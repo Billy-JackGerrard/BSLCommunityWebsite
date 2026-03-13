@@ -1,0 +1,187 @@
+/* ── Calendar Layout ── */
+.calendar-page {
+    font-family: 'Georgia', serif;
+    min-height: 100vh;
+    background: #f5f0e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+  
+.calendar-card {
+    background: #1a1a2e;
+    border-radius: 2px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 12px 12px 0 #c9b99a;
+}
+  
+/* ── Header ── */
+.calendar-header {
+    background: #e8c547;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+  
+.calendar-nav-btn {
+    background: none;
+    border: 2px solid #1a1a2e;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+  
+.calendar-nav-btn:hover {
+    background: rgba(26, 26, 46, 0.12);
+}
+  
+.calendar-title {
+    text-align: center;
+}
+  
+.calendar-month {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #1a1a2e;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.calendar-year {
+    font-size: 0.9rem;
+    color: #1a1a2e;
+    opacity: 0.7;
+}
+  
+/* ── Day Labels ── */
+.calendar-day-labels {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #16213e;
+    padding: 0.75rem 1rem 0.5rem;
+} 
+  
+.calendar-day-label {
+    text-align: center;
+    color: #e8c547;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+  
+/* ── Day Grid ── */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: #16213e;
+    padding: 0.5rem 1rem 1rem;
+}
+  
+.calendar-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 2px;
+    position: relative;
+    background: transparent;
+    transition: background 0.15s;
+}
+  
+.calendar-cell:hover:not(.calendar-cell--empty) {
+    background: rgba(232, 197, 71, 0.15);
+}
+  
+.calendar-cell--empty {
+    cursor: default;
+}
+  
+.calendar-cell--today {
+    background: #2d2d5e;
+}
+  
+.calendar-cell--selected {
+    background: #e8c547;
+}
+  
+.calendar-cell--selected:hover {
+    background: #e8c547;
+}
+  
+.calendar-day-number {
+    font-size: 0.95rem;
+    color: #d4cfc7;
+}
+  
+.calendar-cell--today .calendar-day-number {
+    color: #e8c547;
+    font-weight: bold;
+}
+  
+.calendar-cell--selected .calendar-day-number {
+    color: #1a1a2e;
+}
+  
+.calendar-event-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #e8c547;
+    position: absolute;
+    bottom: 4px;
+}
+  
+.calendar-cell--selected .calendar-event-dot {
+    background: #1a1a2e;
+}
+  
+/* ── Event Panel ── */
+.calendar-event-panel {
+    border-top: 2px solid #e8c547;
+    padding: 1rem 1.5rem;
+    min-height: 80px;
+    background: #1a1a2e;
+}
+  
+.calendar-event-date {
+    color: #e8c547;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-family: monospace;
+}
+  
+.calendar-event-item {
+    color: #f5f0e8;
+    font-size: 0.9rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #2d2d5e;
+}
+  
+.calendar-event-item:last-child {
+    border-bottom: none;
+}
+  
+.calendar-event-empty,
+.calendar-event-placeholder {
+    color: #6b6b8a;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+  
