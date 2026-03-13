@@ -8,3 +8,7 @@ when event is approved, they receive an email
 email announcements?
 
 integrate with socials?
+
+
+add to navbar:
+contact us / report a bug
