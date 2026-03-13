@@ -12,7 +12,7 @@ type Props = {
 export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }: Props) {
   return (
     <nav className="navbar">
-      <div className="navbar-brand">Edinburgh BSL</div>
+      <div className="navbar-brand">Edinburgh BSL Community</div>
       <div className="navbar-links">
         <button
           className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
