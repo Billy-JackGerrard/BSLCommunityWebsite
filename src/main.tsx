@@ -1,29 +1,28 @@
 import './style.css'
-import './components/Navbar.css'
 
 import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { supabase } from "./supabaseClient";
-import Calendar from "./components/calendar.tsx";
-import Login from "./components/login.tsx";
-import Navbar from "./components/navbar.tsx";
+import Calendar from "./components/Calendar.tsx";
+import Login from "./components/Login.tsx";
+import Navbar from "./components/Navbar.tsx";
+import AddEvent from "./components/AddEvent.tsx";
+import AdminQueue from "./components/AdminQueue.tsx";
 
-type View = "calendar" | "login" | "add-event";
+type View = "calendar" | "login" | "add-event" | "admin-queue";
 
 function App() {
   const [view, setView] = useState<View>("calendar");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check auth state on load
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
-      if (!session) setView("calendar"); // redirect on logout
+      if (!session) setView("calendar");
     });
 
     return () => subscription.unsubscribe();
@@ -51,7 +50,8 @@ function App() {
       <div style={{ paddingTop: "60px" }}>
         {view === "calendar" && <Calendar />}
         {view === "login" && <Login onLogin={handleLogin} />}
-        {view === "add-event" && isLoggedIn && <Calendar />}
+        {view === "add-event" && <AddEvent />}
+        {view === "admin-queue" && isLoggedIn && <AdminQueue />}
       </div>
     </>
   );

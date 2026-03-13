@@ -1,6 +1,6 @@
 import "./Navbar.css";
 
-type View = "calendar" | "login" | "add-event";
+type View = "calendar" | "login" | "add-event" | "admin-queue";
 
 type Props = {
   currentView: View;
@@ -21,13 +21,20 @@ export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }
           Calendar
         </button>
 
+        <button
+          className={`navbar-link ${currentView === "add-event" ? "navbar-link--active" : ""}`}
+          onClick={() => onNavigate("add-event")}
+        >
+          Add Event
+        </button>
+
         {isLoggedIn ? (
           <>
             <button
-              className={`navbar-link ${currentView === "add-event" ? "navbar-link--active" : ""}`}
-              onClick={() => onNavigate("add-event")}
+              className={`navbar-link ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
+              onClick={() => onNavigate("admin-queue")}
             >
-              Add Event
+              Pending Events
             </button>
             <button className="navbar-link navbar-link--logout" onClick={onLogout}>
               Log out
@@ -38,7 +45,7 @@ export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }
             className={`navbar-link ${currentView === "login" ? "navbar-link--active" : ""}`}
             onClick={() => onNavigate("login")}
           >
-            I'm an Admin
+            Admin Login
           </button>
         )}
       </div>
