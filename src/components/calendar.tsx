@@ -27,7 +27,6 @@ export default function Calendar() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch events for the current month whenever month/year changes
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
@@ -38,6 +37,7 @@ export default function Calendar() {
       const { data, error } = await supabase
         .from("events")
         .select("*")
+        .eq("approved", true)
         .gte("starts_at", from)
         .lte("starts_at", to)
         .order("starts_at", { ascending: true });
@@ -63,13 +63,13 @@ export default function Calendar() {
   const eventsOnDay = (day: number) =>
     events.filter(e => {
       const start  = new Date(e.starts_at);
-      const finish = e.finishes_at ? new Date(e.finishes_at) : start;
+      // Always create a fresh Date for finish to avoid mutating start
+      const finish = new Date(e.finishes_at ?? e.starts_at);
       const cell   = new Date(current.year, current.month, day);
-  
-      // Strip times, compare dates only
+
       start.setHours(0, 0, 0, 0);
       finish.setHours(23, 59, 59, 999);
-  
+
       return cell >= start && cell <= finish;
     });
 
