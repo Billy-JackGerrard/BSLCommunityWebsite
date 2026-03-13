@@ -24,39 +24,45 @@ export default function Calendar() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isCurrent = true;
+  
     const fetchEvents = async () => {
       setLoading(true);
-
+  
       const from = new Date(current.year, current.month, 1).toISOString();
       const to   = new Date(current.year, current.month + 1, 0, 23, 59, 59).toISOString();
-
-      // Fetch events that overlap with this month:
-      // - starts within the month, OR
-      // - started before the month but finishes during or after it
+  
       const { data, error } = await supabase
         .from("events")
         .select("*")
         .eq("approved", true)
         .or(`and(starts_at.gte.${from},starts_at.lte.${to}),and(starts_at.lt.${from},finishes_at.gte.${from})`)
         .order("starts_at", { ascending: true });
-
+  
+      if (!isCurrent) return;
+  
       if (error) console.error("Error fetching events:", error);
       else setEvents(data || []);
-
+  
       setLoading(false);
     };
-
+  
     fetchEvents();
+  
+    return () => { isCurrent = false; };
   }, [current.month, current.year]);
 
   const prev = () =>
-    setCurrent(c =>
-      c.month === 0 ? { month: 11, year: c.year - 1 } : { month: c.month - 1, year: c.year }
-    );
+    setCurrent(c => {
+      setSelected(null);
+      return c.month === 0 ? { month: 11, year: c.year - 1 } : { month: c.month - 1, year: c.year };
+    });
+  
   const next = () =>
-    setCurrent(c =>
-      c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year }
-    );
+    setCurrent(c => {
+      setSelected(null);
+      return c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year };
+    });
   
     const toUTCDateString = (iso: string) => iso.slice(0, 10); // "YYYY-MM-DD", no timezone shift
 
