@@ -14,6 +14,7 @@ type Event = {
   location?: string;
   starts_at: string;
   finishes_at?: string;
+  admin_id?: string;
   approved: boolean;
   created_at: string;
 };
@@ -44,11 +45,13 @@ export default function AdminQueue() {
   }, []);
 
   const approve = async (id: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+  
     const { error } = await supabase
       .from("events")
-      .update({ approved: true })
+      .update({ approved: true, admin_id: user?.id })
       .eq("id", id);
-
+  
     if (error) setError(error.message);
     else setEvents(prev => prev.filter(e => e.id !== id));
   };

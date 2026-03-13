@@ -45,12 +45,12 @@ export default function AddEvent() {
         <div className="addevent-card">
           <div className="addevent-success">
             <div className="addevent-success-icon">✓</div>
-            <h2 className="addevent-title">Event Submitted!</h2>
+            <h2 className="addevent-title">Event Added!</h2>
             <p className="addevent-success-msg">
               Thank you! Your event has been submitted and is awaiting approval from an admin.
             </p>
             <button className="addevent-btn" onClick={() => setSubmitted(false)}>
-              Submit Another
+              Add Another Event
             </button>
           </div>
         </div>
@@ -61,7 +61,7 @@ export default function AddEvent() {
   return (
     <div className="addevent-page">
       <div className="addevent-card">
-        <h2 className="addevent-title">Submit an Event</h2>
+        <h2 className="addevent-title">Add an Event</h2>
         <p className="addevent-subtitle">
           Events are reviewed by an admin before appearing on the calendar.
         </p>
@@ -94,7 +94,7 @@ export default function AddEvent() {
           <input
             className="addevent-input"
             type="text"
-            placeholder="e.g. Edinburgh Central Library"
+            placeholder="e.g. Blackwood Bar"
             value={location}
             onChange={e => setLocation(e.target.value)}
           />
@@ -123,7 +123,7 @@ export default function AddEvent() {
         </div>
 
         <button className="addevent-btn" onClick={handleSubmit} disabled={loading}>
-          {loading ? "Submitting…" : "Submit Event"}
+          {loading ? "Submitting…" : "Add Event"}
         </button>
       </div>
     </div>
