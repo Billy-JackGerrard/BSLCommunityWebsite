@@ -93,7 +93,6 @@
     background: #16213e;
     padding: 0.5rem 1rem 1rem;
     min-height: 280px;
-
     width: 100%;
     box-sizing: border-box;
 }
@@ -111,7 +110,7 @@
     transition: background 0.15s;
 }
   
-.calendar-cell:hover:not(.calendar-cell--empty) {
+.calendar-cell:hover:not(.calendar-cell--empty):not(.calendar-cell--selected) {
     background: rgba(232, 197, 71, 0.15);
 }
   
@@ -123,10 +122,7 @@
     background: #2d2d5e;
 }
   
-.calendar-cell--selected {
-    background: #e8c547;
-}
-  
+.calendar-cell--selected,
 .calendar-cell--selected:hover {
     background: #e8c547;
 }
@@ -141,7 +137,8 @@
     font-weight: bold;
 }
   
-.calendar-cell--selected .calendar-day-number {
+.calendar-cell--selected .calendar-day-number,
+.calendar-cell--selected:hover .calendar-day-number {
     color: #1a1a2e;
 }
   
@@ -192,4 +189,3 @@
     font-size: 0.85rem;
     font-style: italic;
 }
-  
