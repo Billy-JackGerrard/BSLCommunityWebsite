@@ -1,19 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { formatDateTimeRange } from "../utils/dates";
+import type { Event } from "../utils/types";
 import "./AdminQueue.css";
-
-type Event = {
-  id: string;
-  title: string;
-  description?: string;
-  location?: string;
-  starts_at: string;
-  finishes_at?: string;
-  admin_id?: string;
-  approved: boolean;
-  created_at: string;
-};
 
 export default function AdminQueue() {
   const [events, setEvents] = useState<Event[]>([]);

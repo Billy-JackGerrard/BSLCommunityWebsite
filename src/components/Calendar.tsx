@@ -1,21 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { MONTHS, formatTime, toLocalDateKey } from "../utils/dates";
+import type { Event } from "../utils/types";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-type Event = {
-  id: string;
-  title: string;
-  description?: string;
-  location?: string;
-  starts_at: string;
-  finishes_at?: string;
-};
-
 export default function Calendar() {
-  
+
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
