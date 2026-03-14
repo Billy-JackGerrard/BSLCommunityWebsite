@@ -15,14 +15,31 @@ type Event = {
 };
 
 export default function Calendar() {
-  const [current, setCurrent] = useState({
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
-  });
+  
+  const [today, setToday] = useState(() => new Date());
 
-  // today is a stable reference — no deps needed. It won't change during a
-  // session, and re-creating it each render would be equally fine.
-  const today = useMemo(() => new Date(), []);
+  useEffect(() => {
+    const msUntilMidnight = () => {
+      const now = new Date();
+      const midnight = new Date(now);
+      midnight.setHours(24, 0, 0, 0);
+      return midnight.getTime() - now.getTime();
+    };
+
+    // Schedule the first tick at the next midnight, then repeat every 24 h.
+    const timeout = setTimeout(() => {
+      setToday(new Date());
+      const interval = setInterval(() => setToday(new Date()), 24 * 60 * 60 * 1000);
+      return () => clearInterval(interval);
+    }, msUntilMidnight());
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const [current, setCurrent] = useState({
+    month: today.getMonth(),
+    year: today.getFullYear(),
+  });
 
   const [selected, setSelected] = useState<number | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -31,17 +48,10 @@ export default function Calendar() {
   useEffect(() => {
     let isCurrent = true;
 
-    // Fix #3: Clear events and set loading synchronously before the async
-    // fetch begins, so the old month's events never flash in the panel
-    // while the new month's data is in flight.
     setEvents([]);
     setLoading(true);
 
     const fetchEvents = async () => {
-      // Build bounds at local midnight converted to UTC ISO strings.
-      // Date.UTC gives us midnight UTC, but we want midnight *local* time as
-      // the boundary so that events on the 1st and last day of the month are
-      // fully included regardless of the user's UTC offset.
       const fromDate = new Date(current.year, current.month, 1, 0, 0, 0, 0);
       const toDate   = new Date(current.year, current.month + 1, 0, 23, 59, 59, 999);
 
@@ -68,39 +78,60 @@ export default function Calendar() {
     return () => { isCurrent = false; };
   }, [current.month, current.year]);
 
-  const prev = () =>
-    setCurrent(c => {
-      setSelected(null);
-      return c.month === 0
+  const prev = () => {
+    setSelected(null);
+    setCurrent(c =>
+      c.month === 0
         ? { month: 11, year: c.year - 1 }
-        : { month: c.month - 1, year: c.year };
-    });
+        : { month: c.month - 1, year: c.year }
+    );
+  };
 
-  const next = () =>
-    setCurrent(c => {
-      setSelected(null);
-      return c.month === 11
+  const next = () => {
+    setSelected(null);
+    setCurrent(c =>
+      c.month === 11
         ? { month: 0, year: c.year + 1 }
-        : { month: c.month + 1, year: c.year };
-    });
+        : { month: c.month + 1, year: c.year }
+    );
+  };
 
-  /**
-   * Returns all events that overlap a given calendar day.
-   * Both the cell key and the event keys are "YYYY-MM-DD" in local time,
-   * so the comparison is consistent.
-   */
-  const eventsOnDay = (day: number) => {
-    const cell = [
+  const eventsByDate = useMemo(() => {
+    const map = new Map<string, Event[]>();
+
+    for (const e of events) {
+      const startKey  = toLocalDateKey(e.starts_at);
+      const finishKey = toLocalDateKey(e.finishes_at ?? e.starts_at);
+
+      // Walk every local date the event spans and add it to that bucket.
+      const cursor = new Date(startKey);
+      const end    = new Date(finishKey);
+
+      while (cursor <= end) {
+        const key = [
+          cursor.getFullYear(),
+          String(cursor.getMonth() + 1).padStart(2, "0"),
+          String(cursor.getDate()).padStart(2, "0"),
+        ].join("-");
+
+        if (!map.has(key)) map.set(key, []);
+        map.get(key)!.push(e);
+
+        cursor.setDate(cursor.getDate() + 1);
+      }
+    }
+
+    return map;
+  }, [events]);
+
+  const eventsOnDay = (day: number): Event[] => {
+    const key = [
       current.year,
       String(current.month + 1).padStart(2, "0"),
       String(day).padStart(2, "0"),
     ].join("-");
 
-    return events.filter(e => {
-      const start  = toLocalDateKey(e.starts_at);
-      const finish = toLocalDateKey(e.finishes_at ?? e.starts_at);
-      return cell >= start && cell <= finish;
-    });
+    return eventsByDate.get(key) ?? [];
   };
 
   const isToday = (day: number) =>

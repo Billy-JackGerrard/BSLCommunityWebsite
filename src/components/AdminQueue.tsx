@@ -43,6 +43,8 @@ export default function AdminQueue() {
   }, []);
 
   const approve = async (id: string) => {
+    // Fix: Clear any stale error from a previous action before proceeding.
+    setError(null);
     setActingOn(id);
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -57,6 +59,8 @@ export default function AdminQueue() {
   };
 
   const reject = async (id: string) => {
+    // Fix: Clear any stale error from a previous action before proceeding.
+    setError(null);
     setActingOn(id);
     setConfirmReject(null);
 

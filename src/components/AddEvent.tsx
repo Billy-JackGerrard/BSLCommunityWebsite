@@ -18,20 +18,20 @@ export default function AddEvent() {
   const [startsAt, setStartsAt] = useState("");
   const [finishesAt, setFinishesAt] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [wasAdmin, setWasAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fix #2: Subscribe to auth state changes so isAdmin never goes stale
-  // if the user logs in or out while this component is mounted.
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAdmin(!!session);
+      setAuthChecked(true);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAdmin(!!session);
+      setAuthChecked(true);
     });
 
     return () => subscription.unsubscribe();
@@ -46,11 +46,8 @@ export default function AddEvent() {
     setLoading(true);
     setError(null);
 
-    // Fix #1: Fetch the user once and reuse it, rather than making a second
-    // async call inside the insert — avoids a race condition where the session
-    // could expire between the isAdmin check and the admin_id lookup.
-    const { data: { user } } = await supabase.auth.getUser();
-    const admin = !!user;
+    const { data: { session } } = await supabase.auth.getSession();
+    const admin = !!session?.user;
 
     const { error } = await supabase.from("events").insert({
       title,
@@ -59,13 +56,12 @@ export default function AddEvent() {
       starts_at: toUTCIso(startsAt),
       finishes_at: finishesAt ? toUTCIso(finishesAt) : null,
       approved: admin,
-      admin_id: admin ? user!.id : null,
+      admin_id: admin ? session!.user.id : null,
     });
 
     if (error) {
       setError(error.message);
     } else {
-      setWasAdmin(admin);
       setSubmitted(true);
     }
 
@@ -80,7 +76,7 @@ export default function AddEvent() {
             <div className="addevent-success-icon">✓</div>
             <h2 className="addevent-title">Event Added!</h2>
             <p className="addevent-success-msg">
-              {wasAdmin
+              {isAdmin
                 ? "Your event has been published directly to the calendar."
                 : "Thank you! Your event has been submitted and is awaiting approval from an admin."}
             </p>
@@ -97,7 +93,8 @@ export default function AddEvent() {
     <div className="addevent-page">
       <div className="addevent-card">
         <h2 className="addevent-title">Add an Event</h2>
-        {!isAdmin && (
+
+        {authChecked && !isAdmin && (
           <p className="addevent-subtitle">
             Events are reviewed by an admin before appearing on the calendar.
           </p>

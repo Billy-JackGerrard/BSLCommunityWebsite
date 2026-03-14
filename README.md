@@ -1,6 +1,8 @@
 
 TODO:
 
+final bug checker
+
 email announcements?
 
 integrate with socials!!
