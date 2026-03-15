@@ -1,124 +1,149 @@
-:root {
-  /* ── Palette ─────────────────────────────────────────────
-     Edit here to retheme the entire app.
-     ───────────────────────────────────────────────────── */
-
-  /* Page / surface backgrounds */
-  --color-bg-page:          #f5f0e8;   /* warm cream — outer page */
-  --color-bg-card:          #1a1a2e;   /* deep navy — cards, navbar */
-  --color-bg-inset:         #16213e;   /* darker navy — inputs, inset panels */
-  --color-bg-error:         #3d1a1a;   /* dark red — error banners */
-
-  /* Borders */
-  --color-border:           #2d2d5e;   /* mid navy — field borders */
-  --color-border-subtle:    #4a4a6a;   /* lighter navy — secondary borders */
-
-  /* Accent */
-  --color-accent:           #e8c547;   /* gold — primary highlight */
-
-  /* Text */
-  --color-text-light:       #f5f0e8;   /* cream — text on dark surfaces */
-  --color-text-dark:        #1a1a2e;   /* navy — text on light surfaces */
-  --color-text-muted:       #6b6b8a;   /* muted purple-grey — placeholders */
-  --color-text-error:       #ff6b6b;   /* red — error messages, logout */
-  --color-text-link:        #a8b4e8;   /* soft blue — hyperlinks */
-
-  /* Decorative */
-  --color-shadow:           #c9b99a;   /* tan — offset box shadows */
-
-  /* ── Typography & base ──────────────────────────────── */
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* =====================================================
+   DARK MODE (default)
+   ===================================================== */
+   :root {
+    /* Page / surface backgrounds */
+    --color-bg-page:          #f5f0e8;   /* warm cream — outer page */
+    --color-bg-card:          #1a1a2e;   /* deep navy — cards, navbar */
+    --color-bg-inset:         #16213e;   /* darker navy — inputs, inset panels */
+    --color-bg-error:         #3d1a1a;   /* dark red — error banners */
+  
+    /* Borders */
+    --color-border:           #2d2d5e;   /* mid navy — field borders */
+    --color-border-subtle:    #4a4a6a;   /* lighter navy — secondary borders */
+  
+    /* Accent */
+    --color-accent:           #e8c547;   /* gold — primary highlight */
+  
+    /* Text */
+    --color-text-primary:     #f5f0e8;   /* cream — main text on dark surfaces */
+    --color-text-dark:        #1a1a2e;   /* navy — text on accent/light surfaces */
+    --color-text-muted:       #6b6b8a;   /* muted purple-grey — placeholders */
+    --color-text-error:       #ff6b6b;   /* red — error messages, logout */
+    --color-text-link:        #a8b4e8;   /* soft blue — hyperlinks */
+  
+    /* Decorative */
+    --color-shadow:           #c9b99a;   /* tan — offset box shadows */
+  
+    /* ── Typography & base ──────────────────────────────── */
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+  
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+  
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
   }
   a:hover {
-    color: #747bff;
+    color: #535bf2;
   }
+  
+  body {
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+  }
+  
+  h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+  }
+  
+  #app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+  }
+  .logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  .logo.vanilla:hover {
+    filter: drop-shadow(0 0 2em #3178c6aa);
+  }
+  
+  .card {
+    padding: 2em;
+  }
+  
+  .read-the-docs {
+    color: #888;
+  }
+  
   button {
-    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
   }
-}
+  button:hover {
+    border-color: #646cff;
+  }
+  button:focus,
+  button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+  
+  /* =====================================================
+     LIGHT MODE
+     Only variables that differ from dark mode above.
+     Everything else inherits from :root unchanged.
+     ===================================================== */
+  @media (prefers-color-scheme: light) {
+    :root {
+      /* Page / surface backgrounds */
+      --color-bg-page:        #ede8df;   /* warm off-white page */
+      --color-bg-card:        #ffffff;   /* white cards */
+      --color-bg-inset:       #f5f0e8;   /* cream inputs / inset panels */
+      --color-bg-error:       #fff0f0;   /* pale red error banners */
+  
+      /* Borders */
+      --color-border:         #d4c9b8;   /* warm grey-tan borders */
+      --color-border-subtle:  #e0d9ce;   /* lighter warm-grey */
+  
+      /* Accent — slightly deeper gold for contrast on white */
+      --color-accent:         #c8a800;
+  
+      /* Text */
+      --color-text-primary:   #1a1a2e;   /* dark navy — main text */
+      --color-text-dark:      #1a1a2e;   /* same — text on accent buttons */
+      --color-text-muted:     #7a7088;   /* slightly darker muted */
+      --color-text-error:     #cc3333;   /* deeper red readable on light bg */
+      --color-text-link:      #4a5ab8;   /* deeper blue for contrast */
+  
+      /* Decorative */
+      --color-shadow:         #b8a888;   /* slightly darker tan shadow */
+    }
+  
+    a:hover {
+      color: #747bff;
+    }
+    button {
+      background-color: #f9f9f9;
+    }
+  }

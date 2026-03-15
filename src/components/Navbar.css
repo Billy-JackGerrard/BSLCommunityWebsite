@@ -31,7 +31,7 @@
 .navbar-link {
     background: transparent;
     border: 1px solid transparent;
-    color: var(--color-text-light);
+    color: var( --color-text-primary);
     font-family: monospace;
     font-size: 0.8rem;
     letter-spacing: 0.1em;
