@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
-import { isoToLocal, getMinDateTime } from "../../utils/dates";
+import { isoToLocal, getSoftMinDateTime } from "../../utils/dates";
 import type { Event } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
@@ -78,6 +78,15 @@ export default function EventForm({
   const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
   const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
 
+  // Fix #3: keep minDateTime fresh — recompute every minute so the `min`
+  // attribute on the datetime-local inputs never goes stale if the form sits
+  // open for an extended period.
+  const [minDateTime, setMinDateTime] = useState(getSoftMinDateTime);
+  useEffect(() => {
+    const id = setInterval(() => setMinDateTime(getSoftMinDateTime()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
   // Track whether initialValues changed (e.g. switching which event is being edited)
   const prevInitialRef = useRef<Event | undefined>(initialValues);
   useEffect(() => {
@@ -99,8 +108,6 @@ export default function EventForm({
       setInternalError(null);
     }
   }, [initialValues]);
-
-  const minDateTime = getMinDateTime();
 
   const handleStartsAtChange = (value: string) => {
     setStartsAt(value);

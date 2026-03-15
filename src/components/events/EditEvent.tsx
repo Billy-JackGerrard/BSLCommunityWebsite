@@ -7,6 +7,8 @@ import RecurrencePicker from "./RecurrencePicker";
 import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
 import type { Event } from "../../utils/types";
+import EditEventScopePrompt from "./EditEventScopePrompt";
+import type { RecurringScope } from "./EditEventScopePrompt";
 import "./AddEvent.css";
 import "./EditEvent.css";
 
@@ -15,63 +17,6 @@ type Props = {
   onSaved: (updated: Event) => void;
   onCancel: () => void;
 };
-
-type RecurringScope = "single" | "all-future";
-
-// ── Scope prompt ──────────────────────────────────────────────────────────────
-
-type ScopePromptProps = {
-  eventTitle: string;
-  saving: boolean;
-  error: string | null;
-  onChoose: (scope: RecurringScope) => void;
-  onBack: () => void;
-};
-
-function RecurringEditScopePrompt({ eventTitle, saving, error, onChoose, onBack }: ScopePromptProps) {
-  return (
-    <div className="addevent-page">
-      <div className="addevent-card">
-        <h2 className="addevent-title">Edit Recurring Event</h2>
-
-        <p className="editrecur-question">
-          <strong style={{ color: "var(--color-accent)" }}>{eventTitle}</strong> is part
-          of a recurring series. Which occurrences do you want to update?
-        </p>
-
-        {error && <div className="addevent-error">{error}</div>}
-
-        <div className="editrecur-choices">
-          <button
-            className="editrecur-choice-btn"
-            onClick={() => onChoose("single")}
-            disabled={saving}
-          >
-            <span className="editrecur-choice-title">
-              {saving ? "Saving…" : "Just this event"}
-            </span>
-            <span className="editrecur-choice-desc">Only update this single occurrence</span>
-          </button>
-
-          <button
-            className="editrecur-choice-btn editrecur-choice-btn--secondary"
-            onClick={() => onChoose("all-future")}
-            disabled={saving}
-          >
-            <span className="editrecur-choice-title">
-              {saving ? "Saving…" : "This & all future events"}
-            </span>
-            <span className="editrecur-choice-desc">Update this occurrence and all that follow it</span>
-          </button>
-        </div>
-
-        <button className="editrecur-back-btn" onClick={onBack} disabled={saving}>
-          ← Back to edit
-        </button>
-      </div>
-    </div>
-  );
-}
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -172,6 +117,10 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
         ? new Date(row.finishes_at).getTime() - newStart
         : null;
 
+      // Note: if the user clears the finish time (duration === null), all
+      // future occurrences will have their finishes_at set to null. This is
+      // intentional — the edit explicitly removes the end time for the series.
+
       const patchPromises = (futures ?? []).map(
         (future: { id: string; starts_at: string }) => {
           const futureStart   = new Date(future.starts_at).getTime();
@@ -201,6 +150,14 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
   // ── Recurrence change (delete future + regenerate) ─────────────────────────
 
   const applyRecurrenceChange = async (row: EventFormRow) => {
+    // Fix #5: runtime guard — this function must only be called for events that
+    // belong to a recurrence group. The caller already checks this, but we
+    // guard here too so the non-null assertion below is safe.
+    if (!event.recurrence_id) {
+      setError("Cannot change recurrence on a non-recurring event.");
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
@@ -208,7 +165,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     const { error: deleteErr } = await supabase
       .from("events")
       .delete()
-      .eq("recurrence_id", event.recurrence_id!)
+      .eq("recurrence_id", event.recurrence_id)
       .gte("starts_at", event.starts_at);
 
     if (deleteErr) { setError(deleteErr.message); setSaving(false); return; }
@@ -262,7 +219,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
   if (pendingRow) {
     return (
-      <RecurringEditScopePrompt
+      <EditEventScopePrompt
         eventTitle={event.title}
         saving={saving}
         error={error}

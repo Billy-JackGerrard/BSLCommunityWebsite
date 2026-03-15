@@ -9,8 +9,11 @@ import "./AddEvent.css";
 export default function AddEvent() {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
+  // Fix #7: isAdmin is used only for the subtitle — derive it from the auth
+  // subscription rather than duplicating it via a separate getSession call.
+  // The submit handler re-fetches the session itself (see comment there) so
+  // this state is never trusted for security decisions.
   const [isAdmin, setIsAdmin] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [formKey, setFormKey] = useState(0);
@@ -19,15 +22,14 @@ export default function AddEvent() {
     useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY, formKey);
 
   useEffect(() => {
+    // Seed the initial value, then keep it live via the auth subscription.
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setIsAdmin(!!session);
-      setAuthChecked(true);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
         setIsAdmin(!!session);
-        setAuthChecked(true);
       }
     );
 
@@ -63,9 +65,8 @@ export default function AddEvent() {
     }
 
     // Re-fetch the session here rather than relying on the isAdmin state value.
-    // isAdmin is set asynchronously on mount and could theoretically be stale
-    // by the time the user submits; we don't want to trust client-side state
-    // for a security-relevant write (approved / admin_id).
+    // isAdmin is set asynchronously and is only used for the subtitle UI;
+    // we always re-verify server-side here before writing approved / admin_id.
     const { data: { session } }: { data: { session: Session | null } } =
       await supabase.auth.getSession();
     const admin = !!session?.user;
@@ -131,7 +132,7 @@ export default function AddEvent() {
       <div className="addevent-card">
         <h2 className="addevent-title">Add an Event</h2>
 
-        {authChecked && !isAdmin && (
+        {!isAdmin && (
           <p className="addevent-subtitle">
             Events are reviewed by an admin before appearing on the calendar.
           </p>

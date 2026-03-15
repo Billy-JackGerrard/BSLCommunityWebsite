@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { formatDateTimeRange } from "../../utils/dates";
-import type { Event } from "../../utils/types";
+import type { AdminEvent } from "../../utils/types";
 import "./AdminQueue.css";
 
 export default function AdminQueue() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actingOn, setActingOn] = useState<string | null>(null);
@@ -32,7 +32,6 @@ export default function AdminQueue() {
   }, []);
 
   const approve = async (id: string) => {
-    // Fix: Clear any stale error from a previous action before proceeding.
     setError(null);
     setActingOn(id);
     const { data: { user } } = await supabase.auth.getUser();
@@ -48,7 +47,6 @@ export default function AdminQueue() {
   };
 
   const reject = async (id: string) => {
-    // Fix: Clear any stale error from a previous action before proceeding.
     setError(null);
     setActingOn(id);
     setConfirmReject(null);

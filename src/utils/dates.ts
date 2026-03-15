@@ -74,6 +74,9 @@ export const isoToLocal = (isoString: string): string => {
  * on datetime-local inputs. This is a *soft* floor — it allows slight
  * back-dating for events that started very recently, while preventing
  * accidental far-past submissions.
+ *
+ * Call this inside a component (not at module level) so the value is always
+ * fresh rather than fixed at the time the module was first imported.
  */
 export const getSoftMinDateTime = (): string => {
   const d = new Date(Date.now() - 60 * 60 * 1000);
@@ -87,6 +90,3 @@ export const getSoftMinDateTime = (): string => {
     String(d.getMinutes()).padStart(2, "0"),
   ].join(":");
 };
-
-/** @deprecated Use getSoftMinDateTime instead */
-export const getMinDateTime = getSoftMinDateTime;

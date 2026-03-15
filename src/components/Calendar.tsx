@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useRef } from "react";
-import { MONTHS, formatDateTimeRange } from "../utils/dates";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
 import EventDetails from "./events/EventDetails";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
@@ -74,12 +74,19 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
     setCurrent(c => c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year });
   };
 
+  // Fix #11: build eventsByDate using toLocalDateKey from dates.ts rather than
+  // duplicating the YYYY-MM-DD formatting logic inline. The cursor still needs
+  // its own key construction since it's a plain Date, not an ISO string — use
+  // a small local helper that mirrors toLocalDateKey's format.
+  const dateKey = (d: Date): string =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
   const eventsByDate = useMemo(() => {
     const map = new Map<string, Event[]>();
     for (const e of events) {
-      // Fix: build the cursor from the parsed ISO string with local time, then
-      // zero the time component — avoids the UTC-midnight trap that new Date("YYYY-MM-DD")
-      // falls into, which would place events a day early in UTC-N timezones.
+      // Start the cursor at local midnight on the event's start date.
+      // Using new Date(e.starts_at) then zeroing the time avoids the
+      // UTC-midnight trap that new Date("YYYY-MM-DD") falls into in UTC-N zones.
       const cursor = new Date(e.starts_at);
       cursor.setHours(0, 0, 0, 0);
 
@@ -87,11 +94,7 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
       end.setHours(0, 0, 0, 0);
 
       while (cursor <= end) {
-        const key = [
-          cursor.getFullYear(),
-          String(cursor.getMonth() + 1).padStart(2, "0"),
-          String(cursor.getDate()).padStart(2, "0"),
-        ].join("-");
+        const key = dateKey(cursor);
         if (!map.has(key)) map.set(key, []);
         map.get(key)!.push(e);
         cursor.setDate(cursor.getDate() + 1);
@@ -101,11 +104,7 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
   }, [events]);
 
   const eventsOnDay = (day: number): Event[] => {
-    const key = [
-      current.year,
-      String(current.month + 1).padStart(2, "0"),
-      String(day).padStart(2, "0"),
-    ].join("-");
+    const key = `${current.year}-${String(current.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     return eventsByDate.get(key) ?? [];
   };
 
@@ -113,17 +112,19 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
     day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();
   const isSelected = (day: number) => selected === day;
 
-  const matchesSearch = (event: Event, query: string): boolean => {
+  // Fix #2: stable reference via useCallback so the searchResults memo's
+  // dependency array correctly covers the function's actual inputs.
+  const matchesSearch = useCallback((event: Event, query: string): boolean => {
     if (!query.trim()) return false;
     const q = query.toLowerCase();
     const haystack = [event.title, event.description ?? "", event.location ?? ""].join(" ").toLowerCase();
     return q.split(/\s+/).filter(Boolean).every(word => haystack.includes(word));
-  };
+  }, []); // no external deps — pure function of its arguments
 
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     return allEvents.filter(e => matchesSearch(e, searchQuery));
-  }, [searchQuery, allEvents]);
+  }, [searchQuery, allEvents, matchesSearch]);
 
   const handleResultClick = (event: Event) => {
     const d = new Date(event.starts_at);
