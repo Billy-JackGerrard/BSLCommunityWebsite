@@ -10,7 +10,7 @@ export type Event = {
   created_at: string;
   contact_name?: string;
   contact_email?: string;
-  contact_phone?: string;
   url?: string;
-  recurrence_id?: string
+  recurrence_id?: string;
+  whatsapp_link?: string
 };
