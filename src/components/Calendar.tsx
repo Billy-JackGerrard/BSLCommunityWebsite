@@ -7,6 +7,13 @@ import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+/** Last moment of next calendar month */
+const searchWindowEnd = (): Date => {
+  const now = new Date();
+  // end of the month after next
+  return new Date(now.getFullYear(), now.getMonth() + 2 + 1, 0, 23, 59, 59, 999);
+};
+
 export default function Calendar() {
 
   const [today, setToday] = useState(() => new Date());
@@ -42,7 +49,7 @@ export default function Calendar() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Modal state
+  // Selected event for the detail card
   const [detailEvent, setDetailEvent] = useState<Event | null>(null);
 
   // Fetch current month events for grid
@@ -72,7 +79,7 @@ export default function Calendar() {
     return () => { isCurrent = false; };
   }, [current.month, current.year]);
 
-  // Fetch all future approved events for search
+  // Fetch this month + next month's events for search
   useEffect(() => {
     const fetchAll = async () => {
       const { data } = await supabase
@@ -80,8 +87,8 @@ export default function Calendar() {
         .select("*")
         .eq("approved", true)
         .gte("starts_at", new Date().toISOString())
-        .order("starts_at", { ascending: true })
-        .limit(500);
+        .lte("starts_at", searchWindowEnd().toISOString())
+        .order("starts_at", { ascending: true });
       setAllEvents(data || []);
     };
     fetchAll();
@@ -100,11 +107,13 @@ export default function Calendar() {
 
   const prev = () => {
     setSelected(null);
+    setDetailEvent(null);
     setCurrent(c => c.month === 0 ? { month: 11, year: c.year - 1 } : { month: c.month - 1, year: c.year });
   };
 
   const next = () => {
     setSelected(null);
+    setDetailEvent(null);
     setCurrent(c => c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year });
   };
 
@@ -149,9 +158,10 @@ export default function Calendar() {
     return q.split(/\s+/).filter(Boolean).every(word => haystack.includes(word));
   };
 
+  // No slice — show all matches within the two-month window
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    return allEvents.filter(e => matchesSearch(e, searchQuery)).slice(0, 8);
+    return allEvents.filter(e => matchesSearch(e, searchQuery));
   }, [searchQuery, allEvents]);
 
   const handleResultClick = (event: Event) => {
@@ -186,135 +196,138 @@ export default function Calendar() {
   return (
     <>
       <div className="calendar-page">
-        <div className="calendar-card">
+        <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
+          <div className="calendar-card">
 
-          {/* Header */}
-          <div className="calendar-header">
-            <button className="calendar-nav-btn" onClick={prev}>‹</button>
+            {/* Header */}
+            <div className="calendar-header">
+              <button className="calendar-nav-btn" onClick={prev}>‹</button>
 
-            <div className="calendar-header-center">
-              {searchOpen ? (
-                <div className="calendar-search-wrap" ref={dropdownRef}>
-                  <div className="calendar-search-bar">
-                    <span className="calendar-search-icon">⌕</span>
-                    <input
-                      ref={searchInputRef}
-                      className="calendar-search-input"
-                      type="text"
-                      placeholder="Search events…"
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
-                    />
-                  </div>
-
-                  {searchQuery.trim().length > 0 && (
-                    <div className="calendar-search-dropdown">
-                      {searchResults.length === 0 ? (
-                        <div className="calendar-search-dropdown-empty">No matching events</div>
-                      ) : (
-                        searchResults.map(ev => (
-                          <button
-                            key={ev.id}
-                            className="calendar-search-result"
-                            onClick={() => handleResultClick(ev)}
-                          >
-                            <span className="calendar-search-result-title">{ev.title}</span>
-                            <span className="calendar-search-result-date">
-                              {formatDateTimeRange(ev.starts_at, ev.finishes_at)}
-                            </span>
-                          </button>
-                        ))
-                      )}
+              <div className="calendar-header-center">
+                {searchOpen ? (
+                  <div className="calendar-search-wrap" ref={dropdownRef}>
+                    <div className="calendar-search-bar">
+                      <span className="calendar-search-icon">⌕</span>
+                      <input
+                        ref={searchInputRef}
+                        className="calendar-search-input"
+                        type="text"
+                        placeholder="Search events…"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
+                      />
                     </div>
+
+                    {searchQuery.trim().length > 0 && (
+                      <div className="calendar-search-dropdown">
+                        {searchResults.length === 0 ? (
+                          <div className="calendar-search-dropdown-empty">No matching events</div>
+                        ) : (
+                          searchResults.map(ev => (
+                            <button
+                              key={ev.id}
+                              className="calendar-search-result"
+                              onClick={() => handleResultClick(ev)}
+                            >
+                              <span className="calendar-search-result-title">{ev.title}</span>
+                              <span className="calendar-search-result-date">
+                                {formatDateTimeRange(ev.starts_at, ev.finishes_at)}
+                              </span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="calendar-title">
+                    <div className="calendar-month">{MONTHS[current.month]}</div>
+                    <div className="calendar-year">{current.year}</div>
+                  </div>
+                )}
+              </div>
+
+              <div className="calendar-header-actions">
+                <button
+                  className={`calendar-search-btn ${searchOpen ? "calendar-search-btn--active" : ""}`}
+                  onClick={handleSearchToggle}
+                  title={searchOpen ? "Close search" : "Search events"}
+                >
+                  {searchOpen ? "✕" : "⌕"}
+                </button>
+                <button className="calendar-nav-btn" onClick={next}>›</button>
+              </div>
+            </div>
+
+            {/* Day labels */}
+            <div className="calendar-day-labels">
+              {DAYS.map(d => (
+                <div key={d} className="calendar-day-label">{d}</div>
+              ))}
+            </div>
+
+            {/* Day grid */}
+            <div className="calendar-grid">
+              {cells.map((day, i) => {
+                const cellClass = [
+                  "calendar-cell",
+                  !day                    ? "calendar-cell--empty"    : "",
+                  day && isToday(day)     ? "calendar-cell--today"    : "",
+                  day && isSelected(day)  ? "calendar-cell--selected" : "",
+                ].filter(Boolean).join(" ");
+
+                return (
+                  <div key={i} className={cellClass} onClick={() => { if (day) { setSelected(day); setDetailEvent(null); } }}>
+                    {day && (
+                      <>
+                        <span className="calendar-day-number">{day}</span>
+                        {eventsOnDay(day).length > 0 && <span className="calendar-event-dot" />}
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Event panel */}
+            <div className="calendar-event-panel">
+              {loading ? (
+                <div className="calendar-event-placeholder">Loading events…</div>
+              ) : selected ? (
+                <>
+                  <div className="calendar-event-date">
+                    {selected} {MONTHS[current.month]}
+                  </div>
+                  {selectedEvents.length > 0 ? (
+                    selectedEvents.map(ev => (
+                      <div
+                        key={ev.id}
+                        className="calendar-event-item calendar-event-item--clickable"
+                        onClick={() => setDetailEvent(ev)}
+                      >
+                        · {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                        {ev.finishes_at ? ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}` : ""} — {ev.title}
+                        {ev.location && <span style={{ opacity: 0.6 }}> @ {ev.location}</span>}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="calendar-event-empty">No events scheduled</div>
                   )}
-                </div>
+                </>
               ) : (
-                <div className="calendar-title">
-                  <div className="calendar-month">{MONTHS[current.month]}</div>
-                  <div className="calendar-year">{current.year}</div>
-                </div>
+                <div className="calendar-event-placeholder">Select a day to view events</div>
               )}
             </div>
 
-            <div className="calendar-header-actions">
-              <button
-                className={`calendar-search-btn ${searchOpen ? "calendar-search-btn--active" : ""}`}
-                onClick={handleSearchToggle}
-                title={searchOpen ? "Close search" : "Search events"}
-              >
-                {searchOpen ? "✕" : "⌕"}
-              </button>
-              <button className="calendar-nav-btn" onClick={next}>›</button>
-            </div>
           </div>
 
-          {/* Day labels */}
-          <div className="calendar-day-labels">
-            {DAYS.map(d => (
-              <div key={d} className="calendar-day-label">{d}</div>
-            ))}
-          </div>
-
-          {/* Day grid */}
-          <div className="calendar-grid">
-            {cells.map((day, i) => {
-              const cellClass = [
-                "calendar-cell",
-                !day                    ? "calendar-cell--empty"    : "",
-                day && isToday(day)     ? "calendar-cell--today"    : "",
-                day && isSelected(day)  ? "calendar-cell--selected" : "",
-              ].filter(Boolean).join(" ");
-
-              return (
-                <div key={i} className={cellClass} onClick={() => day && setSelected(day)}>
-                  {day && (
-                    <>
-                      <span className="calendar-day-number">{day}</span>
-                      {eventsOnDay(day).length > 0 && <span className="calendar-event-dot" />}
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Event panel */}
-          <div className="calendar-event-panel">
-            {loading ? (
-              <div className="calendar-event-placeholder">Loading events…</div>
-            ) : selected ? (
-              <>
-                <div className="calendar-event-date">
-                  {selected} {MONTHS[current.month]}
-                </div>
-                {selectedEvents.length > 0 ? (
-                  selectedEvents.map(ev => (
-                    <div
-                      key={ev.id}
-                      className="calendar-event-item calendar-event-item--clickable"
-                      onClick={() => setDetailEvent(ev)}
-                    >
-                      · {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                      {ev.finishes_at ? ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}` : ""} — {ev.title}
-                      {ev.location && <span style={{ opacity: 0.6 }}> @ {ev.location}</span>}
-                    </div>
-                  ))
-                ) : (
-                  <div className="calendar-event-empty">No events scheduled</div>
-                )}
-              </>
-            ) : (
-              <div className="calendar-event-placeholder">Select a day to view events</div>
-            )}
-          </div>
-
+          {/* EventDetails card — sits alongside the calendar */}
+          {detailEvent && (
+            <EventDetails event={detailEvent} onClose={() => setDetailEvent(null)} />
+          )}
         </div>
       </div>
-
-      {detailEvent && (
-        <EventDetails event={detailEvent} onClose={() => setDetailEvent(null)} />
-      )}
     </>
   );
 }

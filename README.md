@@ -10,15 +10,11 @@ No way for admins to edit an event before approving it (e.g. fix a typo)
 Critical gaps:
 
 there's no way to share or link to a specific event
-No pagination or search — as events accumulate, the calendar only shows one month at a time with no way to browse upcoming events as a list
 No email notifications — admins won't know when something is pending approval unless they log in and check
 Mobile navbar — it'll break on small screens with all those buttons in a row
 
 
 IDEAS:
-
-
-to be able to click on an event, and have it pop up next to or under the calendar, and it shows the full description as well as submitting edit or remove requests
 
 in the log in page, if people arent admins/etc maybe they could request to be an admin (providing an email and password)
 also clarify that only admins can log in so peeps arent wondering why there isnt a sign up button
@@ -33,13 +29,12 @@ integrate with socials!!
 
 for adding events, add a languages box to show interpreters etc
 
-search for events (limit to only this and the next months)
-
 when adding events:
 - add a public contact email/number for that event specifically
 - possible to make the event happen on repeat
 - can add an organiser name (or "added by"?)
 - when their event is approved, they receive an email if they've put one in
+- optionally add an image 
 
 event queue for admins:
 - add a "notification" mark when there are unapproved events in the queue
