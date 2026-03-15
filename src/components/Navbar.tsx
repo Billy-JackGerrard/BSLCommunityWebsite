@@ -14,6 +14,16 @@ export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }
     <nav className="navbar">
       <div className="navbar-brand">Edinburgh BSL Community</div>
       <div className="navbar-links">
+
+        <a
+          className="navbar-link navbar-link--whatsapp"
+          href="https://chat.whatsapp.com/YOUR_INVITE_CODE"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          💬 WhatsApp
+        </a>
+
         <button
           className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
           onClick={() => onNavigate("calendar")}

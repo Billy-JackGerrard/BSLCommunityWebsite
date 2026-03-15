@@ -67,3 +67,13 @@
     border-color: var(--color-text-error);
     color: var(--color-text-error);
 }
+
+.navbar-link--whatsapp {
+    color: #4ade80;
+    text-decoration: none;
+  }
+  
+  .navbar-link--whatsapp:hover {
+    border-color: #4ade80;
+    color: #4ade80;
+  }
