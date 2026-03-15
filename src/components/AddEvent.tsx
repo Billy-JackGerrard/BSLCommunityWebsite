@@ -1,15 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import "./AddEvent.css";
 
-/**
- * Converts a datetime-local string ("YYYY-MM-DDTHH:mm") to a UTC ISO string.
- * The browser parses datetime-local values as local time, so new Date() on
- * that string correctly applies the user's timezone offset before .toISOString()
- * converts it to UTC — which is what Supabase's timestamptz column expects.
- */
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: string | HTMLElement, options: Record<string, unknown>) => string;
+      reset: (widgetId: string) => void;
+    };
+  }
+}
+
 const toUTCIso = (localDateTimeStr: string): string =>
   new Date(localDateTimeStr).toISOString();
+
+/**
+ * Returns "YYYY-MM-DDTHH:mm" for one hour ago, used as the `min` attribute
+ * on the datetime-local inputs so past dates are greyed out and unselectable.
+ */
+const getMinDateTime = (): string => {
+  const d = new Date(Date.now() - 60 * 60 * 1000);
+  d.setSeconds(0, 0);
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0"),
+  ].join("-") + "T" + [
+    String(d.getHours()).padStart(2, "0"),
+    String(d.getMinutes()).padStart(2, "0"),
+  ].join(":");
+};
 
 export default function AddEvent() {
   const [title, setTitle] = useState("");
@@ -22,6 +42,11 @@ export default function AddEvent() {
   const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+  const minDateTime = getMinDateTime();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -37,15 +62,83 @@ export default function AddEvent() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Load the Turnstile script and render the widget
+  useEffect(() => {
+    const scriptId = "cf-turnstile-script";
+
+    const renderWidget = () => {
+      if (turnstileRef.current && window.turnstile && !widgetIdRef.current) {
+        widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+          sitekey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
+          callback: (token: string) => setTurnstileToken(token),
+          "expired-callback": () => setTurnstileToken(null),
+          "error-callback": () => setTurnstileToken(null),
+          theme: "dark",
+        });
+      }
+    };
+
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      script.onload = renderWidget;
+      document.head.appendChild(script);
+    } else if (window.turnstile) {
+      renderWidget();
+    }
+  }, []);
+
+  // Clear finish time if user changes start to something later
+  const handleStartsAtChange = (value: string) => {
+    setStartsAt(value);
+    if (finishesAt && finishesAt <= value) {
+      setFinishesAt("");
+    }
+  };
+
   const handleSubmit = async () => {
     if (!title || !startsAt) {
       setError("Please fill in at least a title and start time.");
       return;
     }
 
+    if (finishesAt && new Date(finishesAt) <= new Date(startsAt)) {
+      setError("The finish time must be after the start time.");
+      return;
+    }
+
+    if (!turnstileToken) {
+      setError("Please complete the captcha check.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
+    // Verify the Turnstile token via the Edge Function
+    const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY}`,
+      },
+      body: JSON.stringify({ turnstileToken }),
+    });
+
+    const verifyData = await verifyRes.json();
+
+    if (!verifyData.success) {
+      setError("Captcha verification failed. Please try again.");
+      setTurnstileToken(null);
+      if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
+      setLoading(false);
+      return;
+    }
+
+    // Captcha passed — insert the event
     const { data: { session } } = await supabase.auth.getSession();
     const admin = !!session?.user;
 
@@ -61,6 +154,7 @@ export default function AddEvent() {
 
     if (error) {
       setError(error.message);
+      if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
     } else {
       setSubmitted(true);
     }
@@ -80,7 +174,11 @@ export default function AddEvent() {
                 ? "Your event has been published directly to the calendar."
                 : "Thank you! Your event has been submitted and is awaiting approval from an admin."}
             </p>
-            <button className="addevent-btn" onClick={() => setSubmitted(false)}>
+            <button className="addevent-btn" onClick={() => {
+              setSubmitted(false);
+              setTurnstileToken(null);
+              widgetIdRef.current = null;
+            }}>
               Add Another Event
             </button>
           </div>
@@ -140,8 +238,9 @@ export default function AddEvent() {
             <input
               className="addevent-input"
               type="datetime-local"
+              min={minDateTime}
               value={startsAt}
-              onChange={e => setStartsAt(e.target.value)}
+              onChange={e => handleStartsAtChange(e.target.value)}
             />
           </div>
 
@@ -150,13 +249,17 @@ export default function AddEvent() {
             <input
               className="addevent-input"
               type="datetime-local"
+              min={startsAt || minDateTime}
               value={finishesAt}
               onChange={e => setFinishesAt(e.target.value)}
             />
           </div>
         </div>
 
-        <button className="addevent-btn" onClick={handleSubmit} disabled={loading}>
+        {/* Turnstile widget */}
+        <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
+
+        <button className="addevent-btn" onClick={handleSubmit} disabled={loading || !turnstileToken}>
           {loading ? "Submitting…" : "Add Event"}
         </button>
       </div>
