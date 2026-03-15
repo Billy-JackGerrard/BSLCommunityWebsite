@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 
-// Fix #10: shared base query — approved events ordered by start time.
+// Shared base query — approved events ordered by start time.
 const approvedEvents = () =>
   supabase.from("events").select("*").eq("approved", true).order("starts_at", { ascending: true });
 
 /**
  * Fetches approved events for the given month/year and a separate
  * forward-looking list used by the search dropdown.
+ *
+ * Search window: up to 1 year ahead. The 10-result cap is applied by
+ * Calendar.tsx after filtering so the cap always reflects actual matches
+ * rather than the raw pool size.
  */
 export function useCalendarEvents(month: number, year: number) {
   const [events, setEvents] = useState<Event[]>([]);
@@ -42,13 +46,13 @@ export function useCalendarEvents(month: number, year: number) {
   }, [month, year]);
 
   // Forward-looking events for the search dropdown.
-  // Fix #1: compute the search window end *inside* the effect so it's always
-  // fresh rather than being fixed at module-load time.
+  // Fetches the full year window; the 10-result cap is applied after
+  // filtering in Calendar so the cap reflects actual matches.
   useEffect(() => {
     const fetchAll = async () => {
       const now = new Date();
-      // Last moment of next calendar month
-      const windowEnd = new Date(now.getFullYear(), now.getMonth() + 2 + 1, 0, 23, 59, 59, 999);
+      const windowEnd = new Date(now);
+      windowEnd.setFullYear(windowEnd.getFullYear() + 1);
 
       const { data } = await approvedEvents()
         .gte("starts_at", now.toISOString())
