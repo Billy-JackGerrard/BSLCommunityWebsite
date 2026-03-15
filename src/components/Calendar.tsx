@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
-import EventDetails from "./EventDetails";
+import EventDetails from "./events/EventDetails";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

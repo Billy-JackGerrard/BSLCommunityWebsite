@@ -1,5 +1,5 @@
-import type { Event } from "../utils/types";
-import { formatDateTimeRange } from "../utils/dates";
+import type { Event } from "../../utils/types";
+import { formatDateTimeRange } from "../../utils/dates";
 import "./EventDetails.css";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 export default function EventDetailCard({ event, onClose }: Props) {
   const hasContact =
     event.contact_name || event.contact_email ||
-    event.contact_phone || event.url;
+    event.url || event.whatsapp_url;
 
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
@@ -26,6 +26,10 @@ export default function EventDetailCard({ event, onClose }: Props) {
       return normUrl;
     }
   })() : null;
+
+  const normWhatsapp = event.whatsapp_url
+    ? (event.whatsapp_url.startsWith("http") ? event.whatsapp_url : `https://${event.whatsapp_url}`)
+    : null;
 
   return (
     <div className="event-detail-card">
@@ -76,18 +80,6 @@ export default function EventDetailCard({ event, onClose }: Props) {
             </div>
           )}
 
-          {event.contact_phone && (
-            <div className="event-detail-row">
-              <span className="event-detail-icon">📞</span>
-              <a
-                className="event-detail-link"
-                href={`tel:${event.contact_phone.replace(/\s/g, "")}`}
-              >
-                {event.contact_phone}
-              </a>
-            </div>
-          )}
-
           {normUrl && (
             <div className="event-detail-row">
               <span className="event-detail-icon">🔗</span>
@@ -98,6 +90,20 @@ export default function EventDetailCard({ event, onClose }: Props) {
                 rel="noopener noreferrer"
               >
                 {displayUrl}
+              </a>
+            </div>
+          )}
+
+          {normWhatsapp && (
+            <div className="event-detail-row">
+              <span className="event-detail-icon">💬</span>
+              <a
+                className="event-detail-link"
+                href={normWhatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Join WhatsApp group
               </a>
             </div>
           )}

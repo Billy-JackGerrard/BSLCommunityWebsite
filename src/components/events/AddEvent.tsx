@@ -46,8 +46,8 @@ export default function AddEvent() {
   const [finishesAt, setFinishesAt] = useState("");
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
   const [url, setUrl] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -133,6 +133,11 @@ export default function AddEvent() {
       return;
     }
 
+    if (whatsappUrl && !whatsappUrl.includes("chat.whatsapp.com")) {
+      setError("Please enter a valid WhatsApp group chat link (chat.whatsapp.com/…).");
+      return;
+    }
+
     if (!turnstileToken) {
       setError("Please complete the captcha check.");
       return;
@@ -192,8 +197,8 @@ export default function AddEvent() {
       recurrence_id: recurrenceId,
       contact_name: contactName || null,
       contact_email: contactEmail || null,
-      contact_phone: contactPhone || null,
       url: url || null,
+      whatsapp_url: whatsappUrl || null,
     }));
 
     const { error: insertError } = await supabase.from("events").insert(rows);
@@ -217,8 +222,8 @@ export default function AddEvent() {
     setFinishesAt("");
     setContactName("");
     setContactEmail("");
-    setContactPhone("");
     setUrl("");
+    setWhatsappUrl("");
     setSubmitted(false);
     setSubmittedCount(1);
     setRecurrenceEnabled(false);
@@ -352,28 +357,15 @@ export default function AddEvent() {
           />
         </div>
 
-        <div className="addevent-row">
-          <div className="addevent-field">
-            <label className="addevent-label">Email</label>
-            <input
-              className="addevent-input"
-              type="email"
-              placeholder="e.g. hello@example.com"
-              value={contactEmail}
-              onChange={e => setContactEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="addevent-field">
-            <label className="addevent-label">Phone</label>
-            <input
-              className="addevent-input"
-              type="tel"
-              placeholder="e.g. 07700 900000"
-              value={contactPhone}
-              onChange={e => setContactPhone(e.target.value)}
-            />
-          </div>
+        <div className="addevent-field">
+          <label className="addevent-label">Email</label>
+          <input
+            className="addevent-input"
+            type="email"
+            placeholder="e.g. hello@example.com"
+            value={contactEmail}
+            onChange={e => setContactEmail(e.target.value)}
+          />
         </div>
 
         <div className="addevent-field">
@@ -384,6 +376,17 @@ export default function AddEvent() {
             placeholder="e.g. https://eventbrite.com/..."
             value={url}
             onChange={e => setUrl(e.target.value)}
+          />
+        </div>
+
+        <div className="addevent-field">
+          <label className="addevent-label">WhatsApp Group Chat</label>
+          <input
+            className="addevent-input"
+            type="url"
+            placeholder="e.g. https://chat.whatsapp.com/..."
+            value={whatsappUrl}
+            onChange={e => setWhatsappUrl(e.target.value)}
           />
         </div>
 
