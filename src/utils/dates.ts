@@ -70,11 +70,12 @@ export const isoToLocal = (isoString: string): string => {
 };
 
 /**
- * Returns the minimum datetime string (1 hour in the past) for datetime-local
- * inputs — prevents accidental far-past submissions while allowing slight
- * back-dating.
+ * Returns a datetime string 1 hour in the past, used as the `min` attribute
+ * on datetime-local inputs. This is a *soft* floor — it allows slight
+ * back-dating for events that started very recently, while preventing
+ * accidental far-past submissions.
  */
-export const getMinDateTime = (): string => {
+export const getSoftMinDateTime = (): string => {
   const d = new Date(Date.now() - 60 * 60 * 1000);
   d.setSeconds(0, 0);
   return [
@@ -86,3 +87,6 @@ export const getMinDateTime = (): string => {
     String(d.getMinutes()).padStart(2, "0"),
   ].join(":");
 };
+
+/** @deprecated Use getSoftMinDateTime instead */
+export const getMinDateTime = getSoftMinDateTime;

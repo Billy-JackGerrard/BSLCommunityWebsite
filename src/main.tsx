@@ -10,7 +10,8 @@ import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
 import AdminQueue from "./components/events/AdminQueue.tsx";
 import Contact from "./components/Contact.tsx";
-import type { Event, View } from "./utils/types.ts";
+import type { Event } from "./utils/types.ts";
+import type { View } from "./utils/views.ts";
 
 function App() {
   const [view, setView] = useState<View>("calendar");

@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { supabase } from "../supabaseClient";
-import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
+import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import type { Event } from "../utils/types";
 import EventDetails from "./events/EventDetails";
+import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -12,19 +12,10 @@ type Props = {
   onEditEvent: (event: Event) => void;
 };
 
-/** Last moment of next calendar month */
-const searchWindowEnd = (): Date => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth() + 2 + 1, 0, 23, 59, 59, 999);
-};
-
 export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
-  // Fix: the previous implementation returned the clearInterval callback from
-  // inside the setTimeout callback, where it had no effect. The interval is now
-  // captured in the outer scope so the useEffect cleanup can cancel it.
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
 
@@ -52,58 +43,13 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
   });
 
   const [selected, setSelected] = useState<number | null>(null);
-  const [events, setEvents] = useState<Event[]>([]);
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   const [detailEvent, setDetailEvent] = useState<Event | null>(null);
 
-  // Fetch current month events for grid
-  useEffect(() => {
-    let isCurrent = true;
-    setEvents([]);
-    setLoading(true);
-
-    const fetchEvents = async () => {
-      const fromDate = new Date(current.year, current.month, 1, 0, 0, 0, 0);
-      const toDate   = new Date(current.year, current.month + 1, 0, 23, 59, 59, 999);
-
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("approved", true)
-        .or(`and(starts_at.gte.${fromDate.toISOString()},starts_at.lte.${toDate.toISOString()}),and(starts_at.lt.${fromDate.toISOString()},finishes_at.gte.${fromDate.toISOString()})`)
-        .order("starts_at", { ascending: true });
-
-      if (!isCurrent) return;
-      if (error) console.error("Error fetching events:", error);
-      else setEvents(data || []);
-      setLoading(false);
-    };
-
-    fetchEvents();
-    return () => { isCurrent = false; };
-  }, [current.month, current.year]);
-
-  // Fetch search window events
-  useEffect(() => {
-    const fetchAll = async () => {
-      const { data } = await supabase
-        .from("events")
-        .select("*")
-        .eq("approved", true)
-        .gte("starts_at", new Date().toISOString())
-        .lte("starts_at", searchWindowEnd().toISOString())
-        .order("starts_at", { ascending: true });
-      setAllEvents(data || []);
-    };
-    fetchAll();
-  }, []);
+  const { events, allEvents, loading } = useCalendarEvents(current.month, current.year);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -131,10 +77,15 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
   const eventsByDate = useMemo(() => {
     const map = new Map<string, Event[]>();
     for (const e of events) {
-      const startKey  = toLocalDateKey(e.starts_at);
-      const finishKey = toLocalDateKey(e.finishes_at ?? e.starts_at);
-      const cursor = new Date(startKey);
-      const end    = new Date(finishKey);
+      // Fix: build the cursor from the parsed ISO string with local time, then
+      // zero the time component — avoids the UTC-midnight trap that new Date("YYYY-MM-DD")
+      // falls into, which would place events a day early in UTC-N timezones.
+      const cursor = new Date(e.starts_at);
+      cursor.setHours(0, 0, 0, 0);
+
+      const end = e.finishes_at ? new Date(e.finishes_at) : new Date(e.starts_at);
+      end.setHours(0, 0, 0, 0);
+
       while (cursor <= end) {
         const key = [
           cursor.getFullYear(),

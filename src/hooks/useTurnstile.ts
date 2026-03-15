@@ -19,8 +19,8 @@ type UseTurnstileResult = {
 };
 
 /**
- * Fix #10: Encapsulates Cloudflare Turnstile script injection, widget
- * rendering, token management, and reset — extracted from AddEvent.tsx.
+ * Encapsulates Cloudflare Turnstile script injection, widget rendering,
+ * token management, and reset.
  *
  * @param siteKey  The VITE_TURNSTILE_SITE_KEY value.
  * @param formKey  Increment this to force a full remount of the widget
@@ -32,6 +32,15 @@ export function useTurnstile(siteKey: string, formKey: number): UseTurnstileResu
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!siteKey) {
+      console.warn(
+        "[useTurnstile] VITE_TURNSTILE_SITE_KEY is not set. " +
+        "The Turnstile widget will not render and form submission will be blocked. " +
+        "Add it to your .env file."
+      );
+      return;
+    }
+
     const SCRIPT_ID = "cf-turnstile-script";
 
     const renderWidget = () => {

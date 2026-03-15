@@ -18,11 +18,68 @@ type Props = {
 
 type RecurringScope = "single" | "all-future";
 
+// ── Scope prompt ──────────────────────────────────────────────────────────────
+
+type ScopePromptProps = {
+  eventTitle: string;
+  saving: boolean;
+  error: string | null;
+  onChoose: (scope: RecurringScope) => void;
+  onBack: () => void;
+};
+
+function RecurringEditScopePrompt({ eventTitle, saving, error, onChoose, onBack }: ScopePromptProps) {
+  return (
+    <div className="addevent-page">
+      <div className="addevent-card">
+        <h2 className="addevent-title">Edit Recurring Event</h2>
+
+        <p className="editrecur-question">
+          <strong style={{ color: "var(--color-accent)" }}>{eventTitle}</strong> is part
+          of a recurring series. Which occurrences do you want to update?
+        </p>
+
+        {error && <div className="addevent-error">{error}</div>}
+
+        <div className="editrecur-choices">
+          <button
+            className="editrecur-choice-btn"
+            onClick={() => onChoose("single")}
+            disabled={saving}
+          >
+            <span className="editrecur-choice-title">
+              {saving ? "Saving…" : "Just this event"}
+            </span>
+            <span className="editrecur-choice-desc">Only update this single occurrence</span>
+          </button>
+
+          <button
+            className="editrecur-choice-btn editrecur-choice-btn--secondary"
+            onClick={() => onChoose("all-future")}
+            disabled={saving}
+          >
+            <span className="editrecur-choice-title">
+              {saving ? "Saving…" : "This & all future events"}
+            </span>
+            <span className="editrecur-choice-desc">Update this occurrence and all that follow it</span>
+          </button>
+        </div>
+
+        <button className="editrecur-back-btn" onClick={onBack} disabled={saving}>
+          ← Back to edit
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
 export default function EditEvent({ event, onSaved, onCancel }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch the admin user id once on mount rather than on every save (#11)
+  // Fetch the admin user id once on mount rather than on every save
   const [adminId, setAdminId] = useState<string | undefined>(undefined);
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -30,7 +87,10 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     });
   }, []);
 
-  // Tracks the form's current starts_at so RecurrencePicker always reflects the live date
+  // Tracks the form's current starts_at so RecurrencePicker always reflects
+  // the live date. Initialised from the event prop; kept in sync via
+  // onStartsAtChange — EventForm maintains its own internal copy of the same
+  // value, so the two are always in step.
   const [liveStartsAt, setLiveStartsAt] = useState<string>(() => isoToLocal(event.starts_at));
 
   // Recurrence editing — only relevant when event.recurrence_id is set
@@ -42,13 +102,16 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
   // For field edits on recurring events: hold the validated row while we ask scope
   const [pendingRow, setPendingRow] = useState<EventFormRow | null>(null);
 
-  // ── Step 1: EventForm submits ─────────────────────────────────────
+  // ── Step 1: EventForm submits ───────────────────────────────────────────────
 
   const handleFormSubmit = (rows: EventFormRow[]) => {
     const row = rows[0]; // showRecurrence=false, always one row
 
-    if (recurrenceChanged) {
-      // Recurrence changed → delete future + regenerate, no scope prompt needed
+    // Guard: recurrenceChanged only triggers a regeneration when the event
+    // actually belongs to a recurrence group. Without this check, calling
+    // applyRecurrenceChange on a non-recurring event would do a no-op delete
+    // (recurrence_id IS NULL) and then insert a duplicate.
+    if (recurrenceChanged && event.recurrence_id) {
       applyRecurrenceChange(row);
     } else if (event.recurrence_id) {
       // Field-only change on a recurring event → ask scope
@@ -59,7 +122,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     }
   };
 
-  // ── Field-only edit (patch existing rows) ────────────────────────
+  // ── Field-only edit (patch existing rows) ──────────────────────────────────
 
   const buildPatch = (row: EventFormRow) => ({
     title:         row.title,
@@ -135,7 +198,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     setSaving(false);
   };
 
-  // ── Recurrence change (delete future + regenerate) ───────────────
+  // ── Recurrence change (delete future + regenerate) ─────────────────────────
 
   const applyRecurrenceChange = async (row: EventFormRow) => {
     setSaving(true);
@@ -151,8 +214,8 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     if (deleteErr) { setError(deleteErr.message); setSaving(false); return; }
 
     // 2. Expand the new rule from the edited start time.
-    //    Fix: when recurrenceEnabled is false the user toggled recurrence off,
-    //    so we use frequency "none" to produce a single occurrence rather than
+    //    When recurrenceEnabled is false the user toggled recurrence off,
+    //    so use frequency "none" to produce a single occurrence rather than
     //    expanding with whatever rule happens to be set.
     const activeRule: RecurrenceRule = recurrenceEnabled
       ? recurrenceRule
@@ -191,66 +254,31 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
     if (insertErr) { setError(insertErr.message); setSaving(false); return; }
 
-    // Return the first inserted occurrence as the "updated" event
     onSaved((inserted as Event[])[0]);
     setSaving(false);
   };
 
-  // ── Scope prompt (field-only edit on recurring event) ────────────
+  // ── Scope prompt (field-only edit on recurring event) ──────────────────────
 
   if (pendingRow) {
     return (
-      <div className="addevent-page">
-        <div className="addevent-card">
-          <h2 className="addevent-title">Edit Recurring Event</h2>
-
-          <p className="editrecur-question">
-            <strong style={{ color: "var(--color-accent)" }}>{event.title}</strong> is part
-            of a recurring series. Which occurrences do you want to update?
-          </p>
-
-          {error && <div className="addevent-error">{error}</div>}
-
-          <div className="editrecur-choices">
-            <button
-              className="editrecur-choice-btn"
-              onClick={() => applyFieldEdit(pendingRow, "single")}
-              disabled={saving}
-            >
-              <span className="editrecur-choice-title">
-                {saving ? "Saving…" : "Just this event"}
-              </span>
-              <span className="editrecur-choice-desc">Only update this single occurrence</span>
-            </button>
-
-            <button
-              className="editrecur-choice-btn editrecur-choice-btn--secondary"
-              onClick={() => applyFieldEdit(pendingRow, "all-future")}
-              disabled={saving}
-            >
-              <span className="editrecur-choice-title">
-                {saving ? "Saving…" : "This & all future events"}
-              </span>
-              <span className="editrecur-choice-desc">Update this occurrence and all that follow it</span>
-            </button>
-          </div>
-
-          <button className="editrecur-back-btn" onClick={() => setPendingRow(null)} disabled={saving}>
-            ← Back to edit
-          </button>
-        </div>
-      </div>
+      <RecurringEditScopePrompt
+        eventTitle={event.title}
+        saving={saving}
+        error={error}
+        onChoose={(scope) => applyFieldEdit(pendingRow, scope)}
+        onBack={() => setPendingRow(null)}
+      />
     );
   }
 
-  // ── Main edit form ────────────────────────────────────────────────
+  // ── Main edit form ──────────────────────────────────────────────────────────
 
   return (
     <div className="addevent-page">
       <div className="addevent-card">
         <h2 className="addevent-title">Edit Event</h2>
 
-        {/* Main fields */}
         <EventForm
           initialValues={event}
           showRecurrence={false}

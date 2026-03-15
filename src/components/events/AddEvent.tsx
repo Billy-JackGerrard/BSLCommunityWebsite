@@ -62,6 +62,10 @@ export default function AddEvent() {
       return;
     }
 
+    // Re-fetch the session here rather than relying on the isAdmin state value.
+    // isAdmin is set asynchronously on mount and could theoretically be stale
+    // by the time the user submits; we don't want to trust client-side state
+    // for a security-relevant write (approved / admin_id).
     const { data: { session } }: { data: { session: Session | null } } =
       await supabase.auth.getSession();
     const admin = !!session?.user;

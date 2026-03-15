@@ -4,6 +4,7 @@ import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getMinDateTime } from "../../utils/dates";
 import type { Event } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
+import "./EventForm.css";
 
 // Re-export so AddEvent/EditEvent don't need to import recurrence directly
 export type { RecurrenceRule };

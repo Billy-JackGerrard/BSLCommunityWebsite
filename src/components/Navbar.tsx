@@ -1,4 +1,4 @@
-import type { View } from "../utils/types";
+import type { View } from "../utils/views";
 import "./Navbar.css";
 
 type Props = {
