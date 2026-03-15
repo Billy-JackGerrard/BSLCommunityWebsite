@@ -18,8 +18,6 @@ IDEAS:
 in the log in page, if people arent admins/etc maybe they could request to be an admin (providing an email and password)
 also clarify that only admins can log in so peeps arent wondering why there isnt a sign up button
 
-reoccurring events
-
 final bug checker
 
 email announcements?
@@ -29,13 +27,13 @@ integrate with socials!!
 for adding events, add a languages box to show interpreters etc
 
 when adding events:
-- possible to make the event happen on repeat
 - when their event is approved, they receive an email if they've put one in
 - optionally add an image 
 
 event queue for admins:
 - add a "notification" mark when there are unapproved events in the queue
 - when an event is approved, also publish that event to socials? or email announcements?
+- different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
 add to navbar:
 contact us / report a bug
