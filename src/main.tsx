@@ -6,8 +6,8 @@ import { supabase } from "./supabaseClient";
 import Calendar from "./components/Calendar.tsx";
 import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
-import AddEvent from "./components/submit_events/AddEvent.tsx";
-import AdminQueue from "./components/submit_events/AdminQueue.tsx";
+import AddEvent from "./components/events/AddEvent.tsx";
+import AdminQueue from "./components/events/AdminQueue.tsx";
 
 type View = "calendar" | "login" | "add-event" | "admin-queue";
 

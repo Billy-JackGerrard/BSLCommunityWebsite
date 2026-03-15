@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { RecurrenceRule, WeekdayOrdinal } from ".../utils/recurrence";
-import { expandRecurrences } from ".../utils/recurrence";
+import type { RecurrenceRule, WeekdayOrdinal } from "../../utils/recurrence";
+import { expandRecurrences } from "../../utils/recurrence";
 import "./RecurrencePicker.css";
 
 const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

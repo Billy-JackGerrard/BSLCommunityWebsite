@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import { supabase } from "../supabaseClient";
-import { expandRecurrences } from "../utils/recurrence";
-import type { RecurrenceRule } from "../utils/recurrence";
+import { supabase } from "../../supabaseClient";
+import { expandRecurrences } from "../../utils/recurrence";
+import type { RecurrenceRule } from "../../utils/recurrence";
 import RecurrencePicker from "./RecurrencePicker";
 import "./AddEvent.css";
 
