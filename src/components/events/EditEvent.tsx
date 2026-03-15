@@ -104,7 +104,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
       // Fetch all future occurrences in the recurrence group
       const { data: futures, error: fetchErr } = await supabase
         .from("events")
-        .select("id, starts_at, finishes_at")
+        .select("id, starts_at")
         .eq("recurrence_id", event.recurrence_id!)
         .gte("starts_at", event.starts_at);
 

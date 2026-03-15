@@ -8,7 +8,7 @@ import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
-import AdminQueue from "./components/events/AdminQueue.tsx";
+import AdminQueue from "./components/AdminQueue.tsx";
 import Contact from "./components/Contact.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";

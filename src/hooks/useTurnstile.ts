@@ -5,6 +5,7 @@ declare global {
     turnstile: {
       render: (container: string | HTMLElement, options: Record<string, unknown>) => string;
       reset: (widgetId: string) => void;
+      remove: (widgetId: string) => void;
     };
   }
 }
@@ -67,8 +68,10 @@ export function useTurnstile(siteKey: string, formKey: number): UseTurnstileResu
       renderWidget();
     }
 
-    // Reset widget tracking when formKey changes so a fresh widget is rendered.
     return () => {
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+      }
       widgetIdRef.current = null;
     };
   }, [siteKey, formKey]);

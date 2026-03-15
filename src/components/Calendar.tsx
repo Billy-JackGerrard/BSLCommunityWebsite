@@ -74,10 +74,8 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
     setCurrent(c => c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year });
   };
 
-  // Fix #11: build eventsByDate using toLocalDateKey from dates.ts rather than
-  // duplicating the YYYY-MM-DD formatting logic inline. The cursor still needs
-  // its own key construction since it's a plain Date, not an ISO string — use
-  // a small local helper that mirrors toLocalDateKey's format.
+  // Local helper for plain Date objects — mirrors toLocalDateKey's format but
+  // takes a Date rather than an ISO string.
   const dateKey = (d: Date): string =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
@@ -103,10 +101,8 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
     return map;
   }, [events]);
 
-  const eventsOnDay = (day: number): Event[] => {
-    const key = `${current.year}-${String(current.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return eventsByDate.get(key) ?? [];
-  };
+  const eventsOnDay = (day: number): Event[] =>
+    eventsByDate.get(dateKey(new Date(current.year, current.month, day))) ?? [];
 
   const isToday    = (day: number) =>
     day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();

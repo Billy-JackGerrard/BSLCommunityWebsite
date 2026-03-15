@@ -11,6 +11,20 @@ export const MONTHS = [
 const parseLocal = (isoString: string): Date => new Date(isoString);
 
 /**
+ * Formats a Date as "YYYY-MM-DDTHH:mm" in local time.
+ * Shared by isoToLocal and getSoftMinDateTime.
+ */
+const formatLocalDateTime = (d: Date): string =>
+  [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0"),
+  ].join("-") + "T" + [
+    String(d.getHours()).padStart(2, "0"),
+    String(d.getMinutes()).padStart(2, "0"),
+  ].join(":");
+
+/**
  * Returns "YYYY-MM-DD" in the **local** timezone.
  * Used to match calendar cells (which are also local dates) against events.
  */
@@ -57,17 +71,8 @@ export const formatDateTimeRange = (start: string, finish?: string): string => {
  * Converts a UTC ISO string from Supabase into a "YYYY-MM-DDTHH:mm" local
  * string suitable for <input type="datetime-local"> values.
  */
-export const isoToLocal = (isoString: string): string => {
-  const d = parseLocal(isoString);
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0"),
-  ].join("-") + "T" + [
-    String(d.getHours()).padStart(2, "0"),
-    String(d.getMinutes()).padStart(2, "0"),
-  ].join(":");
-};
+export const isoToLocal = (isoString: string): string =>
+  formatLocalDateTime(parseLocal(isoString));
 
 /**
  * Returns a datetime string 1 hour in the past, used as the `min` attribute
@@ -81,12 +86,5 @@ export const isoToLocal = (isoString: string): string => {
 export const getSoftMinDateTime = (): string => {
   const d = new Date(Date.now() - 60 * 60 * 1000);
   d.setSeconds(0, 0);
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0"),
-  ].join("-") + "T" + [
-    String(d.getHours()).padStart(2, "0"),
-    String(d.getMinutes()).padStart(2, "0"),
-  ].join(":");
+  return formatLocalDateTime(d);
 };
