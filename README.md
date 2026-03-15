@@ -21,6 +21,9 @@ IDEAS:
 
 to be able to click on an event, and have it pop up next to or under the calendar, and it shows the full description as well as submitting edit or remove requests
 
+in the log in page, if people arent admins/etc maybe they could request to be an admin (providing an email and password)
+also clarify that only admins can log in so peeps arent wondering why there isnt a sign up button
+
 reoccurring events
 
 final bug checker
