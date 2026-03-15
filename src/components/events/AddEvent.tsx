@@ -44,6 +44,10 @@ export default function AddEvent() {
   const [location, setLocation] = useState("");
   const [startsAt, setStartsAt] = useState("");
   const [finishesAt, setFinishesAt] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [url, setUrl] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -124,6 +128,11 @@ export default function AddEvent() {
       return;
     }
 
+    if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     if (!turnstileToken) {
       setError("Please complete the captcha check.");
       return;
@@ -181,6 +190,10 @@ export default function AddEvent() {
       approved: admin,
       admin_id: admin ? session!.user.id : null,
       recurrence_id: recurrenceId,
+      contact_name: contactName || null,
+      contact_email: contactEmail || null,
+      contact_phone: contactPhone || null,
+      url: url || null,
     }));
 
     const { error: insertError } = await supabase.from("events").insert(rows);
@@ -202,6 +215,10 @@ export default function AddEvent() {
     setLocation("");
     setStartsAt("");
     setFinishesAt("");
+    setContactName("");
+    setContactEmail("");
+    setContactPhone("");
+    setUrl("");
     setSubmitted(false);
     setSubmittedCount(1);
     setRecurrenceEnabled(false);
@@ -317,6 +334,57 @@ export default function AddEvent() {
           onToggle={setRecurrenceEnabled}
           onRuleChange={setRecurrenceRule}
         />
+
+        {/* Contact section */}
+        <div className="addevent-section-label">
+          Contact Info <span className="addevent-section-optional">(optional)</span>
+        </div>
+
+        <div className="addevent-field">
+          <label className="addevent-label">Name</label>
+          <input
+            className="addevent-input"
+            type="text"
+            placeholder="e.g. Jane Smith"
+            value={contactName}
+            onChange={e => setContactName(e.target.value)}
+          />
+        </div>
+
+        <div className="addevent-row">
+          <div className="addevent-field">
+            <label className="addevent-label">Email</label>
+            <input
+              className="addevent-input"
+              type="email"
+              placeholder="e.g. hello@example.com"
+              value={contactEmail}
+              onChange={e => setContactEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="addevent-field">
+            <label className="addevent-label">Phone</label>
+            <input
+              className="addevent-input"
+              type="tel"
+              placeholder="e.g. 07700 900000"
+              value={contactPhone}
+              onChange={e => setContactPhone(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="addevent-field">
+          <label className="addevent-label">Website / Booking Link</label>
+          <input
+            className="addevent-input"
+            type="url"
+            placeholder="e.g. https://eventbrite.com/..."
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+          />
+        </div>
 
         {/* Turnstile widget */}
         <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
