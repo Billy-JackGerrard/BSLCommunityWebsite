@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "../../supabaseClient";
-import { expandRecurrences } from "../../utils/recurrence";
-import type { RecurrenceRule } from "../../utils/recurrence";
-import RecurrencePicker from "./RecurrencePicker";
+import EventForm from "./EventForm";
+import type { EventFormRow } from "./EventForm";
 import "./AddEvent.css";
 
 declare global {
@@ -15,41 +14,7 @@ declare global {
   }
 }
 
-/**
- * Returns "YYYY-MM-DDTHH:mm" for one hour ago, used as the `min` attribute
- * on the datetime-local inputs so past dates are greyed out and unselectable.
- */
-const getMinDateTime = (): string => {
-  const d = new Date(Date.now() - 60 * 60 * 1000);
-  d.setSeconds(0, 0);
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0"),
-  ].join("-") + "T" + [
-    String(d.getHours()).padStart(2, "0"),
-    String(d.getMinutes()).padStart(2, "0"),
-  ].join(":");
-};
-
-const DEFAULT_RULE: RecurrenceRule = {
-  frequency: "weekly",
-  intervalMonths: 2,
-  useWeekday: false,
-};
-
 export default function AddEvent() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [startsAt, setStartsAt] = useState("");
-  const [finishesAt, setFinishesAt] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [url, setUrl] = useState("");
-  const [whatsappUrl, setWhatsappUrl] = useState("");
-  const [price, setPrice] = useState("");
-  const [bookingInfo, setBookingInfo] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -57,14 +22,10 @@ export default function AddEvent() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-
-  // Recurrence state
-  const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
-  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
+  const [formKey, setFormKey] = useState(0);
 
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const minDateTime = getMinDateTime();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
@@ -109,37 +70,9 @@ export default function AddEvent() {
     } else if (window.turnstile) {
       renderWidget();
     }
-  }, []);
+  }, [formKey]); // re-run when form resets so widget re-renders
 
-  // Clear finish time if user changes start to something later
-  const handleStartsAtChange = (value: string) => {
-    setStartsAt(value);
-    if (finishesAt && finishesAt <= value) {
-      setFinishesAt("");
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!title || !startsAt) {
-      setError("Please fill in at least a title and start time.");
-      return;
-    }
-
-    if (finishesAt && new Date(finishesAt) <= new Date(startsAt)) {
-      setError("The finish time must be after the start time.");
-      return;
-    }
-
-    if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (whatsappUrl && !whatsappUrl.includes("chat.whatsapp.com")) {
-      setError("Please enter a valid WhatsApp group chat link (chat.whatsapp.com/…).");
-      return;
-    }
-
+  const handleSubmit = async (rows: EventFormRow[]) => {
     if (!turnstileToken) {
       setError("Please complete the captcha check.");
       return;
@@ -168,44 +101,17 @@ export default function AddEvent() {
       return;
     }
 
-    // Captcha passed — build rows to insert
     const { data: { session } }: { data: { session: Session | null } } =
       await supabase.auth.getSession();
     const admin = !!session?.user;
 
-    const firstStart: Date = new Date(startsAt);
-    const firstFinish: Date | null = finishesAt ? new Date(finishesAt) : null;
-
-    // Generate occurrences (single item if not recurring)
-    const activeRule: RecurrenceRule = recurrenceEnabled
-      ? recurrenceRule
-      : { frequency: "none" };
-
-    const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
-
-    // If recurring, stamp all with the same recurrence_id
-    const recurrenceId: string | null = recurrenceEnabled && occurrences.length > 1
-      ? crypto.randomUUID()
-      : null;
-
-    const rows = occurrences.map(({ start, finish }: { start: Date; finish: Date | null }) => ({
-      title,
-      description: description || null,
-      location: location || null,
-      starts_at: start.toISOString(),
-      finishes_at: finish ? finish.toISOString() : null,
+    const rowsWithMeta = rows.map(row => ({
+      ...row,
       approved: admin,
       admin_id: admin ? session!.user.id : null,
-      recurrence_id: recurrenceId,
-      contact_name: contactName || null,
-      contact_email: contactEmail || null,
-      url: url || null,
-      whatsapp_url: whatsappUrl || null,
-      price: price || null,
-      booking_info: bookingInfo || null,
     }));
 
-    const { error: insertError } = await supabase.from("events").insert(rows);
+    const { error: insertError } = await supabase.from("events").insert(rowsWithMeta);
 
     if (insertError) {
       setError(insertError.message);
@@ -219,23 +125,12 @@ export default function AddEvent() {
   };
 
   const resetForm = () => {
-    setTitle("");
-    setDescription("");
-    setLocation("");
-    setStartsAt("");
-    setFinishesAt("");
-    setContactName("");
-    setContactEmail("");
-    setUrl("");
-    setWhatsappUrl("");
-    setPrice("");
-    setBookingInfo("");
     setSubmitted(false);
     setSubmittedCount(1);
-    setRecurrenceEnabled(false);
-    setRecurrenceRule(DEFAULT_RULE);
+    setError(null);
     setTurnstileToken(null);
     widgetIdRef.current = null;
+    setFormKey(k => k + 1); // remount EventForm + re-render Turnstile
   };
 
   if (submitted) {
@@ -279,158 +174,18 @@ export default function AddEvent() {
           </p>
         )}
 
-        {error && <div className="addevent-error">{error}</div>}
-
-        <div className="addevent-field">
-          <label className="addevent-label">Title *</label>
-          <input
-            className="addevent-input"
-            type="text"
-            placeholder="e.g. BSL Social Evening"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Description</label>
-          <textarea
-            className="addevent-input addevent-textarea"
-            placeholder="A short description of the event..."
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Location</label>
-          <input
-            className="addevent-input"
-            type="text"
-            placeholder="e.g. Blackwood Bar"
-            value={location}
-            onChange={e => setLocation(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-row">
-          <div className="addevent-field">
-            <label className="addevent-label">Starts At *</label>
-            <input
-              className="addevent-input"
-              type="datetime-local"
-              min={minDateTime}
-              value={startsAt}
-              onChange={e => handleStartsAtChange(e.target.value)}
-            />
-          </div>
-
-          <div className="addevent-field">
-            <label className="addevent-label">Finishes At</label>
-            <input
-              className="addevent-input"
-              type="datetime-local"
-              min={startsAt || minDateTime}
-              value={finishesAt}
-              onChange={e => setFinishesAt(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Recurrence picker */}
-        <RecurrencePicker
-          enabled={recurrenceEnabled}
-          rule={recurrenceRule}
-          startsAt={startsAt}
-          onToggle={setRecurrenceEnabled}
-          onRuleChange={setRecurrenceRule}
-        />
-
-        {/* Pricing & booking */}
-        <div className="addevent-row">
-          <div className="addevent-field">
-            <label className="addevent-label">Price</label>
-            <input
-              className="addevent-input"
-              type="text"
-              placeholder="e.g. Free, £5, £3–£8"
-              value={price}
-              onChange={e => setPrice(e.target.value)}
-            />
-          </div>
-
-          <div className="addevent-field">
-            <label className="addevent-label">How to Book</label>
-            <input
-              className="addevent-input"
-              type="text"
-              placeholder="e.g. Just turn up"
-              value={bookingInfo}
-              onChange={e => setBookingInfo(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Contact section */}
-        <div className="addevent-section-label addevent-section-label--centered">
-          Contact Info <span className="addevent-section-optional">(optional)</span>
-          <div className="addevent-hint">Visible publicly on the event listing</div>
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Name</label>
-          <input
-            className="addevent-input"
-            type="text"
-            placeholder="e.g. Jane Smith"
-            value={contactName}
-            onChange={e => setContactName(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Email</label>
-          <input
-            className="addevent-input"
-            type="email"
-            placeholder="e.g. hello@example.com"
-            value={contactEmail}
-            onChange={e => setContactEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Website / Booking Link</label>
-          <input
-            className="addevent-input"
-            type="url"
-            placeholder="e.g. https://eventbrite.com/..."
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">WhatsApp Group Chat</label>
-          <input
-            className="addevent-input"
-            type="url"
-            placeholder="e.g. https://chat.whatsapp.com/..."
-            value={whatsappUrl}
-            onChange={e => setWhatsappUrl(e.target.value)}
-          />
-        </div>
-
-        {/* Turnstile widget */}
-        <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
-
-        <button className="addevent-btn" onClick={handleSubmit} disabled={loading || !turnstileToken}>
-          {loading
-            ? "Submitting…"
-            : recurrenceEnabled
-              ? "Add Recurring Event"
-              : "Add Event"}
-        </button>
+        <EventForm
+          key={formKey}
+          showRecurrence={true}
+          submitLabel="Add Event"
+          submittingLabel="Submitting…"
+          externalError={error}
+          submitting={loading || !turnstileToken}
+          onSubmit={handleSubmit}
+        >
+          {/* Turnstile lives here so it stays inside the card */}
+          <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
+        </EventForm>
       </div>
     </div>
   );

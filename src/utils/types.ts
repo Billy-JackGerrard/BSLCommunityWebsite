@@ -16,3 +16,7 @@ export type Event = {
   whatsapp_url?: string;
   recurrence_id?: string;
 };
+
+
+
+export type View = "calendar" | "login" | "add-event" | "edit-event" | "admin-queue" | "contact";

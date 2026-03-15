@@ -7,14 +7,18 @@ import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+type Props = {
+  isLoggedIn: boolean;
+  onEditEvent: (event: Event) => void;
+};
+
 /** Last moment of next calendar month */
 const searchWindowEnd = (): Date => {
   const now = new Date();
-  // end of the month after next
   return new Date(now.getFullYear(), now.getMonth() + 2 + 1, 0, 23, 59, 59, 999);
 };
 
-export default function Calendar() {
+export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
@@ -43,13 +47,11 @@ export default function Calendar() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Search state
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Selected event for the detail card
   const [detailEvent, setDetailEvent] = useState<Event | null>(null);
 
   // Fetch current month events for grid
@@ -79,7 +81,7 @@ export default function Calendar() {
     return () => { isCurrent = false; };
   }, [current.month, current.year]);
 
-  // Fetch this month + next month's events for search
+  // Fetch search window events
   useEffect(() => {
     const fetchAll = async () => {
       const { data } = await supabase
@@ -158,7 +160,6 @@ export default function Calendar() {
     return q.split(/\s+/).filter(Boolean).every(word => haystack.includes(word));
   };
 
-  // No slice — show all matches within the two-month window
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     return allEvents.filter(e => matchesSearch(e, searchQuery));
@@ -322,9 +323,14 @@ export default function Calendar() {
 
           </div>
 
-          {/* EventDetails card — sits alongside the calendar */}
+          {/* EventDetails card */}
           {detailEvent && (
-            <EventDetails event={detailEvent} onClose={() => setDetailEvent(null)} />
+            <EventDetails
+              event={detailEvent}
+              isLoggedIn={isLoggedIn}
+              onClose={() => setDetailEvent(null)}
+              onEdit={onEditEvent}
+            />
           )}
         </div>
       </div>

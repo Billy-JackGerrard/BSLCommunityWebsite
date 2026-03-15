@@ -1,6 +1,5 @@
+import type { View } from "../utils/types";
 import "./Navbar.css";
-
-type View = "calendar" | "login" | "add-event" | "admin-queue" | "contact";
 
 type Props = {
   currentView: View;

@@ -4,18 +4,20 @@ import "./EventDetails.css";
 
 type Props = {
   event: Event;
+  isLoggedIn: boolean;
   onClose: () => void;
+  onEdit: (event: Event) => void;
 };
 
-export default function EventDetailCard({ event, onClose }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit }: Props) {
   const hasContact =
     event.contact_name || event.contact_email ||
     event.url || event.whatsapp_url;
+
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
 
-  // Shorten a URL to just the hostname + truncated path for display
   const displayUrl = normUrl ? (() => {
     try {
       const u = new URL(normUrl);
@@ -32,7 +34,18 @@ export default function EventDetailCard({ event, onClose }: Props) {
 
   return (
     <div className="event-detail-card">
-      <button className="event-detail-close" onClick={onClose} aria-label="Close">✕</button>
+      <div className="event-detail-close-row">
+        <button className="event-detail-close" onClick={onClose} aria-label="Close">✕</button>
+        {isLoggedIn && (
+          <button
+            className="event-detail-edit-btn"
+            onClick={() => onEdit(event)}
+            aria-label="Edit event"
+          >
+            ✎ Edit
+          </button>
+        )}
+      </div>
 
       <div className="event-detail-header">
         <h3 className="event-detail-title">{event.title}</h3>
@@ -63,9 +76,7 @@ export default function EventDetailCard({ event, onClose }: Props) {
       )}
 
       {event.description ? (
-        <div className="event-detail-description">
-          {event.description}
-        </div>
+        <div className="event-detail-description">{event.description}</div>
       ) : (
         <div className="event-detail-nodesc">No description provided.</div>
       )}
@@ -84,10 +95,7 @@ export default function EventDetailCard({ event, onClose }: Props) {
           {event.contact_email && (
             <div className="event-detail-row">
               <span className="event-detail-icon">✉</span>
-              <a
-                className="event-detail-link"
-                href={`mailto:${event.contact_email}`}
-              >
+              <a className="event-detail-link" href={`mailto:${event.contact_email}`}>
                 {event.contact_email}
               </a>
             </div>
@@ -96,12 +104,7 @@ export default function EventDetailCard({ event, onClose }: Props) {
           {normUrl && (
             <div className="event-detail-row">
               <span className="event-detail-icon">🔗</span>
-              <a
-                className="event-detail-link"
-                href={normUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="event-detail-link" href={normUrl} target="_blank" rel="noopener noreferrer">
                 {displayUrl}
               </a>
             </div>
@@ -110,12 +113,7 @@ export default function EventDetailCard({ event, onClose }: Props) {
           {normWhatsapp && (
             <div className="event-detail-row">
               <span className="event-detail-icon">💬</span>
-              <a
-                className="event-detail-link"
-                href={normWhatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="event-detail-link" href={normWhatsapp} target="_blank" rel="noopener noreferrer">
                 Join WhatsApp group
               </a>
             </div>
