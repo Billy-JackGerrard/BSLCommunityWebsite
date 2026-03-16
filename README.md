@@ -57,8 +57,6 @@ accessibility section with drop downs
 event age min and max optional
 maybe click on toddlers, children, youth, adult, family, etc
 
-delivered in which language (or bsl only)
-
 have different ways of viewing calendar
 
 make it phone-screen friendly! 
@@ -68,6 +66,8 @@ add zoom option?
 
 rn set for only edinburgh (block non EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
 
+
+delivered in which language (or bsl only)
 
 interpreter, bsl led or optional terp - name
 ai summariser of info from website url (move it to the top)

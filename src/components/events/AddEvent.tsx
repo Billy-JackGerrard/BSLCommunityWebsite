@@ -19,7 +19,7 @@ export default function AddEvent({ prefillDate }: Props) {
   const [formKey, setFormKey] = useState(0);
 
   const { containerRef: turnstileRef, token: turnstileToken, reset: resetTurnstile } =
-    useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY, formKey);
+    useTurnstile("0x4AAAAAACrO8jfnKMxrJsyA", formKey);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
@@ -44,7 +44,7 @@ export default function AddEvent({ prefillDate }: Props) {
     setLoading(true);
     setError(null);
 
-    const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL, {
+    const verifyRes = await fetch("https://nnkzyvwgosxejriqecmv.supabase.co/functions/v1/submit-event-turnstile", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
