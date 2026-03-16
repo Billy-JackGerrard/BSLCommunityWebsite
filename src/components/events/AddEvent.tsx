@@ -144,7 +144,8 @@ export default function AddEvent({ prefillDate }: Props) {
           submitLabel="Add Event"
           submittingLabel="Submitting…"
           externalError={error}
-          submitting={loading || !turnstileToken}
+          submitting={loading}
+          submitDisabled={!turnstileToken}
           onSubmit={handleSubmit}
         >
           <div ref={turnstileRef} style={{ margin: "1rem 0" }} />

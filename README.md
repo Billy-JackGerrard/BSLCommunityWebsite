@@ -75,6 +75,7 @@ means can filter for city/region etc
 
 rn set for only edinburgh (block non EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
 
+add admin view; can see who are the other admins and for which region are they in charge of
 
 delivered in which language (or bsl only)
 

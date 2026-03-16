@@ -34,6 +34,7 @@ type Props = {
   submittingLabel: string;
   externalError?: string | null;
   submitting?: boolean;
+  submitDisabled?: boolean;
   onSubmit: (rows: EventFormRow[]) => void;
   onCancel?: () => void;
   onStartsAtChange?: (value: string) => void;
@@ -48,6 +49,7 @@ export default function EventForm({
   submittingLabel,
   externalError,
   submitting = false,
+  submitDisabled = false,
   onSubmit,
   onCancel,
   onStartsAtChange,
@@ -418,7 +420,7 @@ export default function EventForm({
         <button
           className="addevent-btn"
           onClick={handleSubmit}
-          disabled={submitting || !!(finishesAt && startsAt && finishesAt <= startsAt)}
+          disabled={submitting || submitDisabled || !!(finishesAt && startsAt && finishesAt <= startsAt)}
           type="button"
         >
           {submitting ? submittingLabel : submitLabel}

@@ -94,6 +94,21 @@ const fetchPendingCount = useCallback(async () => {
     setView(postEditReturn);
   };
 
+  const handleDeleteEvent = (event: Event, returnTo: View = "calendar") => {
+    setDeletingEvent(event);
+    setPostDeleteReturn(returnTo);
+    setView("delete-event");
+  };
+
+  const handleDeleted = () => {
+    setDeletingEvent(null);
+    setView("calendar");
+  };
+
+  const handleDeleteCancel = () => {
+    setView(postDeleteReturn);
+  };
+
   const handleAddEventFromCalendar = (date: { day: number; month: number; year: number }) => {
     const mm = String(date.month + 1).padStart(2, "0");
     const dd = String(date.day).padStart(2, "0");
@@ -116,6 +131,7 @@ const fetchPendingCount = useCallback(async () => {
             isLoggedIn={isLoggedIn}
             onViewEvent={handleViewEvent}
             onEditEvent={ev => handleEditEvent(ev, "calendar")}
+            onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "calendar") : undefined}
             onAddEvent={handleAddEventFromCalendar}
           />
         )}
@@ -126,11 +142,19 @@ const fetchPendingCount = useCallback(async () => {
               isLoggedIn={isLoggedIn}
               onClose={() => setView("calendar")}
               onEdit={ev => handleEditEvent(ev, "event-detail")}
+              onDelete={isLoggedIn ? ev => handleDeleteEvent(ev, "event-detail") : undefined}
             />
           </div>
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
         {view === "add-event"  && <AddEvent prefillDate={addEventDate} />}
+        {view === "delete-event" && isLoggedIn && deletingEvent && (
+          <DeleteEventConfirm
+            event={deletingEvent}
+            onDeleted={handleDeleted}
+            onCancel={handleDeleteCancel}
+          />
+        )}
         {view === "edit-event" && isLoggedIn && editingEvent && (
           <EditEvent
             event={editingEvent}

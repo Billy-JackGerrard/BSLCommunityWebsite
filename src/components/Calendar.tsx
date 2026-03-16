@@ -27,6 +27,7 @@ type Props = {
   isLoggedIn: boolean;
   onViewEvent: (event: Event) => void;
   onEditEvent: (event: Event) => void;
+  onDeleteEvent?: (event: Event) => void;
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
 };
 
@@ -123,7 +124,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -384,6 +385,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props)
                             isLoggedIn={isLoggedIn}
                             onClose={() => setExpandedEventId(null)}
                             onEdit={onEditEvent}
+                            onDelete={onDeleteEvent}
                           />
                         </div>
                       ) : (
