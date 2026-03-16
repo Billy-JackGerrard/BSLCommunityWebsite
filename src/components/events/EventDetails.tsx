@@ -13,8 +13,7 @@ type Props = {
 
 export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, actions }: Props) {
   const hasContact =
-    event.contact_name || event.contact_email ||
-    event.url || event.whatsapp_url;
+    event.contact_name || event.contact_email || event.url;
 
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
@@ -27,10 +26,6 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
       return u.hostname + path;
     } catch { return normUrl; }
   })() : null;
-
-  const normWhatsapp = event.whatsapp_url
-    ? (event.whatsapp_url.startsWith("http") ? event.whatsapp_url : `https://${event.whatsapp_url}`)
-    : null;
 
   const recurrenceSummary = event.recurrence
     ? humaniseRule(event.recurrence, new Date(event.starts_at))
@@ -112,15 +107,6 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
               <span className="event-detail-icon">🔗</span>
               <a className="event-detail-link" href={normUrl} target="_blank" rel="noopener noreferrer">
                 {displayUrl}
-              </a>
-            </div>
-          )}
-
-          {normWhatsapp && (
-            <div className="event-detail-row">
-              <span className="event-detail-icon">💬</span>
-              <a className="event-detail-link" href={normWhatsapp} target="_blank" rel="noopener noreferrer">
-                Join WhatsApp group
               </a>
             </div>
           )}

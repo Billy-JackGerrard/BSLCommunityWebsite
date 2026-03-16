@@ -17,7 +17,6 @@ export type EventFormRow = {
   contact_name: string | null;
   contact_email: string | null;
   url: string | null;
-  whatsapp_url: string | null;
   price: string | null;
   booking_info: string | null;
   recurrence: RecurrenceRule | null;
@@ -56,7 +55,6 @@ export default function EventForm({
   const [contactName, setContactName] = useState(initialValues?.contact_name ?? "");
   const [contactEmail, setContactEmail] = useState(initialValues?.contact_email ?? "");
   const [url, setUrl] = useState(initialValues?.url ?? "");
-  const [whatsappUrl, setWhatsappUrl] = useState(initialValues?.whatsapp_url ?? "");
   const [price, setPrice] = useState(initialValues?.price ?? "");
   const [bookingInfo, setBookingInfo] = useState(initialValues?.booking_info ?? "");
   const [internalError, setInternalError] = useState<string | null>(null);
@@ -82,7 +80,6 @@ export default function EventForm({
       setContactName(initialValues.contact_name ?? "");
       setContactEmail(initialValues.contact_email ?? "");
       setUrl(initialValues.url ?? "");
-      setWhatsappUrl(initialValues.whatsapp_url ?? "");
       setPrice(initialValues.price ?? "");
       setBookingInfo(initialValues.booking_info ?? "");
       setRecurrenceEnabled(false);
@@ -112,10 +109,6 @@ export default function EventForm({
       setInternalError("Please enter a valid email address.");
       return;
     }
-    if (whatsappUrl && !whatsappUrl.includes("chat.whatsapp.com")) {
-      setInternalError("Please enter a valid WhatsApp group chat link (chat.whatsapp.com/…).");
-      return;
-    }
 
     const firstStart = new Date(startsAt);
     const firstFinish = finishesAt ? new Date(finishesAt) : null;
@@ -142,7 +135,6 @@ export default function EventForm({
       contact_name: contactName || null,
       contact_email: contactEmail || null,
       url: url || null,
-      whatsapp_url: whatsappUrl || null,
       price: price || null,
       booking_info: bookingInfo || null,
       recurrence,
@@ -183,75 +175,58 @@ export default function EventForm({
         <input
           className="addevent-input"
           type="text"
-          placeholder="e.g. Blackwood Bar"
+          placeholder="e.g. The Royal Mile, Edinburgh"
           value={location}
           onChange={e => setLocation(e.target.value)}
         />
       </div>
 
-      <div className="addevent-row">
-        <div className="addevent-field">
-          <label className="addevent-label">Starts At *</label>
-          <input
-            className="addevent-input"
-            type="datetime-local"
-            min={minDateTime}
-            value={startsAt}
-            onChange={e => handleStartsAtChange(e.target.value)}
-          />
-        </div>
-        <div className="addevent-field">
-          <label className="addevent-label">Finishes At</label>
-          <input
-            className="addevent-input"
-            type="datetime-local"
-            min={startsAt || minDateTime}
-            value={finishesAt}
-            onChange={e => setFinishesAt(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {showRecurrence && (
-        <RecurrencePicker
-          enabled={recurrenceEnabled}
-          rule={recurrenceRule}
-          startsAt={startsAt}
-          onToggle={setRecurrenceEnabled}
-          onRuleChange={setRecurrenceRule}
+      <div className="addevent-field">
+        <label className="addevent-label">Start Time *</label>
+        <input
+          className="addevent-input"
+          type="datetime-local"
+          min={minDateTime}
+          value={startsAt}
+          onChange={e => handleStartsAtChange(e.target.value)}
         />
-      )}
-
-      <div className="addevent-row">
-        <div className="addevent-field">
-          <label className="addevent-label">Price</label>
-          <input
-            className="addevent-input"
-            type="text"
-            placeholder="e.g. Free, £5, £3–£8"
-            value={price}
-            onChange={e => setPrice(e.target.value)}
-          />
-        </div>
-        <div className="addevent-field">
-          <label className="addevent-label">How to Book</label>
-          <input
-            className="addevent-input"
-            type="text"
-            placeholder="e.g. Just turn up"
-            value={bookingInfo}
-            onChange={e => setBookingInfo(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="addevent-section-label addevent-section-label--centered">
-        Contact Info <span className="addevent-section-optional">(optional)</span>
-        <div className="addevent-hint">Visible publicly on the event listing</div>
       </div>
 
       <div className="addevent-field">
-        <label className="addevent-label">Name</label>
+        <label className="addevent-label">End Time</label>
+        <input
+          className="addevent-input"
+          type="datetime-local"
+          min={startsAt || minDateTime}
+          value={finishesAt}
+          onChange={e => setFinishesAt(e.target.value)}
+        />
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Price</label>
+        <input
+          className="addevent-input"
+          type="text"
+          placeholder="e.g. Free / £5 / £10–£15"
+          value={price}
+          onChange={e => setPrice(e.target.value)}
+        />
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Booking Info</label>
+        <input
+          className="addevent-input"
+          type="text"
+          placeholder="e.g. Book via Eventbrite, no booking needed…"
+          value={bookingInfo}
+          onChange={e => setBookingInfo(e.target.value)}
+        />
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Contact Name</label>
         <input
           className="addevent-input"
           type="text"
@@ -262,7 +237,7 @@ export default function EventForm({
       </div>
 
       <div className="addevent-field">
-        <label className="addevent-label">Email</label>
+        <label className="addevent-label">Contact Email</label>
         <input
           className="addevent-input"
           type="email"
@@ -283,16 +258,15 @@ export default function EventForm({
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">WhatsApp Group Chat</label>
-        <input
-          className="addevent-input"
-          type="url"
-          placeholder="e.g. https://chat.whatsapp.com/..."
-          value={whatsappUrl}
-          onChange={e => setWhatsappUrl(e.target.value)}
+      {showRecurrence && (
+        <RecurrencePicker
+          enabled={recurrenceEnabled}
+          rule={recurrenceRule}
+          startsAt={startsAt}
+          onEnabledChange={setRecurrenceEnabled}
+          onRuleChange={setRecurrenceRule}
         />
-      </div>
+      )}
 
       {children}
 

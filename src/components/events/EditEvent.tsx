@@ -75,7 +75,6 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
     contact_name:  row.contact_name,
     contact_email: row.contact_email,
     url:           row.url,
-    whatsapp_url:  row.whatsapp_url,
     price:         row.price,
     booking_info:  row.booking_info,
     admin_id:      await getAdminId(),
@@ -123,6 +122,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
           const shiftedFinish = duration !== null
             ? new Date(futureStart + startDelta + duration).toISOString()
             : null;
+
           return supabase
             .from("events")
             .update({ ...patch, starts_at: shiftedStart, finishes_at: shiftedFinish })
@@ -130,53 +130,55 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
         }
       );
 
-      const results  = await Promise.all(patchPromises);
+      const results = await Promise.all(patchPromises);
       const firstErr = results.find(r => r.error)?.error;
       if (firstErr) { setError(firstErr.message); setSaving(false); return; }
 
-      const { data: refreshed } = await supabase
-        .from("events").select("*").eq("id", event.id).single();
-      onSaved(refreshed as Event);
+      // Re-fetch the current event to return the updated version.
+      const { data: updated, error: refetchErr } = await supabase
+        .from("events")
+        .select()
+        .eq("id", event.id)
+        .single();
+
+      if (refetchErr) { setError(refetchErr.message); setSaving(false); return; }
+      onSaved(updated as Event);
     }
 
     setSaving(false);
   };
 
-  // ── Recurrence change ─────────────────────────────────────────────────────
+  // ── Recurrence change (replace entire series) ─────────────────────────────
 
   const applyRecurrenceChange = async (row: EventFormRow) => {
-    if (!event.recurrence) {
-      setError("Cannot change recurrence on a non-recurring event.");
-      return;
-    }
-
     setSaving(true);
     setError(null);
 
     const adminId = await getAdminId();
 
-    // Delete all future occurrences using the original starts_at. This must
-    // use event.starts_at (not row.starts_at) so the delete range is correct
-    // even if the user changed the time as part of this edit.
-    const { error: deleteErr } = await supabase
-      .from("events")
-      .delete()
-      .eq("recurrence->>id", event.recurrence.id)
-      .gte("starts_at", event.starts_at);
+    // Delete all future occurrences of the old series.
+    if (event.recurrence) {
+      const { error: delErr } = await supabase
+        .from("events")
+        .delete()
+        .eq("recurrence->>id", event.recurrence.id)
+        .gte("starts_at", event.starts_at);
 
-    if (deleteErr) { setError(deleteErr.message); setSaving(false); return; }
+      if (delErr) { setError(delErr.message); setSaving(false); return; }
+    }
+
+    const firstStart = new Date(row.starts_at);
+    const firstFinish = row.finishes_at ? new Date(row.finishes_at) : null;
 
     const activeRule: RecurrenceRule = recurrenceEnabled
       ? recurrenceRule
       : { frequency: "none" };
 
-    const firstStart  = new Date(row.starts_at);
-    const firstFinish = row.finishes_at ? new Date(row.finishes_at) : null;
     const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
+    const isRecurring = recurrenceEnabled && occurrences.length > 1;
 
-    // Keep the same series id if still recurring, otherwise null out recurrence.
     const newRecurrence: RecurrenceRule | null = occurrences.length > 1
-      ? { ...activeRule, id: event.recurrence.id }
+      ? { ...activeRule, id: event.recurrence?.id ?? crypto.randomUUID() }
       : null;
 
     const newRows = occurrences.map(({ start, finish }) => ({
@@ -188,7 +190,6 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       contact_name:   row.contact_name,
       contact_email:  row.contact_email,
       url:            row.url,
-      whatsapp_url:   row.whatsapp_url,
       price:          row.price,
       booking_info:   row.booking_info,
       approved:       true,
@@ -247,50 +248,28 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
               </div>
 
               {!recurrenceOpen ? (
-                <div className="editrecur-summary">
-                  <span className="editrecur-summary-icon">↻</span>
-                  <span className="editrecur-summary-text">This is a recurring event</span>
-                  <button
-                    className="editrecur-change-btn"
-                    type="button"
-                    onClick={() => setRecurrenceOpen(true)}
-                  >
-                    Change recurrence…
-                  </button>
-                </div>
+                <button
+                  className="editrecur-open-btn"
+                  type="button"
+                  onClick={() => setRecurrenceOpen(true)}
+                >
+                  Change recurrence…
+                </button>
               ) : (
-                <div className="editrecur-picker-wrap">
-                  {!recurrenceChanged && (
-                    <div className="editrecur-picker-note">
-                      ⚠ Changing the recurrence will delete all future occurrences and regenerate them from the new pattern.
-                    </div>
-                  )}
+                <>
                   <RecurrencePicker
                     enabled={recurrenceEnabled}
                     rule={recurrenceRule}
                     startsAt={liveStartsAt}
-                    onToggle={(v) => { setRecurrenceEnabled(v); setRecurrenceChanged(true); }}
+                    onEnabledChange={(v) => { setRecurrenceEnabled(v); setRecurrenceChanged(true); }}
                     onRuleChange={(r) => { setRecurrenceRule(r); setRecurrenceChanged(true); }}
                   />
                   {recurrenceChanged && (
-                    <div className="editrecur-changed-badge">
-                      ✓ Recurrence will be updated on save
-                    </div>
+                    <p className="editrecur-warning">
+                      ⚠ Changing recurrence will replace all future occurrences in this series.
+                    </p>
                   )}
-                  <button
-                    className="editrecur-back-btn"
-                    type="button"
-                    onClick={() => {
-                      setRecurrenceOpen(false);
-                      setRecurrenceChanged(false);
-                      // Reset back to the event's actual existing rule, not DEFAULT_RULE.
-                      setRecurrenceRule(existingRule);
-                      setRecurrenceEnabled(!!event.recurrence);
-                    }}
-                  >
-                    ← Cancel recurrence change
-                  </button>
-                </div>
+                </>
               )}
             </div>
           )}
