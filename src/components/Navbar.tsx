@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { View } from "../utils/views";
 import "./Navbar.css";
 
@@ -16,21 +17,44 @@ export default function Navbar({
   onNavigate,
   onLogout,
 }: Props) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function navigate(view: View) {
+    onNavigate(view);
+    setMenuOpen(false);
+  }
+
+  function logout() {
+    onLogout();
+    setMenuOpen(false);
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-brand">Edinburgh BSL Community</div>
-      <div className="navbar-links">
 
-<button
+      <button
+        className={`navbar-hamburger${menuOpen ? " navbar-hamburger--open" : ""}`}
+        onClick={() => setMenuOpen(o => !o)}
+        aria-label="Toggle menu"
+        aria-expanded={menuOpen}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      <div className={`navbar-links${menuOpen ? " navbar-links--open" : ""}`}>
+        <button
           className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
-          onClick={() => onNavigate("calendar")}
+          onClick={() => navigate("calendar")}
         >
           Calendar
         </button>
 
         <button
           className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
-          onClick={() => onNavigate("contact")}
+          onClick={() => navigate("contact")}
         >
           Contact
         </button>
@@ -39,26 +63,25 @@ export default function Navbar({
           <>
             <button
               className={`navbar-link navbar-link--queue ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
-              onClick={() => onNavigate("admin-queue")}
+              onClick={() => navigate("admin-queue")}
             >
               Pending Events
               {pendingCount > 0 && (
                 <span className="navbar-pending-badge">{pendingCount}</span>
               )}
             </button>
-            <button className="navbar-link navbar-link--logout" onClick={onLogout}>
+            <button className="navbar-link navbar-link--logout" onClick={logout}>
               Log out
             </button>
           </>
         ) : (
           <button
             className={`navbar-link ${currentView === "login" ? "navbar-link--active" : ""}`}
-            onClick={() => onNavigate("login")}
+            onClick={() => navigate("login")}
           >
             Admin Login
           </button>
         )}
-
       </div>
     </nav>
   );

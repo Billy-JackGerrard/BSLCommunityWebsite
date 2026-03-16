@@ -263,3 +263,19 @@
   border-color: var(--color-text-muted);
   color: var(--color-text-primary);
 }
+
+@media (max-width: 500px) {
+  .addevent-page {
+    padding: 1rem;
+  }
+
+  .addevent-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Prevent iOS Safari from zooming when inputs are focused */
+  .addevent-input,
+  .addevent-select {
+    font-size: 16px;
+  }
+}

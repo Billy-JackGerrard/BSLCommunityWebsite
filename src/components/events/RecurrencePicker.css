@@ -142,3 +142,9 @@
   color: var(--color-text-muted);
   font-size: 0.72rem;
 }
+
+@media (max-width: 500px) {
+  .recurrence-select {
+    font-size: 16px;
+  }
+}

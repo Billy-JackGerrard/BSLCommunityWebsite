@@ -178,3 +178,22 @@
   margin-top: 0.4rem;
   line-height: 1.4;
 }
+
+@media (max-width: 700px) {
+  .queue-page {
+    padding: 1rem;
+  }
+
+  .queue-layout {
+    flex-direction: column;
+  }
+
+  .queue-container {
+    width: 100%;
+  }
+
+  .queue-detail-panel {
+    position: static;
+    width: 100%;
+  }
+}
