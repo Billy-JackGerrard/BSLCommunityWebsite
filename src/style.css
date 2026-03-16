@@ -96,7 +96,7 @@ button:focus-visible {
   :root {
     --color-bg-page:    #0f172a;   /* deep slate — outer page */
     --color-bg-card:    #1e293b;   /* dark slate — cards, panels */
-    --color-bg-inset:   #0d1626;   /* darker — inputs, inset panels */
+    --color-bg-inset:   #162032;   /* darker — inputs, inset panels */
     --color-bg-header:  #1e3a8a;   /* dark blue — navbar */
     --color-bg-error:   #450a0a;   /* dark red — error banners */
 

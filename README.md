@@ -26,16 +26,6 @@ event queue for admins:
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
 
-get rid of dots for events on calendar, replace with bars per event.
-if more than 2 events then maybe show "+4" etc then when hover over it it shows all events
-
-colour coded categories - pick from drop down, eg childrens, arts, sports
-
-in the event overview, show a small icon that shows the category colour
-
-add legend for colour categories
-
-add thin, grey lines between cells, and thicker ones between months
 
 make it impossible to select before the starting time if the start and end day are the same day
 
@@ -48,8 +38,6 @@ when you filter you can filter by event by range, region, etc
 tag/# 
 
 rename startsAt to be "from" and finishes At to be "to"
-
-change font to be Calibri
 
 need better filtering/search options
 
