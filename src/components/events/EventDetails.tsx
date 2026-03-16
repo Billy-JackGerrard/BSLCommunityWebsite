@@ -165,7 +165,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         <div className="event-detail-cal-row">
           <button
             className="event-detail-cal-btn"
-            onClick={e => atcb_action({
+            onClick={() => atcb_action({
               name: event.title,
               startDate: toLocalDate(event.starts_at),
               startTime: toLocalTime(event.starts_at),
@@ -179,7 +179,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
               options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"],
               listStyle: "modal",
               hideBranding: true,
-            }, e.currentTarget)}
+            })}
           >
             + Add to Calendar
           </button>

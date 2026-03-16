@@ -158,11 +158,14 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const { eventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
 
-  const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(() => ({
-    day: new Date().getDate(),
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
-  }));
+  const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(() => {
+    if (window.innerWidth <= 700) return null;
+    return {
+      day: new Date().getDate(),
+      month: new Date().getMonth(),
+      year: new Date().getFullYear(),
+    };
+  });
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);

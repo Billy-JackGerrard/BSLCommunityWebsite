@@ -78,7 +78,22 @@ export default function EventForm({
   const categoryRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState<string | null>(null);
 
-  const [accessibility, setAccessibility] = useState<string[]>(initialValues?.accessibility ?? []);
+  const ADVANCED_ACCESS_OPTIONS = {
+    Audio: ["Hearing loop (T-loop)", "Audio description"],
+    Physical: ["Wheelchair accessible", "Step-free access", "Accessible toilets", "Quiet room available"],
+    Sensory: ["Low sensory environment", "Relaxed performance"],
+  };
+  const ALL_ADVANCED_OPTIONS = Object.values(ADVANCED_ACCESS_OPTIONS).flat();
+
+  const [accessibility, setAccessibility] = useState<string[]>(
+    (initialValues?.accessibility ?? []).filter(o => !o.startsWith("Other: "))
+  );
+  const [accessibilityOther, setAccessibilityOther] = useState<string>(
+    initialValues?.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? ""
+  );
+  const [showMoreAccessibility, setShowMoreAccessibility] = useState(
+    () => (initialValues?.accessibility ?? []).some(o => ALL_ADVANCED_OPTIONS.includes(o) || o.startsWith("Other: "))
+  );
 
   const toggleAccessibility = (option: string) => {
     setAccessibility(prev =>
@@ -123,7 +138,9 @@ export default function EventForm({
       setPrice(initialValues.price ?? "");
       setBookingInfo(initialValues.booking_info ?? "");
       setCategory(initialValues.category ?? "");
-      setAccessibility(initialValues.accessibility ?? []);
+      setAccessibility((initialValues.accessibility ?? []).filter(o => !o.startsWith("Other: ")));
+      setAccessibilityOther(initialValues.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? "");
+      setShowMoreAccessibility((initialValues.accessibility ?? []).some(o => ALL_ADVANCED_OPTIONS.includes(o) || o.startsWith("Other: ")));
       setRecurrenceEnabled(false);
       setRecurrenceRule(DEFAULT_RULE);
       setInternalError(null);
@@ -210,7 +227,9 @@ export default function EventForm({
       url: url || null,
       price: price || null,
       booking_info: bookingInfo || null,
-      accessibility,
+      accessibility: accessibilityOther.trim()
+        ? [...accessibility, `Other: ${accessibilityOther.trim()}`]
+        : accessibility,
       recurrence,
     }));
 
@@ -423,6 +442,45 @@ export default function EventForm({
             </button>
           ))}
         </div>
+        <button
+          type="button"
+          className={`accessibility-more-btn${showMoreAccessibility ? ' accessibility-more-btn--open' : ''}`}
+          onClick={() => setShowMoreAccessibility(v => !v)}
+        >
+          <span className="accessibility-more-btn__arrow">{showMoreAccessibility ? '▾' : '▸'}</span>
+          More accessibility options
+        </button>
+        {showMoreAccessibility && (
+          <div className="accessibility-expanded">
+            {Object.entries(ADVANCED_ACCESS_OPTIONS).map(([group, options]) => (
+              <div key={group} className="accessibility-group">
+                <span className="accessibility-group-label">{group}</span>
+                <div className="event-type-toggle">
+                  {options.map(option => (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`event-type-btn${accessibility.includes(option) ? ' event-type-btn--active' : ''}`}
+                      onClick={() => toggleAccessibility(option)}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="accessibility-group">
+              <span className="accessibility-group-label">Other</span>
+              <input
+                className="addevent-input"
+                type="text"
+                placeholder="e.g. SubPac devices available"
+                value={accessibilityOther}
+                onChange={e => setAccessibilityOther(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {showRecurrence && (
