@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
-import EventDetails from "./events/EventDetails";
 import { supabase } from "../supabaseClient";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import "./Calendar.css";
@@ -26,7 +25,7 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
 
 type Props = {
   isLoggedIn: boolean;
-  onEditEvent: (event: Event) => void;
+  onViewEvent: (event: Event) => void;
 };
 
 // ── Single month block ──────────────────────────────────────────────────────
@@ -76,11 +75,12 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
       {/* Day grid */}
       <div className="calendar-grid">
         {cells.map((day, i) => {
+          const count = day ? eventsOnDay(day).length : 0;
           const cellClass = [
             "calendar-cell",
-            !day                  ? "calendar-cell--empty"    : "",
-            day && isToday(day)   ? "calendar-cell--today"    : "",
-            day && isSelected(day)? "calendar-cell--selected" : "",
+            !day                   ? "calendar-cell--empty"    : "",
+            day && isToday(day)    ? "calendar-cell--today"    : "",
+            day && isSelected(day) ? "calendar-cell--selected" : "",
           ].filter(Boolean).join(" ");
 
           return (
@@ -92,7 +92,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
               {day && (
                 <>
                   <span className="calendar-day-number">{day}</span>
-                  {eventsOnDay(day).length > 0 && <span className="calendar-event-dot" />}
+                  {count > 0 && <span className="calendar-event-dot" />}
                 </>
               )}
             </div>
@@ -105,7 +105,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
+export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
@@ -126,7 +126,7 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
 
   const todayKey: MonthKey = { month: today.getMonth(), year: today.getFullYear() };
 
-  // The visible window of months (forward window is hard-capped at 1 year)
+  // The visible window of months (both directions hard-capped at 1 year)
   const [monthsBefore, setMonthsBefore] = useState(MONTHS_BEFORE_INIT);
   const [monthsAfter,  setMonthsAfter]  = useState(MONTHS_AFTER_INIT);
 
@@ -143,15 +143,15 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
   const windowEnd   = monthKeys[monthKeys.length - 1];
   const { eventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
 
-  // Selection: full date (day + month + year)
+  // Selection drives the day-preview overlay
   const [selected, setSelected] = useState<{ month: number; year: number; day: number } | null>(null);
-  const [detailEvent, setDetailEvent]   = useState<Event | null>(null);
-  const [searchOpen,  setSearchOpen]    = useState(false);
-  const [searchQuery, setSearchQuery]   = useState("");
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef    = useRef<HTMLDivElement>(null);
+  const [searchOpen,  setSearchOpen]  = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef    = useRef<HTMLInputElement>(null);
+  const dropdownRef       = useRef<HTMLDivElement>(null);
+  const overlayRef        = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const monthRefs  = useRef<Map<string, HTMLDivElement>>(new Map());
   const todayMonthRef = useRef<HTMLDivElement | null>(null);
 
   // Close search dropdown on outside click
@@ -165,20 +165,34 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Close day overlay on outside click or Escape
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (overlayRef.current && !overlayRef.current.contains(e.target as Node)) {
+        setSelected(null);
+      }
+    };
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelected(null);
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("keydown", keyHandler);
+    };
+  }, []);
+
   // Scroll to today's month on first load
   useEffect(() => {
-    if (todayMonthRef.current && scrollContainerRef.current) {
-      // Small delay ensures DOM is fully painted
+    if (todayMonthRef.current) {
       setTimeout(() => {
         todayMonthRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
       }, 50);
     }
   }, []);
 
-  // Auto-delete events that finished more than 1 year ago.
-  // Runs once on mount — only admins can delete, so this is a best-effort
-  // silent cleanup; errors are intentionally swallowed.
-  // Auto-delete events older than 1 year whenever an admin logs in.
+  // Auto-delete events older than 1 year whenever an admin logs in
   useEffect(() => {
     if (!isLoggedIn) return;
     const cutoff = new Date();
@@ -233,13 +247,9 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
     const d = new Date(event.starts_at);
     const targetMonth = d.getMonth();
     const targetYear  = d.getFullYear();
-
     setSelected({ month: targetMonth, year: targetYear, day: d.getDate() });
     setSearchQuery("");
     setSearchOpen(false);
-    setDetailEvent(event);
-
-    // Scroll to that month
     setTimeout(() => {
       const key = `${targetYear}-${targetMonth}`;
       monthRefs.current.get(key)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -257,8 +267,12 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
   };
 
   const handleSelectDay = (day: number, month: number, year: number) => {
-    setSelected({ day, month, year });
-    setDetailEvent(null);
+    // Toggle off if same cell tapped again
+    if (selected?.day === day && selected?.month === month && selected?.year === year) {
+      setSelected(null);
+    } else {
+      setSelected({ day, month, year });
+    }
   };
 
   const selectedEvents: Event[] = useMemo(() => {
@@ -269,142 +283,142 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
   }, [selected, eventsByDate]);
 
   return (
-    <>
-      <div className="calendar-page">
-        <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
-          <div className="calendar-card">
+    <div className="calendar-page">
+      <div className="calendar-card">
 
-            {/* ── Sticky top bar ── */}
-            <div className="calendar-header">
-              <div className="calendar-header-center">
-                {searchOpen ? (
-                  <div className="calendar-search-wrap" ref={dropdownRef}>
-                    <div className="calendar-search-bar">
-                      <span className="calendar-search-icon">⌕</span>
-                      <input
-                        ref={searchInputRef}
-                        className="calendar-search-input"
-                        type="text"
-                        placeholder="Search events…"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
-                      />
-                    </div>
-                    {searchQuery.trim().length > 0 && (
-                      <div className="calendar-search-dropdown">
-                        {searchResults.length === 0 ? (
-                          <div className="calendar-search-dropdown-empty">No matching events</div>
-                        ) : (
-                          searchResults.map(ev => (
-                            <button
-                              key={ev.id}
-                              className="calendar-search-result"
-                              onClick={() => handleResultClick(ev)}
-                            >
-                              <span className="calendar-search-result-title">{ev.title}</span>
-                              <span className="calendar-search-result-date">
-                                {formatDateTimeRange(ev.starts_at, ev.finishes_at)}
-                              </span>
-                            </button>
-                          ))
-                        )}
-                      </div>
+        {/* ── Sticky top bar ── */}
+        <div className="calendar-header">
+          <div className="calendar-header-center">
+            {searchOpen ? (
+              <div className="calendar-search-wrap" ref={dropdownRef}>
+                <div className="calendar-search-bar">
+                  <span className="calendar-search-icon">⌕</span>
+                  <input
+                    ref={searchInputRef}
+                    className="calendar-search-input"
+                    type="text"
+                    placeholder="Search events…"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
+                  />
+                </div>
+                {searchQuery.trim().length > 0 && (
+                  <div className="calendar-search-dropdown">
+                    {searchResults.length === 0 ? (
+                      <div className="calendar-search-dropdown-empty">No matching events</div>
+                    ) : (
+                      searchResults.map(ev => (
+                        <button
+                          key={ev.id}
+                          className="calendar-search-result"
+                          onClick={() => handleResultClick(ev)}
+                        >
+                          <span className="calendar-search-result-title">{ev.title}</span>
+                          <span className="calendar-search-result-date">
+                            {formatDateTimeRange(ev.starts_at, ev.finishes_at)}
+                          </span>
+                        </button>
+                      ))
                     )}
                   </div>
-                ) : (
-                  <div className="calendar-header-title">Calendar</div>
                 )}
               </div>
-
-              <div className="calendar-header-actions">
-                {/* Today button */}
-                <button
-                  className="calendar-today-btn"
-                  onClick={scrollToToday}
-                  title="Jump to today"
-                >
-                  Today
-                </button>
-
-                {/* Search button */}
-                <button
-                  className={`calendar-search-btn ${searchOpen ? "calendar-search-btn--active" : ""}`}
-                  onClick={handleSearchToggle}
-                  title={searchOpen ? "Close search" : "Search events"}
-                >
-                  {searchOpen ? "✕" : "⌕"}
-                </button>
-              </div>
-            </div>
-
-            {/* ── Scrollable months ── */}
-            <div className="calendar-scroll-container" ref={scrollContainerRef}>
-              {monthKeys.map(mk => {
-                const key = `${mk.year}-${mk.month}`;
-                const isCurrentMonth = mk.month === todayKey.month && mk.year === todayKey.year;
-                return (
-                  <MonthBlock
-                    key={key}
-                    monthKey={mk}
-                    today={today}
-                    selected={selected}
-                    onSelectDay={handleSelectDay}
-                    eventsByDate={eventsByDate}
-                    monthRef={el => {
-                      if (el) {
-                        monthRefs.current.set(key, el);
-                        if (isCurrentMonth) todayMonthRef.current = el;
-                      }
-                    }}
-                  />
-                );
-              })}
-            </div>
-
-            {/* ── Event panel ── */}
-            {selected && (
-              <div className="calendar-event-panel">
-                {loading ? (
-                  <div className="calendar-event-placeholder">Loading events…</div>
-                ) : (
-                  <>
-                    <div className="calendar-event-date">
-                      {selected.day} {MONTHS[selected.month]} {selected.year}
-                    </div>
-                    {selectedEvents.length > 0 ? (
-                      selectedEvents.map(ev => (
-                        <div
-                          key={ev.id}
-                          className="calendar-event-item calendar-event-item--clickable"
-                          onClick={() => setDetailEvent(ev)}
-                        >
-                          · {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                          {ev.finishes_at ? ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}` : ""} — {ev.title}
-                          {ev.location && <span style={{ opacity: 0.6 }}> @ {ev.location}</span>}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="calendar-event-empty">No events scheduled</div>
-                    )}
-                  </>
-                )}
-              </div>
+            ) : (
+              <div className="calendar-header-title">Calendar</div>
             )}
-
           </div>
 
-          {/* EventDetails card */}
-          {detailEvent && (
-            <EventDetails
-              event={detailEvent}
-              isLoggedIn={isLoggedIn}
-              onClose={() => setDetailEvent(null)}
-              onEdit={onEditEvent}
-            />
-          )}
+          <div className="calendar-header-actions">
+            <button
+              className="calendar-today-btn"
+              onClick={scrollToToday}
+              title="Jump to today"
+            >
+              Today
+            </button>
+            <button
+              className={`calendar-search-btn ${searchOpen ? "calendar-search-btn--active" : ""}`}
+              onClick={handleSearchToggle}
+              title={searchOpen ? "Close search" : "Search events"}
+            >
+              {searchOpen ? "✕" : "⌕"}
+            </button>
+          </div>
         </div>
+
+        {/* ── Scrollable months ── */}
+        <div className="calendar-scroll-container" ref={scrollContainerRef}>
+          {monthKeys.map(mk => {
+            const key = `${mk.year}-${mk.month}`;
+            const isCurrentMonth = mk.month === todayKey.month && mk.year === todayKey.year;
+            return (
+              <MonthBlock
+                key={key}
+                monthKey={mk}
+                today={today}
+                selected={selected}
+                onSelectDay={handleSelectDay}
+                eventsByDate={eventsByDate}
+                monthRef={el => {
+                  if (el) {
+                    monthRefs.current.set(key, el);
+                    if (isCurrentMonth) todayMonthRef.current = el;
+                  }
+                }}
+              />
+            );
+          })}
+        </div>
+
       </div>
-    </>
+
+      {/* ── Day preview overlay ── */}
+      {selected && (
+        <div className="calendar-overlay-backdrop" onClick={() => setSelected(null)}>
+          <div
+            className="calendar-overlay"
+            ref={overlayRef}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="calendar-overlay-header">
+              <span className="calendar-overlay-date">
+                {selected.day} {MONTHS[selected.month]} {selected.year}
+              </span>
+              <button
+                className="calendar-overlay-close"
+                onClick={() => setSelected(null)}
+                aria-label="Close"
+              >✕</button>
+            </div>
+
+            {loading ? (
+              <div className="calendar-overlay-empty">Loading…</div>
+            ) : selectedEvents.length === 0 ? (
+              <div className="calendar-overlay-empty">No events on this day</div>
+            ) : (
+              <div className="calendar-overlay-list">
+                {selectedEvents.map(ev => (
+                  <button
+                    key={ev.id}
+                    className="calendar-overlay-event"
+                    onClick={() => { setSelected(null); onViewEvent(ev); }}
+                  >
+                    <span className="calendar-overlay-event-title">{ev.title}</span>
+                    <span className="calendar-overlay-event-time">
+                      {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                      {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
+                    </span>
+                    {ev.location && (
+                      <span className="calendar-overlay-event-location">📍 {ev.location}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

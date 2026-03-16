@@ -9,6 +9,7 @@ import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
+import EventDetails from "./components/events/EventDetails.tsx";
 import AdminQueue from "./components/AdminQueue.tsx";
 import Contact from "./components/Contact.tsx";
 import type { Event } from "./utils/types.ts";
@@ -18,13 +19,11 @@ function App() {
   const [view, setView] = useState<View>("calendar");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
 
   const fetchPendingCount = useCallback(async () => {
-    // Fetch pending event ids + recurrence field so we can deduplicate by
-    // recurrence.id client-side — matching the same logic AdminQueue uses.
-    // A raw COUNT would overcount recurring series.
     const { data } = await supabase
       .from("events")
       .select("id, recurrence")
@@ -66,6 +65,11 @@ function App() {
     setView("calendar");
   };
 
+  const handleViewEvent = (event: Event) => {
+    setViewingEvent(event);
+    setView("event-detail");
+  };
+
   const handleEditEvent = (event: Event, returnTo: View = "calendar") => {
     setEditingEvent(event);
     setPostEditReturn(returnTo);
@@ -92,7 +96,20 @@ function App() {
       />
       <div style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
-          <Calendar isLoggedIn={isLoggedIn} onEditEvent={ev => handleEditEvent(ev, "calendar")} />
+          <Calendar
+            isLoggedIn={isLoggedIn}
+            onViewEvent={handleViewEvent}
+          />
+        )}
+        {view === "event-detail" && viewingEvent && (
+          <div className="event-detail-page">
+            <EventDetails
+              event={viewingEvent}
+              isLoggedIn={isLoggedIn}
+              onClose={() => setView("calendar")}
+              onEdit={ev => handleEditEvent(ev, "event-detail")}
+            />
+          </div>
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
         {view === "add-event"  && <AddEvent />}
@@ -101,8 +118,6 @@ function App() {
             event={editingEvent}
             onSaved={handleEditSaved}
             onCancel={handleEditCancel}
-            // When editing from the admin queue, always apply changes to all
-            // future occurrences without prompting — the event isn't live yet.
             defaultRecurringScope={postEditReturn === "admin-queue" ? "all-future" : undefined}
           />
         )}
