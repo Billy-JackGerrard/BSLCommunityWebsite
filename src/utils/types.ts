@@ -6,7 +6,9 @@ export type Event = {
   title: string;
   category: Category;
   description?: string;
+  event_type?: 'in_person' | 'online' | 'both';
   location?: string;
+  postcode?: string;
   price?: string;
   booking_info?: string;
   starts_at: string;

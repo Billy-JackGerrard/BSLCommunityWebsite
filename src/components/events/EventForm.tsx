@@ -13,7 +13,9 @@ export type EventFormRow = {
   title: string;
   category: Category;
   description: string | null;
+  event_type: 'in_person' | 'online' | 'both';
   location: string | null;
+  postcode: string | null;
   starts_at: string;
   finishes_at: string | null;
   contact_name: string | null;
@@ -53,7 +55,10 @@ export default function EventForm({
 }: Props) {
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
+  const [isInPerson, setIsInPerson] = useState(initialValues?.event_type !== 'online');
+  const [isOnline, setIsOnline] = useState(initialValues?.event_type === 'online' || initialValues?.event_type === 'both');
   const [location, setLocation] = useState(initialValues?.location ?? "");
+  const [postcode, setPostcode] = useState(initialValues?.postcode ?? "");
   const [startsAt, setStartsAt] = useState(() => {
     if (initialValues?.starts_at) return isoToLocal(initialValues.starts_at);
     if (prefillDate) return `${prefillDate}T09:00`;
@@ -95,7 +100,10 @@ export default function EventForm({
       prevInitialRef.current = initialValues;
       setTitle(initialValues.title ?? "");
       setDescription(initialValues.description ?? "");
+      setIsInPerson(initialValues.event_type !== 'online');
+      setIsOnline(initialValues.event_type === 'online' || initialValues.event_type === 'both');
       setLocation(initialValues.location ?? "");
+      setPostcode(initialValues.postcode ?? "");
       setStartsAt(initialValues.starts_at ? isoToLocal(initialValues.starts_at) : "");
       setFinishesAt(initialValues.finishes_at ? isoToLocal(initialValues.finishes_at) : "");
       setContactName(initialValues.contact_name ?? "");
@@ -143,6 +151,14 @@ export default function EventForm({
       setInternalError("Please enter a contact email.");
       return;
     }
+    if (!isInPerson && !isOnline) {
+      setInternalError("Please select at least one event type.");
+      return;
+    }
+    if (isInPerson && !postcode) {
+      setInternalError("Please enter a postcode for this in-person event.");
+      return;
+    }
     if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
       setInternalError("Please enter a valid email address.");
       return;
@@ -168,7 +184,9 @@ export default function EventForm({
       title,
       category: category as Category,
       description: description || null,
-      location: location || null,
+      event_type: isInPerson && isOnline ? 'both' : isOnline ? 'online' : 'in_person',
+      location: isInPerson ? (location || null) : null,
+      postcode: isInPerson ? (postcode || null) : null,
       starts_at: start.toISOString(),
       finishes_at: finish ? finish.toISOString() : null,
       contact_name: contactName || null,
@@ -246,15 +264,50 @@ export default function EventForm({
       </div>
 
       <div className="addevent-field">
-        <label className="addevent-label">Location</label>
-        <input
-          className="addevent-input"
-          type="text"
-          placeholder="e.g. The Royal Mile, Edinburgh"
-          value={location}
-          onChange={e => setLocation(e.target.value)}
-        />
+        <label className="addevent-label">Event Type *</label>
+        <div className="event-type-toggle">
+          <button
+            type="button"
+            className={`event-type-btn${isInPerson ? ' event-type-btn--active' : ''}`}
+            onClick={() => setIsInPerson(v => !v)}
+          >
+            📍 In Person
+          </button>
+          <button
+            type="button"
+            className={`event-type-btn${isOnline ? ' event-type-btn--active' : ''}`}
+            onClick={() => setIsOnline(v => !v)}
+          >
+            💻 Online
+          </button>
+        </div>
       </div>
+
+      {isInPerson && (
+        <>
+          <div className="addevent-field">
+            <label className="addevent-label">Location</label>
+            <input
+              className="addevent-input"
+              type="text"
+              placeholder="e.g. Blackwood Bar"
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+            />
+          </div>
+
+          <div className="addevent-field">
+            <label className="addevent-label">Postcode *</label>
+            <input
+              className="addevent-input"
+              type="text"
+              placeholder="e.g. EH1 1AA"
+              value={postcode}
+              onChange={e => setPostcode(e.target.value)}
+            />
+          </div>
+        </>
+      )}
 
       <div className="addevent-field">
         <label className="addevent-label">Start Time *</label>
@@ -274,12 +327,11 @@ export default function EventForm({
           type="datetime-local"
           min={startsAt || minDateTime}
           value={finishesAt}
-          onChange={e => {
-            const val = e.target.value;
-            if (val && startsAt && val.slice(0, 10) === startsAt.slice(0, 10) && val <= startsAt) return;
-            setFinishesAt(val);
-          }}
+          onChange={e => setFinishesAt(e.target.value)}
         />
+        {finishesAt && startsAt && finishesAt <= startsAt && (
+          <span className="addevent-field-error">End time must be after the start time.</span>
+        )}
       </div>
 
       <div className="addevent-field">
@@ -366,7 +418,7 @@ export default function EventForm({
         <button
           className="addevent-btn"
           onClick={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || !!(finishesAt && startsAt && finishesAt <= startsAt)}
           type="button"
         >
           {submitting ? submittingLabel : submitLabel}

@@ -67,10 +67,28 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
         )}
       </div>
 
+      {event.event_type && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">
+            {event.event_type === 'both' ? '📍💻' : event.event_type === 'online' ? '💻' : '📍'}
+          </span>
+          <span className="event-detail-text">
+            {event.event_type === 'both' ? 'In person & online' : event.event_type === 'online' ? 'Online event' : 'In-person event'}
+          </span>
+        </div>
+      )}
+
       {event.location && (
         <div className="event-detail-row">
-          <span className="event-detail-icon">📍</span>
-          <span className="event-detail-text">{event.location}</span>
+          <span className="event-detail-icon">🏠</span>
+          <span className="event-detail-text">{event.location}{event.postcode ? `, ${event.postcode}` : ''}</span>
+        </div>
+      )}
+
+      {!event.location && event.postcode && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">🏠</span>
+          <span className="event-detail-text">{event.postcode}</span>
         </div>
       )}
 
