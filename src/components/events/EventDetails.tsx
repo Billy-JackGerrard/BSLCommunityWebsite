@@ -1,7 +1,18 @@
+import { atcb_action } from "add-to-calendar-button";
 import type { Event } from "../../utils/types";
 import { formatDateTimeRange } from "../../utils/dates";
 import { humaniseRule } from "../../utils/recurrence";
 import "./EventDetails.css";
+
+function toLocalDate(iso: string) {
+  const d = new Date(iso);
+  return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
+}
+
+function toLocalTime(iso: string) {
+  const d = new Date(iso);
+  return [String(d.getHours()).padStart(2, "0"), String(d.getMinutes()).padStart(2, "0")].join(":");
+}
 
 type Props = {
   event: Event;
@@ -118,6 +129,29 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
           )}
         </div>
       )}
+
+      <div className="event-detail-cal-row">
+        <button
+          className="event-detail-cal-btn"
+          onClick={e => atcb_action({
+            name: event.title,
+            startDate: toLocalDate(event.starts_at),
+            startTime: toLocalTime(event.starts_at),
+            ...(event.finishes_at && {
+              endDate: toLocalDate(event.finishes_at),
+              endTime: toLocalTime(event.finishes_at),
+            }),
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            location: event.location ?? undefined,
+            description: event.description ?? undefined,
+            options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"],
+            listStyle: "modal",
+            hideBranding: true,
+          }, e.currentTarget)}
+        >
+          + Add to Calendar
+        </button>
+      </div>
 
       {actions && (
         <div className="event-detail-actions">
