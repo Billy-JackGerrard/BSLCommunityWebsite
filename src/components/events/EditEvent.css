@@ -138,6 +138,31 @@
     opacity: 0.7;
   }
   
+  /* ── Destructive confirm button ── */
+  .delete-confirm-btn {
+    background: var(--color-text-error);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: opacity 0.15s;
+    width: 100%;
+  }
+
+  .delete-confirm-btn:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+
+  .delete-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   /* ── Back / cancel link ── */
   .editrecur-back-btn {
     background: none;

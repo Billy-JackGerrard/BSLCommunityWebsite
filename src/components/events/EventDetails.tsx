@@ -19,10 +19,11 @@ type Props = {
   isLoggedIn: boolean;
   onClose: () => void;
   onEdit: (event: Event) => void;
+  onDelete?: (event: Event) => void;
   actions?: React.ReactNode;
 };
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, actions }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, actions }: Props) {
   const hasContact =
     event.contact_name || event.contact_email || event.url;
 
@@ -47,9 +48,16 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
       <div className="event-detail-close-row">
         <button className="event-detail-close" onClick={onClose} aria-label="Close">✕</button>
         {isLoggedIn && (
-          <button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event">
-            ✎ Edit
-          </button>
+          <div className="event-detail-admin-actions">
+            <button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event">
+              ✎ Edit
+            </button>
+            {onDelete && (
+              <button className="event-detail-delete-btn" onClick={() => onDelete(event)} aria-label="Delete event">
+                ✕ Delete
+              </button>
+            )}
+          </div>
         )}
       </div>
 

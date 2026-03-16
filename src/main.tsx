@@ -9,6 +9,7 @@ import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
+import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import EventDetails from "./components/events/EventDetails.tsx";
 import AdminQueue from "./components/AdminQueue.tsx";
 import Contact from "./components/Contact.tsx";
@@ -19,9 +20,11 @@ function App() {
   const [view, setView] = useState<View>("calendar");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
   const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
+  const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
 
 const fetchPendingCount = useCallback(async () => {

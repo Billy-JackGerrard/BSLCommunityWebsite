@@ -26,9 +26,6 @@ event queue for admins:
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
 
-
-make it impossible to select before the starting time if the start and end day are the same day
-
 add predetermined events eg easter sunday, christmas day
 
 
@@ -61,8 +58,7 @@ have different ways of viewing calendar
 
 make it phone-screen friendly! 
 
-location - add post code mandatory. means can filter for city/region etc
-add zoom option?
+means can filter for city/region etc
 
 rn set for only edinburgh (block non EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
 
