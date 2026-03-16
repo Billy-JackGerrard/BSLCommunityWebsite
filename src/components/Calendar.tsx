@@ -7,11 +7,10 @@ import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const SEARCH_RESULT_LIMIT = 10;
-// The calendar is bounded to a 2-year window: 1 year back, 1 year forward.
 const MONTHS_BEFORE_INIT = 2;
-const MONTHS_BEFORE_MAX  = 11;  // hard ceiling — never scroll beyond 1 year back
-const MONTHS_AFTER_INIT  = 11;  // show up to 11 months ahead on load (= 1 year total)
-const MONTHS_AFTER_MAX   = 11;  // hard ceiling — never scroll beyond 1 year ahead
+const MONTHS_BEFORE_MAX  = 11;
+const MONTHS_AFTER_INIT  = 11;
+const MONTHS_AFTER_MAX   = 11;
 
 type MonthKey = { month: number; year: number };
 
@@ -59,20 +58,15 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
   return (
     <div className="calendar-month-block" ref={monthRef} data-month={month} data-year={year}>
-      {/* Sticky month label */}
       <div className="calendar-month-label">
         <span className="calendar-month-label-name">{MONTHS[month]}</span>
         <span className="calendar-month-label-year">{year}</span>
       </div>
-
-      {/* Day-of-week headers */}
       <div className="calendar-day-labels">
         {DAYS.map(d => (
           <div key={d} className="calendar-day-label">{d}</div>
         ))}
       </div>
-
-      {/* Day grid */}
       <div className="calendar-grid">
         {cells.map((day, i) => {
           const count = day ? eventsOnDay(day).length : 0;
@@ -84,11 +78,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
           ].filter(Boolean).join(" ");
 
           return (
-            <div
-              key={i}
-              className={cellClass}
-              onClick={() => { if (day) onSelectDay(day, month, year); }}
-            >
+            <div key={i} className={cellClass} onClick={() => { if (day) onSelectDay(day, month, year); }}>
               {day && (
                 <>
                   <span className="calendar-day-number">{day}</span>
@@ -111,7 +101,7 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    const msUntilMidnight = (): number => {
+    const msUntilMidnight = () => {
       const now = new Date();
       const midnight = new Date(now);
       midnight.setHours(24, 0, 0, 0);
@@ -126,87 +116,55 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
 
   const todayKey: MonthKey = { month: today.getMonth(), year: today.getFullYear() };
 
-  // The visible window of months (both directions hard-capped at 1 year)
   const [monthsBefore, setMonthsBefore] = useState(MONTHS_BEFORE_INIT);
   const [monthsAfter,  setMonthsAfter]  = useState(MONTHS_AFTER_INIT);
 
   const monthKeys: MonthKey[] = useMemo(() => {
     const keys: MonthKey[] = [];
-    for (let i = -monthsBefore; i <= monthsAfter; i++) {
-      keys.push(addMonths(todayKey, i));
-    }
+    for (let i = -monthsBefore; i <= monthsAfter; i++) keys.push(addMonths(todayKey, i));
     return keys;
   }, [monthsBefore, monthsAfter, today]);
 
-  // Fetch events for the whole visible window at once
   const windowStart = monthKeys[0];
   const windowEnd   = monthKeys[monthKeys.length - 1];
   const { eventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
 
-  // Selection drives the day-preview overlay
   const [selected, setSelected] = useState<{ month: number; year: number; day: number } | null>(null);
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef    = useRef<HTMLInputElement>(null);
-  const dropdownRef       = useRef<HTMLDivElement>(null);
-  const overlayRef        = useRef<HTMLDivElement>(null);
+  const searchInputRef     = useRef<HTMLInputElement>(null);
+  const dropdownRef        = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const monthRefs  = useRef<Map<string, HTMLDivElement>>(new Map());
-  const todayMonthRef = useRef<HTMLDivElement | null>(null);
+  const monthRefs          = useRef<Map<string, HTMLDivElement>>(new Map());
+  const todayMonthRef      = useRef<HTMLDivElement | null>(null);
 
   // Close search dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
         setSearchQuery("");
-      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close day overlay on outside click or Escape
+  // Scroll to today on first load
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (overlayRef.current && !overlayRef.current.contains(e.target as Node)) {
-        setSelected(null);
-      }
-    };
-    const keyHandler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelected(null);
-    };
-    document.addEventListener("mousedown", handler);
-    document.addEventListener("keydown", keyHandler);
-    return () => {
-      document.removeEventListener("mousedown", handler);
-      document.removeEventListener("keydown", keyHandler);
-    };
+    setTimeout(() => todayMonthRef.current?.scrollIntoView({ behavior: "instant", block: "start" }), 50);
   }, []);
 
-  // Scroll to today's month on first load
-  useEffect(() => {
-    if (todayMonthRef.current) {
-      setTimeout(() => {
-        todayMonthRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
-      }, 50);
-    }
-  }, []);
-
-  // Auto-delete events older than 1 year whenever an admin logs in
+  // Auto-delete events older than 1 year when admin logs in
   useEffect(() => {
     if (!isLoggedIn) return;
     const cutoff = new Date();
     cutoff.setFullYear(cutoff.getFullYear() - 1);
-    supabase
-      .from("events")
-      .delete()
-      .or(
-        `finishes_at.lt.${cutoff.toISOString()},` +
-        `and(finishes_at.is.null,starts_at.lt.${cutoff.toISOString()})`
-      );
+    supabase.from("events").delete().or(
+      `finishes_at.lt.${cutoff.toISOString()},` +
+      `and(finishes_at.is.null,starts_at.lt.${cutoff.toISOString()})`
+    );
   }, [isLoggedIn]);
 
-  // Load more months when user scrolls near the top or bottom
+  // Infinite scroll — load more months
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -219,9 +177,7 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
     return () => container.removeEventListener("scroll", handler);
   }, []);
 
-  const scrollToToday = () => {
-    todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  const scrollToToday = () => todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   // Search
   const matchesSearch = useCallback((event: Event, query: string): boolean => {
@@ -251,28 +207,20 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
     setSearchQuery("");
     setSearchOpen(false);
     setTimeout(() => {
-      const key = `${targetYear}-${targetMonth}`;
-      monthRefs.current.get(key)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      monthRefs.current.get(`${targetYear}-${targetMonth}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
   };
 
   const handleSearchToggle = () => {
-    if (searchOpen) {
-      setSearchOpen(false);
-      setSearchQuery("");
-    } else {
-      setSearchOpen(true);
-      setTimeout(() => searchInputRef.current?.focus(), 50);
-    }
+    if (searchOpen) { setSearchOpen(false); setSearchQuery(""); }
+    else { setSearchOpen(true); setTimeout(() => searchInputRef.current?.focus(), 50); }
   };
 
   const handleSelectDay = (day: number, month: number, year: number) => {
-    // Toggle off if same cell tapped again
-    if (selected?.day === day && selected?.month === month && selected?.year === year) {
+    if (selected?.day === day && selected?.month === month && selected?.year === year)
       setSelected(null);
-    } else {
+    else
       setSelected({ day, month, year });
-    }
   };
 
   const selectedEvents: Event[] = useMemo(() => {
@@ -284,9 +232,9 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
 
   return (
     <div className="calendar-page">
-      <div className="calendar-card">
 
-        {/* ── Sticky top bar ── */}
+      {/* ── Left: scrollable calendar ── */}
+      <div className="calendar-col">
         <div className="calendar-header">
           <div className="calendar-header-center">
             {searchOpen ? (
@@ -307,20 +255,12 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
                   <div className="calendar-search-dropdown">
                     {searchResults.length === 0 ? (
                       <div className="calendar-search-dropdown-empty">No matching events</div>
-                    ) : (
-                      searchResults.map(ev => (
-                        <button
-                          key={ev.id}
-                          className="calendar-search-result"
-                          onClick={() => handleResultClick(ev)}
-                        >
-                          <span className="calendar-search-result-title">{ev.title}</span>
-                          <span className="calendar-search-result-date">
-                            {formatDateTimeRange(ev.starts_at, ev.finishes_at)}
-                          </span>
-                        </button>
-                      ))
-                    )}
+                    ) : searchResults.map(ev => (
+                      <button key={ev.id} className="calendar-search-result" onClick={() => handleResultClick(ev)}>
+                        <span className="calendar-search-result-title">{ev.title}</span>
+                        <span className="calendar-search-result-date">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
@@ -328,15 +268,8 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
               <div className="calendar-header-title">Calendar</div>
             )}
           </div>
-
           <div className="calendar-header-actions">
-            <button
-              className="calendar-today-btn"
-              onClick={scrollToToday}
-              title="Jump to today"
-            >
-              Today
-            </button>
+            <button className="calendar-today-btn" onClick={scrollToToday} title="Jump to today">Today</button>
             <button
               className={`calendar-search-btn ${searchOpen ? "calendar-search-btn--active" : ""}`}
               onClick={handleSearchToggle}
@@ -347,7 +280,6 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
           </div>
         </div>
 
-        {/* ── Scrollable months ── */}
         <div className="calendar-scroll-container" ref={scrollContainerRef}>
           {monthKeys.map(mk => {
             const key = `${mk.year}-${mk.month}`;
@@ -370,55 +302,49 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
             );
           })}
         </div>
-
       </div>
 
-      {/* ── Day preview overlay ── */}
-      {selected && (
-        <div className="calendar-overlay-backdrop" onClick={() => setSelected(null)}>
-          <div
-            className="calendar-overlay"
-            ref={overlayRef}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="calendar-overlay-header">
-              <span className="calendar-overlay-date">
+      {/* ── Right: event panel ── */}
+      <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""}`}>
+        {!selected ? (
+          <div className="calendar-panel-empty">
+            <span className="calendar-panel-empty-icon">◎</span>
+            <p>Select a day to see events</p>
+          </div>
+        ) : (
+          <>
+            <div className="calendar-panel-header">
+              <div className="calendar-panel-date">
                 {selected.day} {MONTHS[selected.month]} {selected.year}
-              </span>
-              <button
-                className="calendar-overlay-close"
-                onClick={() => setSelected(null)}
-                aria-label="Close"
-              >✕</button>
+              </div>
+              <button className="calendar-panel-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
             </div>
 
             {loading ? (
-              <div className="calendar-overlay-empty">Loading…</div>
+              <div className="calendar-panel-empty"><p>Loading…</p></div>
             ) : selectedEvents.length === 0 ? (
-              <div className="calendar-overlay-empty">No events on this day</div>
+              <div className="calendar-panel-empty">
+                <span className="calendar-panel-empty-icon">○</span>
+                <p>No events on this day</p>
+              </div>
             ) : (
-              <div className="calendar-overlay-list">
+              <div className="calendar-panel-list">
                 {selectedEvents.map(ev => (
-                  <button
-                    key={ev.id}
-                    className="calendar-overlay-event"
-                    onClick={() => { setSelected(null); onViewEvent(ev); }}
-                  >
-                    <span className="calendar-overlay-event-title">{ev.title}</span>
-                    <span className="calendar-overlay-event-time">
+                  <button key={ev.id} className="calendar-panel-event" onClick={() => onViewEvent(ev)}>
+                    <span className="calendar-panel-event-title">{ev.title}</span>
+                    <span className="calendar-panel-event-time">
                       {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                       {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
                     </span>
-                    {ev.location && (
-                      <span className="calendar-overlay-event-location">📍 {ev.location}</span>
-                    )}
+                    {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
                   </button>
                 ))}
               </div>
             )}
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
+
     </div>
   );
 }
