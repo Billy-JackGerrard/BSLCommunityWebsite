@@ -95,6 +95,11 @@
   border-color: var(--color-accent);
 }
 
+.addevent-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
 /* ── Category custom dropdown ── */
 .category-select {
   position: relative;

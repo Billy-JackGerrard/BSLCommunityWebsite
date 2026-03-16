@@ -73,7 +73,12 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
       {event.booking_info && (
         <div className="event-detail-row">
           <span className="event-detail-icon">📋</span>
-          <span className="event-detail-text">{event.booking_info}</span>
+          <span className="event-detail-text">
+            {event.booking_info === "via_link" ? "Book via a link" :
+             event.booking_info === "by_contacting" ? "Book by contacting" :
+             event.booking_info === "just_turn_up" ? "Just turn up" :
+             event.booking_info}
+          </span>
         </div>
       )}
 

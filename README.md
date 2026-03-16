@@ -19,7 +19,7 @@ integrate with socials!!
 
 when adding events:
 - when their event is approved, they receive an email if they've put one in
-- optionally add an image 
+- optionally add an image (but think db memory)
 
 event queue for admins:
 - when an event is approved, also publish that event to socials? or email announcements?
@@ -66,15 +66,13 @@ make it phone-screen friendly!
 location - add post code mandatory. means can filter for city/region etc
 add zoom option?
 
-for how to book - make it a dropbox (if says through website, you must have a booking url)
-
 rn set for only edinburgh (block non EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
 
 
 interpreter, bsl led or optional terp - name
 ai summariser of info from website url (move it to the top)
 
-remove whatsapp but add info abt the whastapp to the contact info page
+add info abt the whastapp to the contact info page
 
 add to my own calendar option (outlook, google or apple)
 

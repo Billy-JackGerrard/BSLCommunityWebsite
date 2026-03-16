@@ -131,6 +131,18 @@ export default function EventForm({
       setInternalError("The finish time must be after the start time.");
       return;
     }
+    if (!bookingInfo) {
+      setInternalError("Please select how to book.");
+      return;
+    }
+    if (bookingInfo === "via_link" && !url) {
+      setInternalError("Please enter a link.");
+      return;
+    }
+    if (bookingInfo === "by_contacting" && !contactEmail) {
+      setInternalError("Please enter a contact email.");
+      return;
+    }
     if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
       setInternalError("Please enter a valid email address.");
       return;
@@ -278,13 +290,27 @@ export default function EventForm({
       </div>
 
       <div className="addevent-field">
-        <label className="addevent-label">Booking Info</label>
-        <input
-          className="addevent-input"
-          type="text"
-          placeholder="e.g. Book via Eventbrite, no booking needed…"
+        <label className="addevent-label">How to Book</label>
+        <select
+          className="addevent-input addevent-select"
           value={bookingInfo}
           onChange={e => setBookingInfo(e.target.value)}
+        >
+          <option value="">-- Select --</option>
+          <option value="via_link">Via a link</option>
+          <option value="by_contacting">By contacting</option>
+          <option value="just_turn_up">Just turn up</option>
+        </select>
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Link</label>
+        <input
+          className="addevent-input"
+          type="url"
+          placeholder="e.g. https://eventbrite.com/..."
+          value={url}
+          onChange={e => setUrl(e.target.value)}
         />
       </div>
 
@@ -307,17 +333,6 @@ export default function EventForm({
           placeholder="e.g. hello@example.com"
           value={contactEmail}
           onChange={e => setContactEmail(e.target.value)}
-        />
-      </div>
-
-      <div className="addevent-field">
-        <label className="addevent-label">Website / Booking Link</label>
-        <input
-          className="addevent-input"
-          type="url"
-          placeholder="e.g. https://eventbrite.com/..."
-          value={url}
-          onChange={e => setUrl(e.target.value)}
         />
       </div>
 
