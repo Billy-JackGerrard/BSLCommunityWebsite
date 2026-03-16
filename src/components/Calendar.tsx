@@ -29,6 +29,9 @@ type Props = {
   onEditEvent: (event: Event) => void;
   onDeleteEvent?: (event: Event) => void;
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
+  searchOpen: boolean;
+  onToggleSearch: () => void;
+  onScrollToTodayReady: (fn: () => void) => void;
 };
 
 // ── Single month block ──────────────────────────────────────────────────────
@@ -124,7 +127,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -172,7 +175,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const todayMonthRef = useRef<HTMLDivElement | null>(null);
 
-  const [searchOpen,  setSearchOpen]  = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef    = useRef<HTMLDivElement>(null);
@@ -181,13 +183,12 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setSearchOpen(false);
-        setSearchQuery("");
+        if (searchOpen) { onToggleSearch(); setSearchQuery(""); }
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }, [searchOpen, onToggleSearch]);
 
   // Infinite scroll – load more months when near top/bottom
   useEffect(() => {
@@ -216,9 +217,14 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   }, []);
 
   const handleSearchToggle = useCallback(() => {
-    if (searchOpen) { setSearchOpen(false); setSearchQuery(""); }
-    else { setSearchOpen(true); setTimeout(() => searchInputRef.current?.focus(), 50); }
-  }, [searchOpen]);
+    if (searchOpen) { setSearchQuery(""); }
+    else { setTimeout(() => searchInputRef.current?.focus(), 50); }
+    onToggleSearch();
+  }, [searchOpen, onToggleSearch]);
+
+  useEffect(() => {
+    onScrollToTodayReady(scrollToToday);
+  }, [scrollToToday, onScrollToTodayReady]);
 
 
   const matchesSearch = useCallback((event: Event, q: string) => {
@@ -244,7 +250,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
     const targetYear  = d.getFullYear();
     setSelected({ month: targetMonth, year: targetYear, day: d.getDate() });
     setSearchQuery("");
-    setSearchOpen(false);
+    if (searchOpen) onToggleSearch();
     setTimeout(() => {
       monthRefs.current.get(`${targetYear}-${targetMonth}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
@@ -342,12 +348,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
       {/* ── Right: event panel ── */}
       <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""}`}>
 
-        {/* Always-visible top: controls + legend */}
+        {/* Always-visible top: legend */}
         <div className="calendar-panel-top">
-          <div className="calendar-panel-controls">
-            <button className="calendar-panel-ctrl-btn" onClick={scrollToToday}>Today</button>
-            <button className="calendar-panel-ctrl-btn" onClick={handleSearchToggle} title="Search events">⌕</button>
-          </div>
           <div className="calendar-panel-legend">
             {CATEGORIES.map(c => (
               <div key={c} className="calendar-panel-legend-item">

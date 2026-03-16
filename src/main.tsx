@@ -1,6 +1,6 @@
 import './style.css'
 
-import { StrictMode, useState, useEffect, useCallback } from "react";
+import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { supabase } from "./supabaseClient";
 import { deduplicateByRecurrence } from "./utils/recurrence";
@@ -26,6 +26,10 @@ function App() {
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const scrollToTodayRef = useRef<(() => void) | null>(null);
+  const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
+  const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
 const fetchPendingCount = useCallback(async () => {
     const { data } = await supabase
@@ -71,6 +75,7 @@ const fetchPendingCount = useCallback(async () => {
 
   const handleNavigate = (v: View) => {
     if (v !== "add-event") setAddEventDate(undefined);
+    if (v !== "calendar") setSearchOpen(false);
     setView(v);
   };
 
@@ -124,6 +129,9 @@ const fetchPendingCount = useCallback(async () => {
         pendingCount={pendingCount}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
+        showCalendarControls={view === "calendar"}
+        onScrollToToday={() => scrollToTodayRef.current?.()}
+        onToggleSearch={handleToggleSearch}
       />
       <div style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
@@ -133,6 +141,9 @@ const fetchPendingCount = useCallback(async () => {
             onEditEvent={ev => handleEditEvent(ev, "calendar")}
             onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "calendar") : undefined}
             onAddEvent={handleAddEventFromCalendar}
+            searchOpen={searchOpen}
+            onToggleSearch={handleToggleSearch}
+            onScrollToTodayReady={handleScrollToTodayReady}
           />
         )}
         {view === "event-detail" && viewingEvent && (

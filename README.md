@@ -8,8 +8,6 @@ Mobile navbar — it'll break on small screens with all those buttons in a row
 
 IDEAS:
 
-make it so today button also selects today
-
 in the log in page, if people arent admins/etc maybe they could request to be an admin (providing an email and password)
 also clarify that only admins can log in so peeps arent wondering why there isnt a sign up button
 
@@ -34,10 +32,6 @@ event queue for admins:
 - when an event is approved, also publish that event to socials? or email announcements?
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
-add boolean - BSL delivered or BSL interpreted
-
-in the event details view; change the in person / online to just show the location if its in person, or just "online"
-
 add predetermined events eg easter sunday, christmas day
 
 for category colours,
@@ -45,7 +39,6 @@ ensure that the light colours have black text and vice versa
 
 when you filter you can filter by event by range, region, etc
 
-tag/# 
 
 rename startsAt to be "from" and finishes At to be "to"
 

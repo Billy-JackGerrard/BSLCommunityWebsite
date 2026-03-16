@@ -8,6 +8,9 @@ type Props = {
   pendingCount: number;
   onNavigate: (view: View) => void;
   onLogout: () => void;
+  showCalendarControls?: boolean;
+  onScrollToToday?: () => void;
+  onToggleSearch?: () => void;
 };
 
 export default function Navbar({
@@ -16,6 +19,9 @@ export default function Navbar({
   pendingCount,
   onNavigate,
   onLogout,
+  showCalendarControls,
+  onScrollToToday,
+  onToggleSearch,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -32,6 +38,13 @@ export default function Navbar({
   return (
     <nav className="navbar">
       <div className="navbar-brand">Edinburgh BSL Community</div>
+
+      {showCalendarControls && (
+        <div className="navbar-calendar-controls">
+          <button className="navbar-calendar-btn" onClick={onScrollToToday}>Today</button>
+          <button className="navbar-calendar-btn" onClick={onToggleSearch} title="Search events">⌕</button>
+        </div>
+      )}
 
       <button
         className={`navbar-hamburger${menuOpen ? " navbar-hamburger--open" : ""}`}
