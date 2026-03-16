@@ -6,7 +6,11 @@ import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
 import "./AddEvent.css";
 
-export default function AddEvent() {
+type Props = {
+  prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
+};
+
+export default function AddEvent({ prefillDate }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -135,6 +139,7 @@ export default function AddEvent() {
 
         <EventForm
           key={formKey}
+          prefillDate={prefillDate}
           showRecurrence={true}
           submitLabel="Add Event"
           submittingLabel="Submitting…"

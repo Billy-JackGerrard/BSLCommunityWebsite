@@ -22,6 +22,7 @@ function App() {
   const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
+  const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
 
   const fetchPendingCount = useCallback(async () => {
     const { data } = await supabase
@@ -65,6 +66,12 @@ function App() {
     setView("calendar");
   };
 
+  // Clear the prefill date whenever navigating away from add-event via the navbar
+  const handleNavigate = (v: View) => {
+    if (v !== "add-event") setAddEventDate(undefined);
+    setView(v);
+  };
+
   const handleViewEvent = (event: Event) => {
     setViewingEvent(event);
     setView("event-detail");
@@ -85,13 +92,20 @@ function App() {
     setView(postEditReturn);
   };
 
+  const handleAddEventFromCalendar = (date: { day: number; month: number; year: number }) => {
+    const mm = String(date.month + 1).padStart(2, "0");
+    const dd = String(date.day).padStart(2, "0");
+    setAddEventDate(`${date.year}-${mm}-${dd}`);
+    setView("add-event");
+  };
+
   return (
     <>
       <Navbar
         currentView={view}
         isLoggedIn={isLoggedIn}
         pendingCount={pendingCount}
-        onNavigate={setView}
+        onNavigate={handleNavigate}
         onLogout={handleLogout}
       />
       <div style={{ paddingTop: "60px" }}>
@@ -99,6 +113,7 @@ function App() {
           <Calendar
             isLoggedIn={isLoggedIn}
             onViewEvent={handleViewEvent}
+            onAddEvent={handleAddEventFromCalendar}
           />
         )}
         {view === "event-detail" && viewingEvent && (
@@ -112,7 +127,7 @@ function App() {
           </div>
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
-        {view === "add-event"  && <AddEvent />}
+        {view === "add-event"  && <AddEvent prefillDate={addEventDate} />}
         {view === "edit-event" && isLoggedIn && editingEvent && (
           <EditEvent
             event={editingEvent}

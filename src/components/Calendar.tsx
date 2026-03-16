@@ -25,6 +25,7 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
 type Props = {
   isLoggedIn: boolean;
   onViewEvent: (event: Event) => void;
+  onAddEvent: (date: { day: number; month: number; year: number }) => void;
 };
 
 // ── Single month block ──────────────────────────────────────────────────────
@@ -95,7 +96,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
+export default function Calendar({ isLoggedIn, onViewEvent, onAddEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
@@ -317,7 +318,16 @@ export default function Calendar({ isLoggedIn, onViewEvent }: Props) {
               <div className="calendar-panel-date">
                 {selected.day} {MONTHS[selected.month]} {selected.year}
               </div>
-              <button className="calendar-panel-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
+              <div className="calendar-panel-header-actions">
+                <button
+                  className="calendar-panel-add-btn"
+                  onClick={() => onAddEvent(selected)}
+                  title="Add event on this day"
+                >
+                  + Add Event
+                </button>
+                <button className="calendar-panel-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
+              </div>
             </div>
 
             {loading ? (

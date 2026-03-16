@@ -24,6 +24,7 @@ export type EventFormRow = {
 
 type Props = {
   initialValues?: Event;
+  prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
   showRecurrence?: boolean;
   submitLabel: string;
   submittingLabel: string;
@@ -37,6 +38,7 @@ type Props = {
 
 export default function EventForm({
   initialValues,
+  prefillDate,
   showRecurrence = true,
   submitLabel,
   submittingLabel,
@@ -50,7 +52,11 @@ export default function EventForm({
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [location, setLocation] = useState(initialValues?.location ?? "");
-  const [startsAt, setStartsAt] = useState(initialValues?.starts_at ? isoToLocal(initialValues.starts_at) : "");
+  const [startsAt, setStartsAt] = useState(() => {
+    if (initialValues?.starts_at) return isoToLocal(initialValues.starts_at);
+    if (prefillDate) return `${prefillDate}T09:00`;
+    return "";
+  });
   const [finishesAt, setFinishesAt] = useState(initialValues?.finishes_at ? isoToLocal(initialValues.finishes_at) : "");
   const [contactName, setContactName] = useState(initialValues?.contact_name ?? "");
   const [contactEmail, setContactEmail] = useState(initialValues?.contact_email ?? "");
