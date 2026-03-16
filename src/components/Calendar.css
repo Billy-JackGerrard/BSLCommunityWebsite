@@ -53,10 +53,6 @@
     text-transform: uppercase;
 }
 
-@media (prefers-color-scheme: light) {
-    .calendar-panel-date { color: var(--color-text-dark); }
-}
-
 .calendar-panel-header-actions {
     display: flex;
     align-items: center;
@@ -332,8 +328,8 @@
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    background: var(--color-bg-inset);
+    gap: 1px;
+    background: var(--color-border);
     padding: 0.35rem 0.75rem 0.75rem;
     width: 100%;
     box-sizing: border-box;
@@ -348,19 +344,23 @@
     cursor: pointer;
     border-radius: 2px;
     position: relative;
-    background: transparent;
+    background: var(--color-bg-card);
     transition: background 0.15s;
 }
 
 .calendar-cell:hover:not(.calendar-cell--empty):not(.calendar-cell--selected) {
-    background: rgba(232, 197, 71, 0.15);
+    background: rgba(37, 99, 235, 0.08);
 }
 
-.calendar-cell--empty   { cursor: default; }
-.calendar-cell--weekend { background: rgba(255, 255, 255, 0.035); }
-.calendar-cell--today   { background: var(--color-border); }
+.calendar-cell--empty   { cursor: default; background: var(--color-bg-page); }
+.calendar-cell--weekend { background: var(--color-bg-inset); }
+.calendar-cell--today   { background: rgba(37, 99, 235, 0.12); }
 .calendar-cell--selected,
 .calendar-cell--selected:hover { background: var(--color-accent); }
+
+@media (prefers-color-scheme: dark) {
+    .calendar-cell--today { background: rgba(59, 130, 246, 0.22); }
+}
 
 .calendar-day-number { font-size: 0.9rem; color: var(--color-text-primary); }
 .calendar-cell--today    .calendar-day-number { color: var(--color-accent); font-weight: bold; }

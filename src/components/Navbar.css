@@ -1,12 +1,12 @@
 .navbar {
     width: 100%;
-    background: var(--color-bg-card);
+    background: var(--color-bg-header);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 2rem;
     box-sizing: border-box;
-    box-shadow: 0 2px 0 var(--color-accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     position: fixed;
     top: 0;
     left: 0;
@@ -14,7 +14,7 @@
 }
 
 .navbar-brand {
-    color: var(--color-accent);
+    color: #ffffff;
     font-family: Georgia, serif;
     font-size: 1.1rem;
     font-weight: bold;
@@ -31,7 +31,7 @@
 .navbar-link {
     background: transparent;
     border: 1px solid transparent;
-    color: var(--color-text-primary);
+    color: rgba(255, 255, 255, 0.85);
     font-family: monospace;
     font-size: 0.8rem;
     letter-spacing: 0.1em;
@@ -43,29 +43,32 @@
 }
 
 .navbar-link:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 .navbar-link--active {
-    background: var(--color-accent);
-    color: var(--color-text-dark);
+    background: #ffffff;
+    color: var(--color-bg-header);
     font-weight: bold;
+    border-color: transparent;
 }
 
 .navbar-link--active:hover {
-    background: var(--color-accent);
-    color: var(--color-text-dark);
-    border-color: var(--color-accent);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-bg-header);
+    border-color: transparent;
 }
 
 .navbar-link--logout {
-    color: var(--color-text-error);
+    color: rgba(255, 180, 180, 0.9);
 }
 
 .navbar-link--logout:hover {
-    border-color: var(--color-text-error);
-    color: var(--color-text-error);
+    border-color: rgba(255, 180, 180, 0.6);
+    color: #ffb4b4;
+    background: rgba(255, 100, 100, 0.12);
 }
 
 /* ── Queue button — relative so the badge can anchor to it ── */
@@ -78,7 +81,7 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background: var(--color-text-error);
+    background: #ef4444;
     color: #fff;
     font-family: monospace;
     font-size: 0.65rem;
@@ -101,12 +104,12 @@
     gap: 0.25rem;
     margin-right: 0.5rem;
     padding-right: 0.75rem;
-    border-right: 1px solid var(--color-border);
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .navbar-calendar-today {
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
     height: 32px;
     padding: 0 0.75rem;
@@ -116,18 +119,18 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     border-radius: 999px;
-    color: var(--color-accent);
+    color: #ffffff;
     transition: background 0.15s, border-color 0.15s;
 }
 
 .navbar-calendar-today:hover {
-    background: var(--color-border);
-    border-color: var(--color-accent);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
 }
 
 .navbar-calendar-search {
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
     width: 36px;
     height: 32px;
@@ -136,12 +139,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-accent);
+    color: #ffffff;
     transition: background 0.15s, border-color 0.15s;
     padding: 0;
 }
 
 .navbar-calendar-search:hover {
-    background: var(--color-border);
-    border-color: var(--color-accent);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
 }

@@ -1,121 +1,116 @@
 /* =====================================================
-   DARK MODE (default)
+   LIGHT MODE (default)
    ===================================================== */
-   :root {
-    /* Page / surface backgrounds */
-    --color-bg-page:          #f5f0e8;   /* warm cream — outer page */
-    --color-bg-card:          #1a1a2e;   /* deep navy — cards, navbar */
-    --color-bg-inset:         #16213e;   /* darker navy — inputs, inset panels */
-    --color-bg-error:         #3d1a1a;   /* dark red — error banners */
-  
-    /* Borders */
-    --color-border:           #2d2d5e;   /* mid navy — field borders */
-    --color-border-subtle:    #4a4a6a;   /* lighter navy — secondary borders */
-  
-    /* Accent */
-    --color-accent:           #e8c547;   /* gold — primary highlight */
-  
-    /* Text */
-    --color-text-primary:     #f5f0e8;   /* cream — main text on dark surfaces */
-    --color-text-dark:        #1a1a2e;   /* navy — text on accent/light surfaces */
-    --color-text-muted:       #6b6b8a;   /* muted purple-grey — placeholders */
-    --color-text-error:       #ff6b6b;   /* red — error messages, logout */
-    --color-text-link:        #a8b4e8;   /* soft blue — hyperlinks */
-  
-    /* Decorative */
-    --color-shadow:           #c9b99a;   /* tan — offset box shadows */
-  
-    /* ── Typography & base ──────────────────────────────── */
-    font-family: system-ui, Calibri, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-  
-    color-scheme: light dark;
-    color: var(--color-text-primary);
-    background-color: var(--color-bg-page);
-  
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  a {
-    font-weight: 500;
-    color: var(--color-text-link);
-    text-decoration: inherit;
-  }
-  
-  a:hover {
-    color: var(--color-accent);
-  }
-  
-  /* Body and #app take full viewport — no centering, no padding */
-  body {
-    margin: 0;
-    min-width: 320px;
-    min-height: 100vh;
-  }
-  
-  #app {
-    width: 100%;
-    min-height: 100vh;
-  }
+:root {
+  /* Page / surface backgrounds */
+  --color-bg-page:    #f1f5f9;   /* cool slate-white — outer page */
+  --color-bg-card:    #ffffff;   /* white — cards, panels */
+  --color-bg-inset:   #e2e8f0;   /* light slate — inputs, inset panels */
+  --color-bg-header:  #1d4ed8;   /* deep blue — navbar */
+  --color-bg-error:   #fef2f2;   /* light red — error banners */
 
-  /* The padded wrapper in main.tsx only applies to non-calendar views */
-  #app > div {
-    padding-top: 60px; /* matches navbar height */
+  /* Borders */
+  --color-border:        #cbd5e1;  /* grey — field borders */
+  --color-border-subtle: #e2e8f0;  /* lighter grey — secondary borders */
+
+  /* Accent */
+  --color-accent: #2563eb;  /* blue — primary highlight */
+
+  /* Text */
+  --color-text-primary: #1e293b;  /* dark slate — main text on light surfaces */
+  --color-text-dark:    #ffffff;  /* white — text on accent/header surfaces */
+  --color-text-muted:   #64748b;  /* muted grey — placeholders */
+  --color-text-error:   #dc2626;  /* red — error messages */
+  --color-text-link:    #2563eb;  /* blue — hyperlinks */
+
+  /* Decorative */
+  --color-shadow: #94a3b8;  /* grey — offset box shadows */
+
+  /* ── Typography & base ──────────────────────────────── */
+  font-family: system-ui, Calibri, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: var(--color-text-link);
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+/* Body and #app take full viewport — no centering, no padding */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* The padded wrapper in main.tsx only applies to non-calendar views */
+#app > div {
+  padding-top: 60px; /* matches navbar height */
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--color-bg-inset);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: var(--color-accent);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* =====================================================
+   DARK MODE
+   ===================================================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-page:    #0f172a;   /* deep slate — outer page */
+    --color-bg-card:    #1e293b;   /* dark slate — cards, panels */
+    --color-bg-inset:   #0d1626;   /* darker — inputs, inset panels */
+    --color-bg-header:  #1e3a8a;   /* dark blue — navbar */
+    --color-bg-error:   #450a0a;   /* dark red — error banners */
+
+    --color-border:        #334155;  /* mid slate — borders */
+    --color-border-subtle: #1e293b;  /* dark border */
+
+    --color-accent: #3b82f6;  /* lighter blue — readable on dark */
+
+    --color-text-primary: #e2e8f0;  /* light grey — text on dark surfaces */
+    --color-text-dark:    #ffffff;  /* white — text on accent surfaces */
+    --color-text-muted:   #94a3b8;  /* muted grey */
+    --color-text-error:   #f87171;  /* light red */
+    --color-text-link:    #60a5fa;  /* light blue */
+
+    --color-shadow: rgba(0, 0, 0, 0.5);
   }
-  
-  button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-  }
-  
-  button:hover {
-    border-color: #646cff;
-  }
-  
-  button:focus,
-  button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
-  
-  /* =====================================================
-     LIGHT MODE
-     Genuinely light UI: cream/warm-white surfaces,
-     darkened gold accent for contrast, navy text.
-     ===================================================== */
-  @media (prefers-color-scheme: light) {
-    :root {
-      /* Page / surface backgrounds */
-      --color-bg-page:          #f5edcc;   /* pale gold — outer page */
-      --color-bg-card:          #fffdf5;   /* warm white — cards, navbar */
-      --color-bg-inset:         #ede8d5;   /* deeper cream — inputs, inset panels */
-      --color-bg-error:         #fde8e8;   /* light red — error banners */
-  
-      /* Borders */
-      --color-border:           #c9a800;   /* mid gold — field borders */
-      --color-border-subtle:    #d4bc5a;   /* lighter gold — secondary borders */
-  
-      /* Accent — darkened gold for sufficient contrast on light surfaces */
-      --color-accent:           #b8960a;
-  
-      /* Text */
-      --color-text-primary:     #1a1a2e;   /* navy — main text on light surfaces */
-      --color-text-dark:        #1a1a2e;   /* navy — text on accent-coloured surfaces */
-      --color-text-muted:       #7a7050;   /* warm grey-brown — placeholders */
-      --color-text-error:       #c0392b;   /* darker red — readable on light bg */
-      --color-text-link:        #4a5abf;   /* readable blue on cream */
-  
-      /* Decorative */
-      --color-shadow:           #c9b580;   /* deeper gold shadow — visible on light cards */
-    }
-  }
+}
