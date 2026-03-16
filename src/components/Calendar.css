@@ -194,12 +194,12 @@
 .calendar-panel-event {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
     width: 100%;
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--color-border);
-    padding: 1rem 1.25rem;
+    padding: 0.85rem 1.25rem 0.85rem calc(1.25rem - 3px);
     cursor: pointer;
     text-align: left;
     transition: background 0.12s;
@@ -209,8 +209,6 @@
 
 .calendar-panel-event:hover {
     background: var(--color-bg-inset);
-    border-left: 3px solid var(--color-accent);
-    padding-left: calc(1.25rem - 3px);
 }
 
 .calendar-panel-event-category-dot {
@@ -226,24 +224,24 @@
 }
 
 .calendar-panel-event-title {
-    color: var(--color-accent);
-    font-family: Calibri, 'Trebuchet MS', Arial, sans-serif;
-    font-size: 1rem;
-    font-weight: bold;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
     line-height: 1.3;
 }
 
 .calendar-panel-event-time {
-    color: var(--color-text-primary);
+    color: var(--color-text-muted);
     font-family: monospace;
-    font-size: 0.78rem;
-    opacity: 0.75;
+    font-size: 0.74rem;
+    font-weight: 500;
 }
 
 .calendar-panel-event-location {
     color: var(--color-text-muted);
-    font-size: 0.8rem;
+    font-size: 0.74rem;
     font-family: monospace;
+    opacity: 0.75;
 }
 
 /* ── Search bar — sits flush at top of calendar-col when open ── */

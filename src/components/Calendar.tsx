@@ -406,10 +406,10 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
                       ) : (
                         <button
                           className="calendar-panel-event"
+                          style={{ borderLeft: `3px solid ${CATEGORY_COLOURS[ev.category]}` }}
                           onClick={() => handleToggleEvent(ev)}
                         >
                           <span className="calendar-panel-event-title">
-                            <span className="calendar-panel-event-category-dot" style={{ background: CATEGORY_COLOURS[ev.category] }} />
                             {ev.title}
                           </span>
                           <span className="calendar-panel-event-time">

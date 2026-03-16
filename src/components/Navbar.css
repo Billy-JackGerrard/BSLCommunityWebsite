@@ -14,12 +14,31 @@
 }
 
 .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.navbar-logo-icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.navbar-brand-text {
     color: #ffffff;
-    font-family: Georgia, serif;
-    font-size: 1.1rem;
-    font-weight: bold;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.navbar-brand-sub {
+    font-weight: 400;
+    opacity: 0.7;
 }
 
 .navbar-links {
