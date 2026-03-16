@@ -175,7 +175,6 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       : { frequency: "none" };
 
     const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
-    const isRecurring = recurrenceEnabled && occurrences.length > 1;
 
     const newRecurrence: RecurrenceRule | null = occurrences.length > 1
       ? { ...activeRule, id: event.recurrence?.id ?? crypto.randomUUID() }
@@ -261,7 +260,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
                     enabled={recurrenceEnabled}
                     rule={recurrenceRule}
                     startsAt={liveStartsAt}
-                    onEnabledChange={(v) => { setRecurrenceEnabled(v); setRecurrenceChanged(true); }}
+                    onToggle={(v) => { setRecurrenceEnabled(v); setRecurrenceChanged(true); }}
                     onRuleChange={(r) => { setRecurrenceRule(r); setRecurrenceChanged(true); }}
                   />
                   {recurrenceChanged && (

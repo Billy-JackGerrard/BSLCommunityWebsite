@@ -263,7 +263,7 @@ export default function EventForm({
           enabled={recurrenceEnabled}
           rule={recurrenceRule}
           startsAt={startsAt}
-          onEnabledChange={setRecurrenceEnabled}
+          onToggle={setRecurrenceEnabled}
           onRuleChange={setRecurrenceRule}
         />
       )}
