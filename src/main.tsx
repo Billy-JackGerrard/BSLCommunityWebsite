@@ -2,6 +2,7 @@ import './style.css'
 
 import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { supabase } from "./supabaseClient";
 import { deduplicateByRecurrence } from "./utils/recurrence";
 import Calendar from "./components/Calendar.tsx";
@@ -190,6 +191,8 @@ const fetchPendingCount = useCallback(async () => {
 
 createRoot(document.getElementById("app")!).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>
 );

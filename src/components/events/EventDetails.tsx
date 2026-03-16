@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { atcb_action } from "add-to-calendar-button";
 import type { Event } from "../../utils/types";
 import { CATEGORY_COLOURS } from "../../utils/types";
@@ -25,25 +26,44 @@ type Props = {
   showAddToCalendar?: boolean;
 };
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, actions, showAddToCalendar = true }: Props) {
-  const hasContact =
-    event.contact_name || event.contact_email || event.url;
+function LinkButtons({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
 
+  function handleCopy() {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div className="event-detail-link-buttons">
+      <a className="event-detail-link-btn" href={url} target="_blank" rel="noopener noreferrer">
+        Visit Website ↗
+      </a>
+      <button className="event-detail-copy-btn" onClick={handleCopy}>
+        {copied ? "Copied ✓" : "Copy Link"}
+      </button>
+    </div>
+  );
+}
+
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, actions, showAddToCalendar = true }: Props) {
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
 
-  const displayUrl = normUrl ? (() => {
-    try {
-      const u = new URL(normUrl);
-      const path = u.pathname.length > 1 ? u.pathname.slice(0, 18) + (u.pathname.length > 18 ? "…" : "") : "";
-      return u.hostname + path;
-    } catch { return normUrl; }
-  })() : null;
-
   const recurrenceSummary = event.recurrence
     ? humaniseRule(event.recurrence, new Date(event.starts_at))
     : null;
+
+  const bookingIsViaLink = event.booking_info === "via_link";
+  const bookingIsContact = event.booking_info === "by_contacting";
+
+  // Contact section shows if there's a name, or an email that wasn't already shown in the booking row
+  const hasContactSection =
+    !!event.contact_name ||
+    (!!event.contact_email && !bookingIsContact);
 
   return (
     <div className="event-detail-card">
@@ -82,6 +102,13 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         )}
       </div>
 
+      {/* Description moved up, right after the header */}
+      {event.description ? (
+        <div className="event-detail-description">{event.description}</div>
+      ) : (
+        <div className="event-detail-nodesc">No description provided.</div>
+      )}
+
       {(event.event_type === 'in_person' || event.event_type === 'both') && (
         <div className="event-detail-row">
           <span className="event-detail-icon">📍</span>
@@ -119,25 +146,51 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         </div>
       )}
 
+      {/* Smart booking row */}
       {event.booking_info && (
-        <div className="event-detail-row">
+        <div className="event-detail-row event-detail-booking-row">
           <span className="event-detail-icon">📋</span>
-          <span className="event-detail-text">
-            {event.booking_info === "via_link" ? "Book via a link" :
-             event.booking_info === "by_contacting" ? "Book by contacting" :
-             event.booking_info === "just_turn_up" ? "Just turn up" :
-             event.booking_info}
-          </span>
+          <div className="event-detail-booking-content">
+            {bookingIsViaLink ? (
+              <>
+                <span className="event-detail-text">Book via link</span>
+                {normUrl && <LinkButtons url={normUrl} />}
+              </>
+            ) : bookingIsContact ? (
+              <>
+                <span className="event-detail-text">Contact to book</span>
+                {(event.contact_name || event.contact_email) && (
+                  <div className="event-detail-booking-contact">
+                    {event.contact_name && (
+                      <span className="event-detail-contact-name">{event.contact_name}</span>
+                    )}
+                    {event.contact_email && (
+                      <a className="event-detail-link-btn event-detail-email-btn" href={`mailto:${event.contact_email}`}>
+                        ✉ Email
+                      </a>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <span className="event-detail-text">
+                {event.booking_info === "just_turn_up" ? "Just turn up" : event.booking_info}
+              </span>
+            )}
+          </div>
         </div>
       )}
 
-      {event.description ? (
-        <div className="event-detail-description">{event.description}</div>
-      ) : (
-        <div className="event-detail-nodesc">No description provided.</div>
+      {/* Standalone URL row — only when booking isn't "via_link" */}
+      {normUrl && !bookingIsViaLink && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">🔗</span>
+          <LinkButtons url={normUrl} />
+        </div>
       )}
 
-      {hasContact && (
+      {/* Contact section — only shown when there's info not already surfaced above */}
+      {hasContactSection && (
         <div className="event-detail-contact">
           <div className="event-detail-contact-heading">Contact</div>
 
@@ -148,20 +201,11 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
             </div>
           )}
 
-          {event.contact_email && (
+          {event.contact_email && !bookingIsContact && (
             <div className="event-detail-row">
               <span className="event-detail-icon">✉</span>
               <a className="event-detail-link" href={`mailto:${event.contact_email}`}>
                 {event.contact_email}
-              </a>
-            </div>
-          )}
-
-          {normUrl && (
-            <div className="event-detail-row">
-              <span className="event-detail-icon">🔗</span>
-              <a className="event-detail-link" href={normUrl} target="_blank" rel="noopener noreferrer">
-                {displayUrl}
               </a>
             </div>
           )}

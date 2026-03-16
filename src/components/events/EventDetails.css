@@ -216,6 +216,94 @@
     text-decoration: underline;
 }
 
+/* ── Booking row ── */
+.event-detail-booking-row {
+    align-items: flex-start;
+}
+
+.event-detail-booking-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+}
+
+.event-detail-booking-contact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.event-detail-contact-name {
+    color: var(--color-text-primary);
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* ── Link / Copy buttons ── */
+.event-detail-link-buttons {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.event-detail-link-btn {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-family: monospace;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.event-detail-link-btn:hover {
+    background: var(--color-accent);
+    color: var(--color-bg-card);
+    text-decoration: none;
+}
+
+.event-detail-email-btn {
+    border-color: var(--color-border-subtle);
+    color: var(--color-text-link);
+}
+
+.event-detail-email-btn:hover {
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.event-detail-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-family: monospace;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.event-detail-copy-btn:hover {
+    background: rgba(37, 99, 235, 0.06);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
 /* ── Add to Calendar button ── */
 .event-detail-cal-row {
     border-top: 1px solid var(--color-border);

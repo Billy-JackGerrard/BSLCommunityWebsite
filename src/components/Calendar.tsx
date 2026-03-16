@@ -306,7 +306,14 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             {searchQuery.trim().length > 0 && (
               <div className="calendar-search-dropdown">
                 {searchResults.length === 0 ? (
-                  <div className="calendar-search-dropdown-empty">No matching events</div>
+                  <div className="calendar-search-dropdown-empty">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                      <circle cx="11" cy="11" r="8"/>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                      <line x1="8" y1="11" x2="14" y2="11"/>
+                    </svg>
+                    No results for "{searchQuery}"
+                  </div>
                 ) : searchResults.map(ev => (
                   <button key={ev.id} className="calendar-search-result" onClick={() => handleResultClick(ev)}>
                     <span className="calendar-search-result-title">{ev.title}</span>
@@ -352,7 +359,12 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
         {!selected ? (
           <div className="calendar-panel-empty">
-            <span className="calendar-panel-empty-icon">◎</span>
+            <svg className="calendar-panel-empty-icon" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
             <p>Select a day to see events</p>
           </div>
         ) : (
@@ -384,7 +396,13 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
               </div>
             ) : selectedEvents.length === 0 ? (
               <div className="calendar-panel-empty">
-                <span className="calendar-panel-empty-icon">○</span>
+                <svg className="calendar-panel-empty-icon" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                  <line x1="9" y1="16" x2="15" y2="16"/>
+                </svg>
                 <p>No events on this day</p>
               </div>
             ) : (
