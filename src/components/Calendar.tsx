@@ -267,6 +267,9 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
     ) ?? [];
   }, [selected, eventsByDate]);
 
+  // On mobile the panel only slides up when there's something to show
+  const mobilePanelOpen = selected !== null && (loading || selectedEvents.length > 0);
+
   return (
     <div className="calendar-page">
 
@@ -328,8 +331,13 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
         </div>
       </div>
 
+      {/* ── Mobile backdrop — dims calendar behind the panel ── */}
+      {mobilePanelOpen && (
+        <div className="calendar-backdrop" onClick={() => setSelected(null)} aria-hidden="true" />
+      )}
+
       {/* ── Right: event panel ── */}
-      <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""}`}>
+      <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""}`}>
 
         {/* Always-visible top: controls + legend */}
         <div className="calendar-panel-top">
