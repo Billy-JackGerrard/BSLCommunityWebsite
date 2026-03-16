@@ -209,6 +209,8 @@
 
 .calendar-panel-event:hover {
     background: var(--color-bg-inset);
+    border-left: 3px solid var(--color-accent);
+    padding-left: calc(1.25rem - 3px);
 }
 
 .calendar-panel-event-category-dot {
@@ -546,9 +548,6 @@
         transform: translateY(0);
     }
 
-    /* Hide the top controls/legend bar inside the overlay — not needed on mobile */
-    .calendar-panel-top { display: none; }
-
     .calendar-panel-empty { display: none; }
 
     .calendar-day-number  { font-size: 0.8rem; }
@@ -582,10 +581,15 @@
     right: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.55rem;
+    font-size: 0.75rem;
     color: var(--color-accent);
-    opacity: 0.5;
+    opacity: 0.8;
     pointer-events: none;
+    transition: transform 0.15s;
+}
+
+.calendar-panel-event:hover .calendar-panel-event-chevron {
+    transform: translateY(-50%) translateX(2px);
 }
 
 .calendar-panel-event-detail {

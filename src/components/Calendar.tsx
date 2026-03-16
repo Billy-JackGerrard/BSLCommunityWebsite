@@ -267,8 +267,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
     ) ?? [];
   }, [selected, eventsByDate]);
 
-  // On mobile the panel only slides up when there's something to show
-  const mobilePanelOpen = selected !== null && (loading || selectedEvents.length > 0);
+  // On mobile the panel always slides up when a day is selected (even empty days show the Add Event button)
+  const mobilePanelOpen = selected !== null;
 
   return (
     <div className="calendar-page">
