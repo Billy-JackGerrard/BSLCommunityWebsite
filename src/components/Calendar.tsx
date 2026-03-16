@@ -206,7 +206,9 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const scrollToToday = useCallback(() => {
     todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
+    if (window.innerWidth > 700) {
+      setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
+    }
   }, [today]);
 
   useEffect(() => {
