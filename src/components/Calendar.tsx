@@ -348,18 +348,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
       {/* ── Right: event panel ── */}
       <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""}`}>
 
-        {/* Always-visible top: legend */}
-        <div className="calendar-panel-top">
-          <div className="calendar-panel-legend">
-            {CATEGORIES.map(c => (
-              <div key={c} className="calendar-panel-legend-item">
-                <span className="calendar-panel-legend-dot" style={{ background: CATEGORY_COLOURS[c] }} />
-                <span className="calendar-panel-legend-label">{c}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {!selected ? (
           <div className="calendar-panel-empty">
             <span className="calendar-panel-empty-icon">◎</span>
@@ -430,6 +418,18 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             )}
           </>
         )}
+
+        {/* Always-visible bottom: legend */}
+        <div className="calendar-panel-bottom">
+          <div className="calendar-panel-legend">
+            {CATEGORIES.map(c => (
+              <div key={c} className="calendar-panel-legend-item">
+                <span className="calendar-panel-legend-dot" style={{ background: CATEGORY_COLOURS[c] }} />
+                <span className="calendar-panel-legend-label">{c}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
     </div>
