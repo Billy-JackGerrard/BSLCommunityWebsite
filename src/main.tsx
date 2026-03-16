@@ -134,7 +134,7 @@ const fetchPendingCount = useCallback(async () => {
         onScrollToToday={() => scrollToTodayRef.current?.()}
         onToggleSearch={handleToggleSearch}
       />
-      <div style={{ paddingTop: "60px" }}>
+      <div key={view} className="page-view" style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
           <Calendar
             isLoggedIn={isLoggedIn}

@@ -162,7 +162,18 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
           {error && <div className="queue-error">{error}</div>}
 
           {loading ? (
-            <div className="queue-empty">Loading…</div>
+            <div className="queue-list">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="queue-card" style={{ cursor: "default" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.6rem", gap: "1rem" }}>
+                    <div className="skeleton" style={{ height: "1rem", width: "55%", borderRadius: "4px" }} />
+                    <div className="skeleton" style={{ height: "1rem", width: "30%", borderRadius: "4px" }} />
+                  </div>
+                  <div className="skeleton" style={{ height: "0.8rem", width: "40%", marginBottom: "0.5rem", borderRadius: "4px" }} />
+                  <div className="skeleton" style={{ height: "0.8rem", width: "80%", borderRadius: "4px" }} />
+                </div>
+              ))}
+            </div>
           ) : displayEvents.length === 0 ? (
             <div className="queue-empty">No pending events — you're all caught up!</div>
           ) : (

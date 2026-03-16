@@ -374,7 +374,14 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             </div>
 
             {loading ? (
-              <div className="calendar-panel-empty"><p>Loading…</p></div>
+              <div className="calendar-panel-list" style={{ padding: "0.75rem" }}>
+                {[1, 2].map(i => (
+                  <div key={i} style={{ padding: "0.75rem 0", borderBottom: "1px solid var(--color-border-subtle)" }}>
+                    <div className="skeleton" style={{ height: "0.9rem", width: "65%", marginBottom: "0.5rem", borderRadius: "4px" }} />
+                    <div className="skeleton" style={{ height: "0.75rem", width: "40%", borderRadius: "4px" }} />
+                  </div>
+                ))}
+              </div>
             ) : selectedEvents.length === 0 ? (
               <div className="calendar-panel-empty">
                 <span className="calendar-panel-empty-icon">○</span>

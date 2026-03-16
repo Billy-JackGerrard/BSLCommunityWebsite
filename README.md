@@ -46,17 +46,12 @@ need better filtering/search options
 
 must have a region selected?
 
-COLOUR : light MODE
-blue: #0178D4 
-white background (cards)
-grey: #ececec
 
-COLOUR : dark MODE
-black: #202020
+accessibility review
+
 
 have different ways of viewing calendar
 
-make it phone-screen friendly! 
 
 means can filter for city/region etc
 
