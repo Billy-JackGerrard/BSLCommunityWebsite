@@ -414,6 +414,7 @@
 }
 
 .calendar-cell--empty { cursor: default; }
+.calendar-cell--weekend { background: rgba(255, 255, 255, 0.035); }
 .calendar-cell--today { background: var(--color-border); }
 .calendar-cell--selected,
 .calendar-cell--selected:hover { background: var(--color-accent); }

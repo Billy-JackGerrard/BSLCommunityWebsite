@@ -62,10 +62,6 @@ tag/#
 
 rename startsAt to be "from" and finishes At to be "to"
 
-have current month be normal colour and previous/after months be a dimmer shadw - changes automatically
-
-change week to start monday, weekend be slightly different colour
-
 change font to be Calibri
 
 need better filtering/search options

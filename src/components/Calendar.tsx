@@ -5,7 +5,7 @@ import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import EventDetails from "./events/EventDetails";
 import "./Calendar.css";
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SEARCH_RESULT_LIMIT = 10;
 const MONTHS_BEFORE_INIT = 2;
 const MONTHS_BEFORE_MAX  = 11;
@@ -42,7 +42,8 @@ type MonthBlockProps = {
 
 function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, monthRef }: MonthBlockProps) {
   const { month, year } = monthKey;
-  const firstDay    = new Date(year, month, 1).getDay();
+  const rawFirstDay = new Date(year, month, 1).getDay(); // 0=Sun…6=Sat
+  const firstDay    = (rawFirstDay + 6) % 7;             // 0=Mon…6=Sun
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells = [
     ...Array(firstDay).fill(null),
@@ -72,11 +73,14 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
       <div className="calendar-grid">
         {cells.map((day, i) => {
           const count = day ? eventsOnDay(day).length : 0;
+          const colIndex = i % 7;
+          const isWeekend = colIndex === 5 || colIndex === 6;
           const cellClass = [
             "calendar-cell",
             !day                   ? "calendar-cell--empty"    : "",
             day && isToday(day)    ? "calendar-cell--today"    : "",
             day && isSelected(day) ? "calendar-cell--selected" : "",
+            isWeekend              ? "calendar-cell--weekend"  : "",
           ].filter(Boolean).join(" ");
 
           return (
