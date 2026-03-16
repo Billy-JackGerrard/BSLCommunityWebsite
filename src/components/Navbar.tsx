@@ -66,6 +66,13 @@ export default function Navbar({
         </button>
 
         <button
+          className={`navbar-link ${currentView === "about" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("about")}
+        >
+          About
+        </button>
+
+        <button
           className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("contact")}
         >

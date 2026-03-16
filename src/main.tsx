@@ -13,6 +13,7 @@ import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import EventDetails from "./components/events/EventDetails.tsx";
 import AdminQueue from "./components/AdminQueue.tsx";
 import Contact from "./components/Contact.tsx";
+import AboutUs from "./components/AboutUs.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
@@ -181,6 +182,7 @@ const fetchPendingCount = useCallback(async () => {
           />
         )}
         {view === "contact" && <Contact />}
+        {view === "about" && <AboutUs />}
       </div>
     </>
   );
