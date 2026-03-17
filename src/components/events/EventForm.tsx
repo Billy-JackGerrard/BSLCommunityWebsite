@@ -3,7 +3,7 @@ import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime } from "../../utils/dates";
 import type { Event, Category, AgeRating } from "../../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS } from "../../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
 
@@ -417,9 +417,9 @@ export default function EventForm({
           onChange={e => setBookingInfo(e.target.value)}
         >
           <option value="">-- Select --</option>
-          <option value="via_link">Via a link</option>
-          <option value="by_contacting">By contacting</option>
-          <option value="just_turn_up">Just turn up</option>
+          {BOOKING_INFO_OPTIONS.map(opt => (
+            <option key={opt} value={opt}>{BOOKING_INFO_LABELS[opt]}</option>
+          ))}
         </select>
       </div>
 

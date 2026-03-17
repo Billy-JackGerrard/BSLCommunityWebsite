@@ -10,7 +10,7 @@ export type Event = {
   location?: string;
   postcode?: string;
   price?: string;
-  booking_info?: string;
+  booking_info?: BookingInfo;
   starts_at: string;
   finishes_at?: string;
   created_at: string;
@@ -34,6 +34,20 @@ export type AdminEvent = Event & {
 };
 
 
+
+export const BOOKING_INFO_OPTIONS = [
+  "via_link",
+  "by_contacting",
+  "just_turn_up",
+] as const;
+
+export type BookingInfo = typeof BOOKING_INFO_OPTIONS[number];
+
+export const BOOKING_INFO_LABELS: Record<BookingInfo, string> = {
+  via_link:      "Via a link",
+  by_contacting: "By contacting",
+  just_turn_up:  "Just turn up",
+};
 
 export const AGE_RATINGS = [
   "Toddlers",
