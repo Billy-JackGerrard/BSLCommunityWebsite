@@ -25,13 +25,15 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
 
 type Props = {
   isLoggedIn: boolean;
-  onViewEvent: (event: Event) => void;
   onEditEvent: (event: Event) => void;
   onDeleteEvent?: (event: Event) => void;
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
   searchOpen: boolean;
   onToggleSearch: () => void;
   onScrollToTodayReady: (fn: () => void) => void;
+  initialEventId?: string;
+  initialEventDate?: Date;
+  onEventExpand?: (event: Event | null) => void;
 };
 
 // ── Single month block ──────────────────────────────────────────────────────
@@ -127,7 +129,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -228,6 +230,21 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
     onScrollToTodayReady(scrollToToday);
   }, [scrollToToday, onScrollToTodayReady]);
 
+  // Auto-expand event when initialEventId + initialEventDate are provided (deep-link / browser back)
+  const resolvedInitialIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!initialEventId || !initialEventDate || resolvedInitialIdRef.current === initialEventId) return;
+    resolvedInitialIdRef.current = initialEventId;
+    const day = initialEventDate.getDate();
+    const month = initialEventDate.getMonth();
+    const year = initialEventDate.getFullYear();
+    setSelected({ day, month, year });
+    setExpandedEventId(initialEventId);
+    setTimeout(() => {
+      monthRefs.current.get(`${year}-${month}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }, [initialEventId, initialEventDate]);
+
 
   const matchesSearch = useCallback((event: Event, q: string) => {
     const haystack = [event.title, event.description ?? "", event.location ?? ""].join(" ").toLowerCase();
@@ -261,14 +278,21 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const handleSelectDay = (day: number, month: number, year: number) => {
     if (selected?.day === day && selected?.month === month && selected?.year === year) {
       setSelected(null);
+      if (expandedEventId) onEventExpand?.(null);
+      setExpandedEventId(null);
     } else {
+      if (expandedEventId) onEventExpand?.(null);
       setSelected({ day, month, year });
       setExpandedEventId(null);
     }
   };
 
   const handleToggleEvent = (ev: Event) => {
-    setExpandedEventId(prev => prev === ev.id ? null : ev.id);
+    setExpandedEventId(prev => {
+      const next = prev === ev.id ? null : ev.id;
+      onEventExpand?.(next ? ev : null);
+      return next;
+    });
   };
 
   const selectedEvents: Event[] = useMemo(() => {
@@ -351,7 +375,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
       {/* ── Mobile backdrop — dims calendar behind the panel ── */}
       {mobilePanelOpen && (
-        <div className="calendar-backdrop" onClick={() => setSelected(null)} aria-hidden="true" />
+        <div className="calendar-backdrop" onClick={() => { if (expandedEventId) onEventExpand?.(null); setSelected(null); setExpandedEventId(null); }} aria-hidden="true" />
       )}
 
       {/* ── Right: event panel ── */}
@@ -381,7 +405,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
                 >
                   + Add Event
                 </button>
-                <button className="calendar-panel-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
+                <button className="calendar-panel-close" onClick={() => { if (expandedEventId) onEventExpand?.(null); setSelected(null); setExpandedEventId(null); }} aria-label="Close">✕</button>
               </div>
             </div>
 
@@ -416,7 +440,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
                           <EventDetails
                             event={ev}
                             isLoggedIn={isLoggedIn}
-                            onClose={() => setExpandedEventId(null)}
+                            onClose={() => { setExpandedEventId(null); onEventExpand?.(null); }}
                             onEdit={onEditEvent}
                             onDelete={onDeleteEvent}
                           />

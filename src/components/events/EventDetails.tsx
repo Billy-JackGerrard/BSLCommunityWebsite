@@ -26,6 +26,22 @@ type Props = {
   showAddToCalendar?: boolean;
 };
 
+function ShareButton({ eventId }: { eventId: string }) {
+  const [copied, setCopied] = useState(false);
+  const shareUrl = `${window.location.origin}/event/${eventId}`;
+  function handleShare() {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+  return (
+    <button className="event-detail-share-btn" onClick={handleShare}>
+      {copied ? "Copied ✓" : "Share event"}
+    </button>
+  );
+}
+
 function LinkButtons({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -211,6 +227,10 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
           )}
         </div>
       )}
+
+      <div className="event-detail-cal-row">
+        <ShareButton eventId={event.id} />
+      </div>
 
       {showAddToCalendar && (
         <div className="event-detail-cal-row">

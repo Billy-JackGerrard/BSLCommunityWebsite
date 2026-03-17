@@ -11,7 +11,6 @@ import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
 import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
-import EventDetails from "./components/events/EventDetails.tsx";
 import AdminQueue from "./components/AdminQueue.tsx";
 import Contact from "./components/Contact.tsx";
 import AboutUs from "./components/AboutUs.tsx";
@@ -25,15 +24,42 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
-  const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [initialEventId, setInitialEventId] = useState<string | undefined>(() => {
+    const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
+    return match ? match[1] : undefined;
+  });
+  const [initialEventDate, setInitialEventDate] = useState<Date | undefined>(undefined);
   const scrollToTodayRef = useRef<(() => void) | null>(null);
   const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
+
+  useEffect(() => {
+    if (!initialEventId) { setInitialEventDate(undefined); return; }
+    supabase
+      .from("events")
+      .select("starts_at")
+      .eq("id", initialEventId)
+      .single()
+      .then(({ data }) => { if (data) setInitialEventDate(new Date(data.starts_at)); });
+  }, [initialEventId]);
+
+  const handleEventExpand = useCallback((event: Event | null) => {
+    window.history.pushState({}, "", event ? `/event/${event.id}` : "/");
+  }, []);
+
+  useEffect(() => {
+    const handler = () => {
+      const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
+      setInitialEventId(match ? match[1] : undefined);
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
 
 const fetchPendingCount = useCallback(async () => {
     const { data } = await supabase
@@ -79,13 +105,13 @@ const fetchPendingCount = useCallback(async () => {
 
   const handleNavigate = (v: View) => {
     if (v !== "add-event") setAddEventDate(undefined);
-    if (v !== "calendar") setSearchOpen(false);
+    if (v !== "calendar") {
+      setSearchOpen(false);
+      if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
+      setInitialEventId(undefined);
+      setInitialEventDate(undefined);
+    }
     setView(v);
-  };
-
-  const handleViewEvent = (event: Event) => {
-    setViewingEvent(event);
-    setView("event-detail");
   };
 
   const handleEditEvent = (event: Event, returnTo: View = "calendar") => {
@@ -142,25 +168,16 @@ const fetchPendingCount = useCallback(async () => {
         {view === "calendar" && (
           <Calendar
             isLoggedIn={isLoggedIn}
-            onViewEvent={handleViewEvent}
             onEditEvent={ev => handleEditEvent(ev, "calendar")}
             onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "calendar") : undefined}
             onAddEvent={handleAddEventFromCalendar}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
             onScrollToTodayReady={handleScrollToTodayReady}
+            initialEventId={initialEventId}
+            initialEventDate={initialEventDate}
+            onEventExpand={handleEventExpand}
           />
-        )}
-        {view === "event-detail" && viewingEvent && (
-          <div className="event-detail-page">
-            <EventDetails
-              event={viewingEvent}
-              isLoggedIn={isLoggedIn}
-              onClose={() => setView("calendar")}
-              onEdit={ev => handleEditEvent(ev, "event-detail")}
-              onDelete={isLoggedIn ? ev => handleDeleteEvent(ev, "event-detail") : undefined}
-            />
-          </div>
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
         {view === "add-event"  && <AddEvent prefillDate={addEventDate} />}

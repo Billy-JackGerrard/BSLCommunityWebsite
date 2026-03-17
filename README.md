@@ -33,6 +33,7 @@ event queue for admins:
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
 add predetermined events eg easter sunday, christmas day
+maybe have this a kind of special event / non real event as it doesnt require a location or booking info etc
 
 for category colours,
 ensure that the light colours have black text and vice versa
@@ -47,11 +48,15 @@ need better filtering/search options
 must have a region selected?
 
 
-accessibility review
+accessibility review - send directly to their email
 
 
 have different ways of viewing calendar
 
+people can click I'm going onto events - maybe need to wait until after user accounts are set up
+
+Set Up Multiple Views: Provide options for list, grid, or monthly views to cater to different user preferences.
+Also setup a Map View to see where events are this month, maybe with a number with each pin to show how many events are there
 
 means can filter for city/region etc
 
