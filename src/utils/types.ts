@@ -39,7 +39,7 @@ export const AGE_RATINGS = [
   "Toddlers",
   "Children",
   "Family",
-  "PG",
+  "All",
   "12+",
   "15+",
   "18+",
