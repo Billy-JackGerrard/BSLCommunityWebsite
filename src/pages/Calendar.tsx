@@ -3,8 +3,8 @@ import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
+import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
-import type { DateFilter } from "../utils/eventFilters";
 import EventDetails from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
@@ -175,8 +175,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const windowStart = monthKeys[0];
   const windowEnd   = monthKeys[monthKeys.length - 1];
 
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
-  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const { selectedCategories, setSelectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
 
   const { eventsByDate: rawEventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
 
@@ -210,15 +209,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef    = useRef<HTMLDivElement>(null);
-
-  function toggleCategory(cat: string) {
-    setSelectedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat);
-      else next.add(cat);
-      return next;
-    });
-  }
 
   // Notify parent when filters become active/inactive (for the navbar button indicator)
   useEffect(() => {
@@ -393,7 +383,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             <FilterPanel
               selectedCategories={selectedCategories}
               onToggleCategory={toggleCategory}
-              onClearCategories={() => setSelectedCategories(new Set())}
+              onClearCategories={clearCategories}
               dateFilter={dateFilter}
               onSetDateFilter={setDateFilter}
             />
@@ -416,6 +406,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
                   if (el) {
                     monthRefs.current.set(key, el);
                     if (isCurrentMonth) todayMonthRef.current = el;
+                  } else {
+                    monthRefs.current.delete(key);
                   }
                 }}
               />

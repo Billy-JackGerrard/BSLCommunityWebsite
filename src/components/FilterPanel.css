@@ -27,9 +27,12 @@
   transition: background 0.15s, border-color 0.15s;
 }
 
-.filter-panel-date-btn:hover {
+.filter-panel-date-btn:hover,
+.filter-panel-date-btn:focus-visible {
   background: var(--color-bg-inset);
   border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .filter-panel-date-btn--active {
@@ -52,9 +55,15 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 0.1rem 0.2rem;
+  border-radius: 4px;
   font-family: inherit;
   transition: opacity 0.12s;
+}
+
+.filter-panel-cat:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .filter-panel-cat--active .filter-panel-cat-label {

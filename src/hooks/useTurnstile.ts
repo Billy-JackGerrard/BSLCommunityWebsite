@@ -51,7 +51,7 @@ export function useTurnstile(siteKey: string, formKey: number): UseTurnstileResu
           callback: (t: string) => setToken(t),
           "expired-callback": () => setToken(null),
           "error-callback": () => setToken(null),
-          theme: "dark",
+          theme: "auto",
         });
       }
     };

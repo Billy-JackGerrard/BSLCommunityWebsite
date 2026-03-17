@@ -34,10 +34,11 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
       .select("content")
       .eq("key", "about_us")
       .single()
-      .then(({ data }) => {
-        if (data) setSections((data.content as { sections: Section[] }).sections);
+      .then(({ data, error }) => {
+        if (error) setError("Failed to load content. Please try refreshing.");
+        else if (data) setSections((data.content as { sections: Section[] }).sections);
         setLoading(false);
-      }, () => setLoading(false));
+      });
   }, []);
 
   // Resize all textareas once content has loaded into the DOM

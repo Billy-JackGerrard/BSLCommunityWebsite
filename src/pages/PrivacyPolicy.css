@@ -8,7 +8,8 @@
 }
 
 .privacy-card {
-  width: 620px;
+  max-width: 620px;
+  width: 100%;
 }
 
 .privacy-title {
@@ -34,17 +35,6 @@
 
 .privacy-section:last-child {
   margin-bottom: 0;
-}
-
-.privacy-section-title {
-  color: var(--color-accent);
-  font-family: monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin: 0 0 0.6rem;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 0.4rem;
 }
 
 .privacy-body {
@@ -87,4 +77,10 @@
 .privacy-inline-note {
   color: var(--color-accent);
   font-weight: 500;
+}
+
+@media (max-width: 660px) {
+  .privacy-page {
+    padding: 1rem;
+  }
 }

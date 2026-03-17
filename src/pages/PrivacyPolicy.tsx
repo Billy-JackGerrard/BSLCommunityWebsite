@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
         <p className="privacy-updated">Last updated: March 2026</p>
 
         <section className="privacy-section">
-          <h3 className="privacy-section-title">Who we are</h3>
+          <h3 className="section-label">Who we are</h3>
           <p className="privacy-body">
             Edinburgh BSL Community Events is a volunteer-run community platform for the BSL and
             Deaf community in Edinburgh. We are not affiliated with any organisation or charity.
@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="privacy-section">
-          <h3 className="privacy-section-title">What data we collect</h3>
+          <h3 className="section-label">What data we collect</h3>
           <p className="privacy-body">We collect data in two ways:</p>
           <ul className="privacy-list">
             <li>
@@ -41,7 +41,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="privacy-section">
-          <h3 className="privacy-section-title">Why we collect it</h3>
+          <h3 className="section-label">Why we collect it</h3>
           <ul className="privacy-list">
             <li>Event submission data is collected to operate the community events calendar.</li>
             <li>Contact messages are collected to respond to enquiries and improve the site.</li>
@@ -53,7 +53,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="privacy-section">
-          <h3 className="privacy-section-title">How long we keep it</h3>
+          <h3 className="section-label">How long we keep it</h3>
           <ul className="privacy-list">
             <li>Approved event listings are kept until they are deleted by an admin or the event organiser requests removal.</li>
             <li>Rejected or unapproved submissions are deleted periodically.</li>
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="privacy-section">
-          <h3 className="privacy-section-title">Who can see it</h3>
+          <h3 className="section-label">Who can see it</h3>
           <ul className="privacy-list">
             <li>Approved event details (including organiser contact info) are visible to all visitors.</li>
             <li>Unapproved submissions and contact messages are only accessible to site admins.</li>
@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section className="privacy-section">
-          <h3 className="privacy-section-title">Your rights</h3>
+          <h3 className="section-label">Your rights</h3>
           <p className="privacy-body">
             Under UK GDPR you have the right to access, correct, or request deletion of any
             personal data we hold about you. To exercise these rights, contact us via the{" "}

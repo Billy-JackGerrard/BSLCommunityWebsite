@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
+import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
 import type { DateFilter } from "../utils/eventFilters";
 import EventDetailCard from "../components/events/EventDetails";
@@ -41,8 +42,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
-  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const { selectedCategories, setSelectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
   const [searchQuery, setSearchQuery] = useState("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -91,15 +91,6 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
     setExpandedId(prev => (prev === id ? null : id));
   }
 
-  function toggleCategory(cat: string) {
-    setSelectedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat);
-      else next.add(cat);
-      return next;
-    });
-  }
-
   const visibleEvents = events.filter(ev =>
     matchesSearch(ev, searchQuery) &&
     (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
@@ -146,7 +137,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
             <FilterPanel
               selectedCategories={selectedCategories}
               onToggleCategory={toggleCategory}
-              onClearCategories={() => setSelectedCategories(new Set())}
+              onClearCategories={clearCategories}
               dateFilter={dateFilter}
               onSetDateFilter={setDateFilter}
             />
@@ -184,7 +175,9 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
                           <span
                             className="event-list-dot"
                             style={{ background: CATEGORY_COLOURS[ev.category] }}
+                            aria-hidden="true"
                           />
+                          <span className="sr-only">{ev.category}</span>
                           <span className="event-list-title">{ev.title}</span>
                           <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
                           {ev.location && (
@@ -239,7 +232,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
           <div className="event-list-sidebar-title event-list-sidebar-title--section">Categories</div>
           <button
             className={`category-filter-btn${selectedCategories.size === 0 ? " category-filter-btn--selected" : ""}`}
-            onClick={() => setSelectedCategories(new Set())}
+            onClick={clearCategories}
           >
             All
           </button>
@@ -250,7 +243,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
               onClick={() => toggleCategory(cat)}
             >
               <span
-                className="category-filter-dot"
+                className="category-dot"
                 style={{ background: CATEGORY_COLOURS[cat] }}
               />
               <span className="category-filter-label">{cat}</span>

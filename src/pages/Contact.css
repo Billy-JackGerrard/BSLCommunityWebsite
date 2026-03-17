@@ -8,7 +8,8 @@
   }
   
   .contact-card {
-    width: 520px;
+    max-width: 520px;
+    width: 100%;
   }
   
   .contact-title {
@@ -80,6 +81,17 @@
     margin-top: 0.25rem;
   }
   
+  @media (max-width: 560px) {
+    .contact-page {
+      padding: 1rem;
+    }
+    /* Prevent iOS Safari from zooming into inputs smaller than 16px */
+    .form-input,
+    .contact-textarea {
+      font-size: 16px;
+    }
+  }
+
   /* ── Success state ── */
   .contact-success {
     text-align: center;

@@ -26,6 +26,7 @@ type Props = {
 export default function AboutUs({ isLoggedIn, onEdit }: Props) {
   const [content, setContent] = useState<AboutContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     supabase
@@ -33,10 +34,11 @@ export default function AboutUs({ isLoggedIn, onEdit }: Props) {
       .select("content")
       .eq("key", "about_us")
       .single()
-      .then(({ data }) => {
-        setContent(data ? (data.content as AboutContent) : null);
+      .then(({ data, error }) => {
+        if (error) setFetchError(true);
+        else setContent(data ? (data.content as AboutContent) : null);
         setLoading(false);
-      }, () => setLoading(false));
+      });
   }, []);
 
   return (
@@ -52,12 +54,14 @@ export default function AboutUs({ isLoggedIn, onEdit }: Props) {
 
         {loading ? (
           <p className="about-body">Loading…</p>
+        ) : fetchError ? (
+          <p className="about-body about-empty">Failed to load content. Please try refreshing the page.</p>
         ) : !content || content.sections.length === 0 ? (
           <p className="about-body about-empty">No content yet.</p>
         ) : (
           content.sections.map((section, i) => (
             <section key={i} className="about-section">
-              <h3 className="about-section-title">{section.title}</h3>
+              <h3 className="section-label">{section.title}</h3>
               {section.paragraphs.map((para, j) => (
                 <p key={j} className="about-body">
                   {renderParagraph(para)}

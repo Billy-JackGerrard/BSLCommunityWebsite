@@ -7,7 +7,8 @@
 }
   
 .login-card {
-    width: 340px;
+    max-width: 340px;
+    width: 100%;
 }
   
 .login-title {
@@ -43,4 +44,11 @@
 .login-back-btn:hover {
     color: var(--color-accent);
     border-color: transparent;
+}
+
+@media (max-width: 400px) {
+  .login-page {
+    padding: 1rem;
+    align-items: flex-start;
+  }
 }

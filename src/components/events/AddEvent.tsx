@@ -36,42 +36,46 @@ export default function AddEvent({ prefillDate }: Props) {
   }, []);
 
   const handleSubmit = async (rows: EventFormRow[]) => {
-    if (!turnstileToken) {
-      setError("Please complete the captcha check.");
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
-    const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
-      },
-      body: JSON.stringify({ turnstileToken }),
-    });
+    // Admins bypass captcha — they're already authenticated
+    if (!isAdmin) {
+      if (!turnstileToken) {
+        setError("Please complete the captcha check.");
+        setLoading(false);
+        return;
+      }
 
-    if (!verifyRes.ok) {
-      setError("Captcha verification failed. Please try again.");
-      resetTurnstile();
-      setLoading(false);
-      return;
+      const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
+        },
+        body: JSON.stringify({ turnstileToken }),
+      });
+
+      if (!verifyRes.ok) {
+        setError("Captcha verification failed. Please try again.");
+        resetTurnstile();
+        setLoading(false);
+        return;
+      }
+
+      const verifyData = await verifyRes.json();
+
+      if (!verifyData.success) {
+        setError("Captcha verification failed. Please try again.");
+        resetTurnstile();
+        setLoading(false);
+        return;
+      }
     }
 
-    const verifyData = await verifyRes.json();
-
-    if (!verifyData.success) {
-      setError("Captcha verification failed. Please try again.");
-      resetTurnstile();
-      setLoading(false);
-      return;
-    }
-
+    // Fetch session only to get the user ID for admin_id; use isAdmin state for the flag
     const { data: { session } }: { data: { session: Session | null } } =
       await supabase.auth.getSession();
-    const admin = !!session?.user;
 
     // All occurrences are inserted upfront. For non-admins they are all
     // unapproved — the queue deduplicates by recurrence_id so only the first
@@ -79,8 +83,8 @@ export default function AddEvent({ prefillDate }: Props) {
     // one query.
     const rowsWithMeta = rows.map(row => ({
       ...row,
-      approved: admin,
-      admin_id: admin ? session!.user.id : null,
+      approved: isAdmin,
+      admin_id: isAdmin ? (session?.user?.id ?? null) : null,
     }));
 
     const { error: insertError } = await supabase.from("events").insert(rowsWithMeta);
@@ -152,10 +156,10 @@ export default function AddEvent({ prefillDate }: Props) {
           submittingLabel="Submitting…"
           externalError={error}
           submitting={loading}
-          submitDisabled={!turnstileToken}
+          submitDisabled={!isAdmin && !turnstileToken}
           onSubmit={handleSubmit}
         >
-          <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
+          {!isAdmin && <div ref={turnstileRef} style={{ margin: "1rem 0" }} />}
         </EventForm>
       </div>
     </div>

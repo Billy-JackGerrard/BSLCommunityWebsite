@@ -29,7 +29,10 @@ export function passesDateFilter(event: Event, filter: DateFilter): boolean {
   if (filter === "weekend") {
     const day = d.getDay(); // 0=Sun, 6=Sat
     if (day !== 0 && day !== 6) return false;
-    const daysUntilSat = (6 - now.getDay() + 7) % 7;
+    // If today is Sunday, "this weekend" is the Sat just passed + today
+    // Otherwise find the upcoming Saturday (same day if today is Sat)
+    const todayDay = now.getDay();
+    const daysUntilSat = todayDay === 0 ? -1 : (6 - todayDay + 7) % 7;
     const thisSat = new Date(now);
     thisSat.setDate(now.getDate() + daysUntilSat);
     const endSun = new Date(thisSat);
