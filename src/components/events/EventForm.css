@@ -1,3 +1,12 @@
+/* ── Muted label suffix (e.g. "· estimated") ── */
+.form-label-muted {
+  font-size: 0.75em;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  opacity: 0.65;
+  letter-spacing: 0.01em;
+}
+
 /* ── Date + time split row ── */
 .datetime-row {
   display: flex;

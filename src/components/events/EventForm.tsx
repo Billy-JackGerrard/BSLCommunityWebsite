@@ -438,7 +438,7 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">End Time *</label>
+        <label className="form-label">Finish Time <span className="form-label-muted">· estimated</span> *</label>
         <div className="datetime-row">
           <input
             id="ef-ends-at-date"
