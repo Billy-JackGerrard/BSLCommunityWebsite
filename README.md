@@ -1,4 +1,26 @@
+TODO
+
+need to rethink the age groups - family AND pg?
+also the symbol for age on show event? not appropriate
+
+apple has dropdown boxes built in - consider using those?
+etc
+
+make it more professional
+
+finish fixing all bugs and issues
+
+change the UI to be more professional and sleek - maybe slightly darker blue? think top tier website. wow factor etc
+can add dynamic text/calendar showing as your scroll for example
+
+home/landing page? make it look professional and modern.
+what do the top UI websites have/use?
+
+
+
 Gaps:
+
+
 
 No way for event submitters to edit or follow up on their submission (eg what if there's a time or room change?)
 No way for admins (or normal peeps) to cancel events (it should show cancelled instead of deleted so peeps know)
