@@ -167,6 +167,15 @@
   white-space: pre-wrap;
 }
 
+/* Edit */
+
+.msgs-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
 /* Actions */
 
 .msgs-actions {

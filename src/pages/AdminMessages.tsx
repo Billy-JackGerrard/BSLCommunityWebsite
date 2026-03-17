@@ -40,6 +40,9 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+  const [savingId, setSavingId] = useState<number | null>(null);
 
   const fetchMessages = async () => {
     setLoading(true);
@@ -85,6 +88,34 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
     setCompose("");
     setMessages(prev => [data, ...prev]);
+  };
+
+  const handleEditStart = (msg: ContactMessage) => {
+    setEditingId(msg.id);
+    setEditText(msg.message);
+    setConfirmDelete(null);
+  };
+
+  const handleEditSave = async (id: number) => {
+    if (!editText.trim()) return;
+    setSavingId(id);
+    setError(null);
+
+    const { error: dbError } = await supabase
+      .from("contact_messages")
+      .update({ message: editText.trim() })
+      .eq("id", id);
+
+    setSavingId(null);
+
+    if (dbError) {
+      setError("Failed to save edit.");
+      return;
+    }
+
+    setMessages(prev => prev.map(m => m.id === id ? { ...m, message: editText.trim() } : m));
+    setEditingId(null);
+    setEditText("");
   };
 
   const handleDelete = async (id: number) => {
@@ -177,7 +208,34 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
                   <span className="msgs-timestamp">{formatTimestamp(msg.created_at)}</span>
                 </div>
 
-                <p className="msgs-body">{msg.message}</p>
+                {editingId === msg.id ? (
+                  <div className="msgs-edit">
+                    <textarea
+                      className="form-input msgs-compose-textarea"
+                      value={editText}
+                      onChange={e => setEditText(e.target.value)}
+                      autoFocus
+                    />
+                    <div className="msgs-actions">
+                      <button
+                        className="msgs-action-btn"
+                        onClick={() => handleEditSave(msg.id)}
+                        disabled={!editText.trim() || savingId === msg.id}
+                      >
+                        {savingId === msg.id ? "Saving…" : "Save"}
+                      </button>
+                      <button
+                        className="msgs-action-btn"
+                        onClick={() => { setEditingId(null); setEditText(""); }}
+                        disabled={savingId === msg.id}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="msgs-body">{msg.message}</p>
+                )}
 
                 <div className="msgs-actions">
                   {confirmDelete === msg.id ? (
@@ -197,13 +255,24 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
                       </button>
                     </>
                   ) : (
-                    <button
-                      className="msgs-action-btn msgs-action-btn--danger"
-                      onClick={() => setConfirmDelete(msg.id)}
-                      disabled={deletingId !== null}
-                    >
-                      Delete
-                    </button>
+                    <>
+                      {msg.is_admin && editingId !== msg.id && (
+                        <button
+                          className="msgs-action-btn"
+                          onClick={() => handleEditStart(msg)}
+                          disabled={deletingId !== null || editingId !== null}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      <button
+                        className="msgs-action-btn msgs-action-btn--danger"
+                        onClick={() => setConfirmDelete(msg.id)}
+                        disabled={deletingId !== null || editingId !== null}
+                      >
+                        Delete
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
