@@ -27,6 +27,7 @@ function App() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
+  const [messagesCount, setMessagesCount] = useState(0);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
@@ -66,7 +67,14 @@ function App() {
     return () => window.removeEventListener("popstate", handler);
   }, []);
 
-const fetchPendingCount = useCallback(async () => {
+const fetchMessagesCount = useCallback(async () => {
+    const { count } = await supabase
+      .from("contact_messages")
+      .select("id", { count: "exact", head: true });
+    setMessagesCount(count ?? 0);
+  }, []);
+
+  const fetchPendingCount = useCallback(async () => {
     const { data } = await supabase
       .from("events")
       .select("id, recurrence")
@@ -80,16 +88,17 @@ const fetchPendingCount = useCallback(async () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
       setUserEmail(session?.user?.email ?? null);
-      if (session) fetchPendingCount();
+      if (session) { fetchPendingCount(); fetchMessagesCount(); }
     }).catch(console.error);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
       setUserEmail(session?.user?.email ?? null);
-      if (session) fetchPendingCount();
+      if (session) { fetchPendingCount(); fetchMessagesCount(); }
       if (!session) {
         setView("calendar");
         setPendingCount(0);
+        setMessagesCount(0);
       }
     });
 
@@ -166,6 +175,7 @@ const fetchPendingCount = useCallback(async () => {
         currentView={view}
         isLoggedIn={isLoggedIn}
         pendingCount={pendingCount}
+        messagesCount={messagesCount}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
         showCalendarControls={view === "calendar"}
@@ -217,7 +227,7 @@ const fetchPendingCount = useCallback(async () => {
             onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
           />
         )}
-        {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} />}
+        {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} onMessagesCountChange={setMessagesCount} />}
         {view === "contact" && <Contact />}
         {view === "about" && <AboutUs />}
         {view === "privacy" && <PrivacyPolicy />}

@@ -6,6 +6,7 @@ type Props = {
   currentView: View;
   isLoggedIn: boolean;
   pendingCount: number;
+  messagesCount: number;
   onNavigate: (view: View) => void;
   onLogout: () => void;
   showCalendarControls?: boolean;
@@ -17,6 +18,7 @@ export default function Navbar({
   currentView,
   isLoggedIn,
   pendingCount,
+  messagesCount,
   onNavigate,
   onLogout,
   showCalendarControls,
@@ -89,19 +91,15 @@ export default function Navbar({
           List
         </button>
 
-        <button
-          className={`navbar-link ${currentView === "about" ? "navbar-link--active" : ""}`}
-          onClick={() => navigate("about")}
-        >
-          About
-        </button>
-
         {isLoggedIn ? (
           <button
-            className={`navbar-link ${currentView === "admin-messages" ? "navbar-link--active" : ""}`}
+            className={`navbar-link navbar-link--messages ${currentView === "admin-messages" ? "navbar-link--active" : ""}`}
             onClick={() => navigate("admin-messages")}
           >
             Messages
+            {messagesCount > 0 && (
+              <span className="navbar-pending-badge">{messagesCount}</span>
+            )}
           </button>
         ) : (
           <button
@@ -130,6 +128,13 @@ export default function Navbar({
             )}
           </button>
         )}
+
+        <button
+          className={`navbar-link ${currentView === "about" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("about")}
+        >
+          About
+        </button>
 
         {isLoggedIn ? (
           <>

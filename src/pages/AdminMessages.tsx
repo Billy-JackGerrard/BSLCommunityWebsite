@@ -31,7 +31,7 @@ function formatTimestamp(iso: string): string {
   });
 }
 
-export default function AdminMessages({ userEmail }: { userEmail: string | null }) {
+export default function AdminMessages({ userEmail, onMessagesCountChange }: { userEmail: string | null; onMessagesCountChange?: (count: number) => void }) {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +60,10 @@ export default function AdminMessages({ userEmail }: { userEmail: string | null 
   useEffect(() => {
     fetchMessages();
   }, []);
+
+  useEffect(() => {
+    if (!loading) onMessagesCountChange?.(messages.length);
+  }, [messages, loading, onMessagesCountChange]);
 
   const handleSend = async () => {
     if (!compose.trim()) return;

@@ -31,6 +31,17 @@
   margin-bottom: 0.75rem;
 }
 
+.event-list-sidebar-title--section {
+  margin-top: 1.5rem;
+}
+
+/* Mobile filter wrapper (date chips + category chips) */
+.event-list-mobile-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .category-filter-btn {
   display: flex;
   align-items: center;
@@ -51,6 +62,18 @@
 
 .category-filter-btn:hover {
   border-color: var(--color-border);
+}
+
+.category-filter-btn--selected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.category-filter-btn--selected:hover {
+  border-color: var(--color-accent);
+  opacity: 0.9;
 }
 
 .category-filter-btn--hidden {
@@ -87,9 +110,13 @@
     position: sticky;
     top: 2rem;
   }
+
+  .event-list-mobile-filters {
+    display: none;
+  }
 }
 
-/* ── Mobile category chip strip ── */
+/* ── Mobile chip strip (date + category) ── */
 .event-list-chips {
   display: flex;
   flex-wrap: nowrap;
@@ -124,6 +151,13 @@
   border-color: var(--color-border);
 }
 
+.event-list-chip--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #ffffff;
+  font-weight: 600;
+}
+
 .event-list-chip--hidden {
   opacity: 0.4;
   text-decoration: line-through;
@@ -136,11 +170,6 @@
   flex-shrink: 0;
 }
 
-@media (min-width: 860px) {
-  .event-list-chips {
-    display: none;
-  }
-}
 
 /* ── Month heading ── */
 .event-list-month {

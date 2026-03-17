@@ -17,6 +17,13 @@ type MonthGroup = {
   events: Event[];
 };
 
+const DATE_FILTER_LABELS = {
+  all: "All dates",
+  week: "This week",
+  weekend: "This weekend",
+  month: "This month",
+} as const;
+
 function groupByMonth(events: Event[]): MonthGroup[] {
   const groups = new Map<string, Event[]>();
   for (const ev of events) {
@@ -36,6 +43,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+  const [dateFilter, setDateFilter] = useState<"all" | "week" | "weekend" | "month">("all");
 
   function toggleCategory(cat: string) {
     setHiddenCategories(prev => {
@@ -68,91 +76,148 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
     setExpandedId(prev => (prev === id ? null : id));
   }
 
-  const visibleEvents = events.filter(ev => !hiddenCategories.has(ev.category));
+  const visibleEvents = events.filter(ev => {
+    if (hiddenCategories.has(ev.category)) return false;
+    if (dateFilter !== "all") {
+      const d = new Date(ev.starts_at);
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      if (dateFilter === "week") {
+        const end = new Date(now);
+        end.setDate(now.getDate() + 7);
+        if (d < now || d >= end) return false;
+      } else if (dateFilter === "weekend") {
+        const day = d.getDay();
+        if (day !== 0 && day !== 6) return false;
+        const daysUntilSat = (6 - now.getDay() + 7) % 7;
+        const thisSat = new Date(now);
+        thisSat.setDate(now.getDate() + daysUntilSat);
+        const endSun = new Date(thisSat);
+        endSun.setDate(thisSat.getDate() + 2);
+        if (d < thisSat || d >= endSun) return false;
+      } else if (dateFilter === "month") {
+        if (d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) return false;
+        if (d < now) return false;
+      }
+    }
+    return true;
+  });
   const groups = groupByMonth(visibleEvents);
 
   return (
     <div className="event-list-page">
       <div className="event-list-layout">
-      <div className="event-list-chips" aria-label="Filter by category">
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat}
-            className={`event-list-chip${hiddenCategories.has(cat) ? " event-list-chip--hidden" : ""}`}
-            onClick={() => toggleCategory(cat)}
-          >
-            <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
-            {cat}
-          </button>
-        ))}
-      </div>
-      <aside className="event-list-sidebar">
-        <div className="event-list-sidebar-title">Categories</div>
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat}
-            className={`category-filter-btn${hiddenCategories.has(cat) ? " category-filter-btn--hidden" : ""}`}
-            onClick={() => toggleCategory(cat)}
-          >
-            <span
-              className="category-filter-dot"
-              style={{ background: CATEGORY_COLOURS[cat] }}
-            />
-            <span className="category-filter-label">{cat}</span>
-          </button>
-        ))}
-      </aside>
-      <div className="event-list-container">
-        {loading ? (
-          <div className="event-list-loading">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="event-list-skeleton" />
+
+        {/* Mobile-only filter chips — hidden at 860px+ where sidebar takes over */}
+        <div className="event-list-mobile-filters">
+          <div className="event-list-chips" role="group" aria-label="Date filter">
+            {(["all", "week", "weekend", "month"] as const).map(f => (
+              <button
+                key={f}
+                className={`event-list-chip${dateFilter === f ? " event-list-chip--active" : ""}`}
+                onClick={() => setDateFilter(f)}
+              >
+                {DATE_FILTER_LABELS[f]}
+              </button>
             ))}
           </div>
-        ) : groups.length === 0 ? (
-          <div className="event-list-empty">
-            {hiddenCategories.size > 0 ? "No events match the selected categories." : "No upcoming events found."}
+          <div className="event-list-chips" aria-label="Filter by category">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                className={`event-list-chip${hiddenCategories.has(cat) ? " event-list-chip--hidden" : ""}`}
+                onClick={() => toggleCategory(cat)}
+              >
+                <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
+                {cat}
+              </button>
+            ))}
           </div>
-        ) : (
-          groups.map(group => (
-            <section key={group.label} className="event-list-month">
-              <h2 className="event-list-month-heading">{group.label}</h2>
-              <div className="event-list-items">
-                {group.events.map(ev => (
-                  <div key={ev.id} className="event-list-item-wrap">
-                    <button
-                      className={`event-list-item${expandedId === ev.id ? " event-list-item--expanded" : ""}`}
-                      onClick={() => toggleExpand(ev.id)}
-                    >
-                      <span
-                        className="event-list-dot"
-                        style={{ background: CATEGORY_COLOURS[ev.category] }}
-                      />
-                      <span className="event-list-title">{ev.title}</span>
-                      <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
-                      {ev.location && (
-                        <span className="event-list-location">📍 {ev.location}</span>
-                      )}
-                      <span className="event-list-chevron">{expandedId === ev.id ? "▼" : "▶"}</span>
-                    </button>
-                    {expandedId === ev.id && (
-                      <div className="event-list-detail">
-                        <EventDetailCard
-                          event={ev}
-                          isLoggedIn={isLoggedIn}
-                          onClose={() => setExpandedId(null)}
-                          onEdit={onEditEvent}
-                          onDelete={onDeleteEvent}
+        </div>
+
+        {/* Events column — LEFT on desktop */}
+        <div className="event-list-container">
+          {loading ? (
+            <div className="event-list-loading">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="event-list-skeleton" />
+              ))}
+            </div>
+          ) : groups.length === 0 ? (
+            <div className="event-list-empty">
+              {hiddenCategories.size > 0 || dateFilter !== "all"
+                ? "No events match your current filters."
+                : "No upcoming events found."}
+            </div>
+          ) : (
+            groups.map(group => (
+              <section key={group.label} className="event-list-month">
+                <h2 className="event-list-month-heading">{group.label}</h2>
+                <div className="event-list-items">
+                  {group.events.map(ev => (
+                    <div key={ev.id} className="event-list-item-wrap">
+                      <button
+                        className={`event-list-item${expandedId === ev.id ? " event-list-item--expanded" : ""}`}
+                        onClick={() => toggleExpand(ev.id)}
+                      >
+                        <span
+                          className="event-list-dot"
+                          style={{ background: CATEGORY_COLOURS[ev.category] }}
                         />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))
-        )}
-      </div>
+                        <span className="event-list-title">{ev.title}</span>
+                        <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
+                        {ev.location && (
+                          <span className="event-list-location">📍 {ev.location}</span>
+                        )}
+                        <span className="event-list-chevron">{expandedId === ev.id ? "▼" : "▶"}</span>
+                      </button>
+                      {expandedId === ev.id && (
+                        <div className="event-list-detail">
+                          <EventDetailCard
+                            event={ev}
+                            isLoggedIn={isLoggedIn}
+                            onClose={() => setExpandedId(null)}
+                            onEdit={onEditEvent}
+                            onDelete={onDeleteEvent}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))
+          )}
+        </div>
+
+        {/* Sidebar — RIGHT on desktop, hidden on mobile */}
+        <aside className="event-list-sidebar">
+          <div className="event-list-sidebar-title">When</div>
+          {(["all", "week", "weekend", "month"] as const).map(f => (
+            <button
+              key={f}
+              className={`category-filter-btn${dateFilter === f ? " category-filter-btn--selected" : ""}`}
+              onClick={() => setDateFilter(f)}
+            >
+              {DATE_FILTER_LABELS[f]}
+            </button>
+          ))}
+          <div className="event-list-sidebar-title event-list-sidebar-title--section">Categories</div>
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              className={`category-filter-btn${hiddenCategories.has(cat) ? " category-filter-btn--hidden" : ""}`}
+              onClick={() => toggleCategory(cat)}
+            >
+              <span
+                className="category-filter-dot"
+                style={{ background: CATEGORY_COLOURS[cat] }}
+              />
+              <span className="category-filter-label">{cat}</span>
+            </button>
+          ))}
+        </aside>
+
       </div>
     </div>
   );

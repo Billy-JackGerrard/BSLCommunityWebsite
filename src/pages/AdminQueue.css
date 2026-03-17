@@ -52,8 +52,8 @@
 
 .queue-card {
   background: var(--color-bg-card);
-  border-radius: 2px;
-  box-shadow: 6px 6px 0 var(--color-shadow);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.5rem;
   cursor: pointer;
   border: 2px solid transparent;

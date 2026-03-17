@@ -1,7 +1,7 @@
 .event-detail-card {
     background: var(--color-bg-card);
-    border-radius: 2px;
-    box-shadow: 12px 12px 0 var(--color-shadow);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
     padding: 1.5rem;
     position: relative;
     width: 100%;
