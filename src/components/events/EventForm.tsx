@@ -357,7 +357,7 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label htmlFor="ef-link" className="form-label">Link</label>
+        <label htmlFor="ef-link" className="form-label">Link{bookingInfo === "via_link" ? " *" : ""}</label>
         <input
           id="ef-link"
           className="form-input"
