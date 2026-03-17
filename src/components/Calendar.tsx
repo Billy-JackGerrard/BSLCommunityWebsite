@@ -287,7 +287,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const handleToggleEvent = (ev: Event) => {
     setExpandedEventId(prev => {
-      const next = prev === ev.id ? null : ev.id;
+      const evId = String(ev.id);
+      const next = prev === evId ? null : evId;
       onEventExpand?.(next ? ev : null);
       return next;
     });
@@ -430,7 +431,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             ) : (
               <div className="calendar-panel-list">
                 {selectedEvents.map(ev => {
-                  const isExpanded = expandedEventId === ev.id;
+                  const isExpanded = expandedEventId !== null && String(expandedEventId) === String(ev.id);
                   return (
                     <div key={ev.id} className="calendar-panel-event-wrap">
                       {isExpanded ? (

@@ -16,6 +16,7 @@ import Contact from "./components/Contact.tsx";
 import AboutUs from "./components/AboutUs.tsx";
 import PrivacyPolicy from "./components/PrivacyPolicy.tsx";
 import PrivacyBanner from "./components/PrivacyBanner.tsx";
+import EventList from "./components/EventList.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
@@ -177,6 +178,13 @@ const fetchPendingCount = useCallback(async () => {
             initialEventId={initialEventId}
             initialEventDate={initialEventDate}
             onEventExpand={handleEventExpand}
+          />
+        )}
+        {view === "list" && (
+          <EventList
+            isLoggedIn={isLoggedIn}
+            onEditEvent={ev => handleEditEvent(ev, "list")}
+            onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "list") : undefined}
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}

@@ -83,6 +83,13 @@ export default function Navbar({
         </button>
 
         <button
+          className={`navbar-link ${currentView === "list" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("list")}
+        >
+          List
+        </button>
+
+        <button
           className={`navbar-link ${currentView === "about" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("about")}
         >
@@ -94,6 +101,13 @@ export default function Navbar({
           onClick={() => navigate("contact")}
         >
           Contact
+        </button>
+
+        <button
+          className={`navbar-link navbar-link--submit ${currentView === "add-event" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("add-event")}
+        >
+          Submit Event
         </button>
 
         {isLoggedIn && (

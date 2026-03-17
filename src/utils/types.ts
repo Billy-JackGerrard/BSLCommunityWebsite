@@ -2,7 +2,7 @@ import type { RecurrenceRule } from "./recurrence";
 
 /** Core event shape — returned by all approved-event queries. */
 export type Event = {
-  id: string;
+  id: number;
   title: string;
   category: Category;
   description?: string;
