@@ -19,6 +19,7 @@ const TYPE_PLACEHOLDERS: Record<ContactType, string> = {
 export default function Contact() {
   const [type, setType] = useState<ContactType>("general");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,7 @@ export default function Contact() {
 
     const { error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type, name: name.trim() || null, message: message.trim() });
+      .insert({ type, name: name.trim() || null, email: email.trim() || null, message: message.trim() });
 
     setLoading(false);
 
@@ -50,6 +51,7 @@ export default function Contact() {
   const reset = () => {
     setType("general");
     setName("");
+    setEmail("");
     setMessage("");
     setError(null);
     setSubmitted(false);
@@ -117,6 +119,20 @@ export default function Contact() {
             placeholder="e.g. Jane Smith"
             value={name}
             onChange={e => setName(e.target.value)}
+          />
+        </div>
+
+        {/* Email */}
+        <div className="form-field">
+          <label className="form-label">
+            Your Email <span className="contact-optional">(optional)</span>
+          </label>
+          <input
+            className="form-input"
+            type="email"
+            placeholder="e.g. jane@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
         </div>
 

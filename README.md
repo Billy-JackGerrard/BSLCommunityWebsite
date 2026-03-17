@@ -13,10 +13,6 @@ also clarify that only admins can log in so peeps arent wondering why there isnt
 
 need to do another bug check
 
-file refactoring? files are a bit messy right now, could do with some more folders
-
-make it so admins see a delete button next to the edit button when viewing events. right now can't even delete events lol.
-
 email announcements?
 
 integrate with socials!!

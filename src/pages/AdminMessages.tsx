@@ -8,6 +8,7 @@ type ContactMessage = {
   id: number;
   type: ContactType;
   name: string | null;
+  email: string | null;
   message: string;
   created_at: string;
   is_admin: boolean;
@@ -64,9 +65,13 @@ export default function AdminMessages() {
     setSending(true);
     setError(null);
 
+    const { data: { user } } = await supabase.auth.getUser();
+    const adminEmail = user?.email ?? null;
+    const adminName = adminEmail ? adminEmail.split("@")[0] : "Admin";
+
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: "Admin", message: compose.trim(), is_admin: true })
+      .insert({ type: "general", name: adminName, email: adminEmail, message: compose.trim(), is_admin: true })
       .select()
       .single();
 
@@ -156,6 +161,9 @@ export default function AdminMessages() {
                     )}
                     <span className="msgs-sender">
                       {msg.name || "Anonymous"}
+                      {msg.email && (
+                        <span className="msgs-email"> — {msg.email}</span>
+                      )}
                     </span>
                   </div>
                   <span className="msgs-timestamp">{formatTimestamp(msg.created_at)}</span>
