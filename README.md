@@ -52,8 +52,6 @@ must have a region selected?
 accessibility review - send directly to their email
 
 
-have different ways of viewing calendar
-
 people can click I'm going to a certain event - maybe need to wait until after user accounts are set up
 
 Set Up Multiple Views: Provide options for list, grid, or monthly views to cater to different user preferences.
@@ -70,8 +68,6 @@ ai summariser of info from website url
 
 scrape data for events.
 eg theatre websites for their bsl interpreted event info
-
-maybe in admin view, get rid of contact view, and replace it with messages view which shows admins the messages from people who have filled in the contact view - and admins can add their own message in there 
 
 
 add info abt the whastapp to the contact info page
