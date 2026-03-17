@@ -28,4 +28,4 @@ dist-ssr
 
 
 # Claude settings
-.claude/settings.local.json
+.claude/
