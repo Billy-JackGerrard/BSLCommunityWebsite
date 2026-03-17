@@ -381,7 +381,7 @@
 /* ── Day labels & grid ── */
 .calendar-day-labels {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     background: var(--color-bg-inset);
     padding: 0.45rem 0.75rem 0.35rem;
 }
@@ -397,7 +397,7 @@
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 1px;
     background: var(--color-border);
     padding: 0.35rem 0.75rem 0.75rem;

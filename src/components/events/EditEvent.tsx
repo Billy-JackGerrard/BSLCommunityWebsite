@@ -200,6 +200,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       price:          row.price,
       booking_info:   row.booking_info,
       accessibility:  row.accessibility,
+      age_rating:     row.age_rating,
       approved:       true,
       admin_id:       adminId,
       recurrence:     newRecurrence,

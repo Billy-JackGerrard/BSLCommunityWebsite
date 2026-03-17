@@ -75,7 +75,7 @@ export default function EventForm({
   const [price, setPrice] = useState(initialValues?.price ?? "");
   const [bookingInfo, setBookingInfo] = useState(initialValues?.booking_info ?? "");
   const [ageRating, setAgeRating] = useState<AgeRating | null>(initialValues?.age_rating ?? null);
-  const [category, setCategory] = useState<string>(initialValues?.category ?? "");
+  const [category, setCategory] = useState<Category | "">(initialValues?.category ?? "");
   const [categoryOpen, setCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState<string | null>(null);

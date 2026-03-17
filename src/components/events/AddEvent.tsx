@@ -44,11 +44,11 @@ export default function AddEvent({ prefillDate }: Props) {
     setLoading(true);
     setError(null);
 
-    const verifyRes = await fetch("https://nnkzyvwgosxejriqecmv.supabase.co/functions/v1/submit-event-turnstile", {
+    const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY}`,
+        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
       },
       body: JSON.stringify({ turnstileToken }),
     });

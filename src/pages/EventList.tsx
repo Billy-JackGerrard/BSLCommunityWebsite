@@ -41,6 +41,7 @@ function groupByMonth(events: Event[]): MonthGroup[] {
 export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [dateFilter, setDateFilter] = useState<"all" | "week" | "weekend" | "month">("all");
@@ -66,8 +67,12 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
       .gte("starts_at", now.toISOString())
       .lte("starts_at", end.toISOString())
       .order("starts_at", { ascending: true })
-      .then(({ data }) => {
-        setEvents(data || []);
+      .then(({ data, error }) => {
+        if (error) {
+          setError(error.message);
+        } else {
+          setEvents(data || []);
+        }
         setLoading(false);
       });
   }, []);
@@ -139,7 +144,9 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
         {/* Events column — LEFT on desktop */}
         <div className={`event-list-container${expandedId !== null ? " event-list-container--split" : ""}`}>
           <div className="event-list-items-col">
-            {loading ? (
+            {error ? (
+            <div className="form-error">{error}</div>
+          ) : loading ? (
               <div className="event-list-loading">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="event-list-skeleton" />

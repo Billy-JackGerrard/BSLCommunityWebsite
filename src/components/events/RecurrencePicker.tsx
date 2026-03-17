@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import type { RecurrenceRule } from "../../utils/recurrence";
-import { expandRecurrences, getOrdinalOfWeekdayInMonth, humaniseRule } from "../../utils/recurrence";
+import { expandRecurrences, getOrdinalOfWeekdayInMonth, humaniseRule, ordinalSuffix, WEEKDAY_NAMES } from "../../utils/recurrence";
 import "./RecurrencePicker.css";
-
-const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 type Props = {
   enabled: boolean;
@@ -12,12 +10,6 @@ type Props = {
   onToggle: (v: boolean) => void;
   onRuleChange: (r: RecurrenceRule) => void;
 };
-
-function ordinalSuffix(n: number): string {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]);
-}
 
 export default function RecurrencePicker({ enabled, rule, startsAt, onToggle, onRuleChange }: Props) {
   const firstStart: Date | null = startsAt ? new Date(startsAt) : null;
@@ -36,12 +28,12 @@ export default function RecurrencePicker({ enabled, rule, startsAt, onToggle, on
 
   return (
     <div>
-      <div className="recurrence-toggle" onClick={() => onToggle(!enabled)}>
+      <button type="button" className="recurrence-toggle" onClick={() => onToggle(!enabled)}>
         <div className={`recurrence-toggle-track ${enabled ? "recurrence-toggle-track--on" : ""}`}>
           <div className="recurrence-toggle-thumb" />
         </div>
         <span className="recurrence-toggle-label">Recurring Event</span>
-      </div>
+      </button>
 
       {enabled && (
         <div className="recurrence-panel">
