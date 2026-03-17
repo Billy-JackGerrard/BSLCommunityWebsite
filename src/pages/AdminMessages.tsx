@@ -36,6 +36,8 @@ export default function AdminMessages() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [compose, setCompose] = useState("");
+  const [composeName, setComposeName] = useState("");
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
@@ -58,6 +60,11 @@ export default function AdminMessages() {
 
   useEffect(() => {
     fetchMessages();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      const email = user?.email ?? null;
+      setAdminEmail(email);
+      setComposeName(email ? email.split("@")[0] : "");
+    });
   }, []);
 
   const handleSend = async () => {
@@ -65,13 +72,9 @@ export default function AdminMessages() {
     setSending(true);
     setError(null);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    const adminEmail = user?.email ?? null;
-    const adminName = adminEmail ? adminEmail.split("@")[0] : "Admin";
-
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: adminName, email: adminEmail, message: compose.trim(), is_admin: true })
+      .insert({ type: "general", name: composeName.trim() || null, email: adminEmail, message: compose.trim(), is_admin: true })
       .select()
       .single();
 
@@ -115,9 +118,16 @@ export default function AdminMessages() {
 
         {/* Compose */}
         <div className="msgs-compose">
+          <input
+            className="form-input"
+            type="text"
+            placeholder="Your name"
+            value={composeName}
+            onChange={e => setComposeName(e.target.value)}
+          />
           <textarea
             className="form-input msgs-compose-textarea"
-            placeholder="Write a message as Admin…"
+            placeholder="Write a message…"
             value={compose}
             onChange={e => setCompose(e.target.value)}
           />
