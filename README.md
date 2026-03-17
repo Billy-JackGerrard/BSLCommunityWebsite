@@ -78,12 +78,9 @@ SEO & social sharing metadata — Add per-page <title> tags and Open Graph tags 
 
 Landing/home page — Right now the site drops straight into the calendar. A simple page explaining what the site is, who it's for, and with a clear "Browse Events" CTA would dramatically improve first impressions and retention.
 
-Visual design polish — Modernise the card shadows (softer, more diffuse), tighten up typography consistency (the Georgia serif + monospace mix is unusual), and add a small logo/brand mark. High perceived quality boost for relatively little work.
-
 Medium Impact, More Involved
 Event submission feedback loop — A confirmation email to event submitters (via a Supabase Edge Function) and an email to admins when a new submission arrives. Currently both sides are flying blind. This is probably the biggest friction point for event organisers.
 
-Richer event discovery — Date range filtering ("this weekend", "this month") and a price filter (free only) would cover the most common user queries without needing a full map view.
 
 Bigger Investments (When Ready)
 Map view — Leaflet + OpenStreetMap, free, no API key needed. Huge for local event discovery.

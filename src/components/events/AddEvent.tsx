@@ -19,7 +19,7 @@ export default function AddEvent({ prefillDate }: Props) {
   const [formKey, setFormKey] = useState(0);
 
   const { containerRef: turnstileRef, token: turnstileToken, reset: resetTurnstile } =
-    useTurnstile("0x4AAAAAACrO8jfnKMxrJsyA", formKey);
+    useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY as string, formKey);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
