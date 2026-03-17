@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import type { ContactType } from "../utils/types";
 import "./AdminMessages.css";
-
-type ContactType = "general" | "bug" | "suggestion";
 
 type ContactMessage = {
   id: string;
@@ -166,7 +165,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     setMessages(prev => prev.filter(m => m.id !== id && m.reply_to_id !== id));
   };
 
-  const topLevel = messages.filter(m => m.reply_to_id == null);
+  const topLevel = messages.filter(m => m.reply_to_id === null);
   const repliesFor = (parentId: string) =>
     messages
       .filter(m => m.reply_to_id === parentId)

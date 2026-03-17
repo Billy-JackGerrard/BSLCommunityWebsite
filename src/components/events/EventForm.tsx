@@ -228,7 +228,7 @@ export default function EventForm({
       return;
     }
     if (url && !/^https?:\/\//.test(url)) {
-      setInternalError("Please enter a valid URL starting with https://");
+      setInternalError("Please enter a valid URL starting with http:// or https://");
       return;
     }
     if (bookingInfo === "by_contacting" && !contactEmail) {
@@ -245,6 +245,10 @@ export default function EventForm({
     }
     if (isInPerson && !postcode) {
       setInternalError("Please enter a postcode for this in-person event.");
+      return;
+    }
+    if (isInPerson && postcode && !/^[A-Za-z]{1,2}\d[A-Za-z\d]?\s*\d[A-Za-z]{2}$/.test(postcode.trim())) {
+      setInternalError("Please enter a valid UK postcode (e.g. EH1 1AA).");
       return;
     }
     if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
@@ -311,6 +315,7 @@ export default function EventForm({
           className="form-input"
           type="text"
           placeholder="e.g. BSL Social Evening"
+          maxLength={100}
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
@@ -358,6 +363,7 @@ export default function EventForm({
           id="ef-description"
           className="form-input addevent-textarea"
           placeholder="A short description of the event..."
+          maxLength={1000}
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
@@ -404,6 +410,7 @@ export default function EventForm({
               className="form-input"
               type="text"
               placeholder="e.g. Blackwood Bar"
+              maxLength={150}
               value={location}
               onChange={e => setLocation(e.target.value)}
             />
@@ -416,6 +423,7 @@ export default function EventForm({
               className="form-input"
               type="text"
               placeholder="e.g. EH1 1AA"
+              maxLength={10}
               value={postcode}
               onChange={e => setPostcode(e.target.value)}
             />

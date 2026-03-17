@@ -76,6 +76,8 @@ export const CATEGORIES = [
 
 export type Category = typeof CATEGORIES[number];
 
+export type ContactType = "general" | "bug" | "suggestion";
+
 export const CATEGORY_COLOURS: Record<Category, string> = {
   "Kids Activities":     "#f97316",
   "Performance & Film":  "#a855f7",

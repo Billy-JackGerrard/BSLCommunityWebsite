@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
+import type { ContactType } from "../utils/types";
 import "./Contact.css";
-
-type ContactType = "general" | "bug" | "suggestion";
 
 const TYPE_LABELS: Record<ContactType, string> = {
   general: "General Enquiry",
@@ -28,6 +27,10 @@ export default function Contact() {
   const handleSend = async () => {
     if (!message.trim()) {
       setError("Please enter a message before sending.");
+      return;
+    }
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError("Please enter a valid email address.");
       return;
     }
 
