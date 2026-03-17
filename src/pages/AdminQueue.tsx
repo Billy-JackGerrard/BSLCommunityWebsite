@@ -4,7 +4,7 @@ import { formatDateTimeRange } from "../utils/dates";
 import { deduplicateByRecurrence } from "../utils/recurrence";
 import type { AdminEvent } from "../utils/types";
 import type { Event } from "../utils/types";
-import EventDetails from "./events/EventDetails";
+import EventDetails from "../components/events/EventDetails";
 import "./AdminQueue.css";
 
 type Props = {

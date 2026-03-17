@@ -96,12 +96,21 @@ export default function Navbar({
           About
         </button>
 
-        <button
-          className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
-          onClick={() => navigate("contact")}
-        >
-          Contact
-        </button>
+        {isLoggedIn ? (
+          <button
+            className={`navbar-link ${currentView === "admin-messages" ? "navbar-link--active" : ""}`}
+            onClick={() => navigate("admin-messages")}
+          >
+            Messages
+          </button>
+        ) : (
+          <button
+            className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
+            onClick={() => navigate("contact")}
+          >
+            Contact
+          </button>
+        )}
 
         <button
           className={`navbar-link navbar-link--submit ${currentView === "add-event" ? "navbar-link--active" : ""}`}

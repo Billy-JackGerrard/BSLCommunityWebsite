@@ -3,7 +3,7 @@ import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
-import EventDetails from "./events/EventDetails";
+import EventDetails from "../components/events/EventDetails";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

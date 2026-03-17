@@ -3,7 +3,7 @@ import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
-import EventDetailCard from "./events/EventDetails";
+import EventDetailCard from "../components/events/EventDetails";
 import "./EventList.css";
 
 type Props = {

@@ -5,18 +5,19 @@ import { createRoot } from "react-dom/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { supabase } from "./supabaseClient";
 import { deduplicateByRecurrence } from "./utils/recurrence";
-import Calendar from "./components/Calendar.tsx";
-import Login from "./components/Login.tsx";
+import Calendar from "./pages/Calendar.tsx";
+import Login from "./pages/Login.tsx";
+import AdminQueue from "./pages/AdminQueue.tsx";
+import AdminMessages from "./pages/AdminMessages.tsx";
+import Contact from "./pages/Contact.tsx";
+import AboutUs from "./pages/AboutUs.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import EventList from "./pages/EventList.tsx";
 import Navbar from "./components/Navbar.tsx";
+import PrivacyBanner from "./components/PrivacyBanner.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
 import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
-import AdminQueue from "./components/AdminQueue.tsx";
-import Contact from "./components/Contact.tsx";
-import AboutUs from "./components/AboutUs.tsx";
-import PrivacyPolicy from "./components/PrivacyPolicy.tsx";
-import PrivacyBanner from "./components/PrivacyBanner.tsx";
-import EventList from "./components/EventList.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
@@ -93,6 +94,7 @@ const fetchPendingCount = useCallback(async () => {
 
   useEffect(() => {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
+    if (view === "admin-messages" && !isLoggedIn) setView("login");
     if (view === "edit-event" && !isLoggedIn) setView("calendar");
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
@@ -211,6 +213,7 @@ const fetchPendingCount = useCallback(async () => {
             onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
           />
         )}
+        {view === "admin-messages" && isLoggedIn && <AdminMessages />}
         {view === "contact" && <Contact />}
         {view === "about" && <AboutUs />}
         {view === "privacy" && <PrivacyPolicy />}
