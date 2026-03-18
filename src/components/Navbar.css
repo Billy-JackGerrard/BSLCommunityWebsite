@@ -109,7 +109,7 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background: #ef4444;
+    background: var(--color-bg-badge);
     color: #fff;
     font-family: monospace;
     font-size: 0.65rem;

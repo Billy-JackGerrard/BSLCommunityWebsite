@@ -161,18 +161,18 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
         <div className="queue-container">
           <h2 className="queue-title">Pending Events</h2>
 
-          {error && <div className="form-error">{error}</div>}
+          {error && <div className="form-error" role="alert">{error}</div>}
 
           {loading ? (
             <div className="queue-list">
               {[1, 2, 3].map(i => (
                 <div key={i} className="queue-card" style={{ cursor: "default" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.6rem", gap: "1rem" }}>
-                    <div className="skeleton" style={{ height: "1rem", width: "55%", borderRadius: "4px" }} />
-                    <div className="skeleton" style={{ height: "1rem", width: "30%", borderRadius: "4px" }} />
+                    <div className="skeleton skeleton-lg" style={{ width: "55%" }} />
+                    <div className="skeleton skeleton-lg" style={{ width: "30%" }} />
                   </div>
-                  <div className="skeleton" style={{ height: "0.8rem", width: "40%", marginBottom: "0.5rem", borderRadius: "4px" }} />
-                  <div className="skeleton" style={{ height: "0.8rem", width: "80%", borderRadius: "4px" }} />
+                  <div className="skeleton skeleton-md skeleton-mb" style={{ width: "40%" }} />
+                  <div className="skeleton skeleton-md" style={{ width: "80%" }} />
                 </div>
               ))}
             </div>

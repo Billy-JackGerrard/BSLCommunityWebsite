@@ -78,6 +78,19 @@ export type Category = typeof CATEGORIES[number];
 
 export type ContactType = "general" | "bug" | "suggestion";
 
+/** Shape of rows in the contact_messages table. */
+export type ContactMessage = {
+  id: string;
+  type: ContactType;
+  name: string | null;
+  email: string | null;
+  title: string | null;
+  message: string;
+  created_at: string;
+  is_admin: boolean;
+  reply_to_id: string | null;
+};
+
 /** Shared type for AboutUs / AdminAboutUs page sections. */
 export type Section = {
   title: string;
@@ -96,3 +109,13 @@ export const CATEGORY_COLOURS: Record<Category, string> = {
   "Religion":            "#64748b",
   "Other":               "#94a3b8",
 };
+
+/** Returns true if a hex colour is perceptually light (better with dark text). */
+export function isLightColor(hex: string): boolean {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  // sRGB relative luminance (WCAG formula)
+  const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return L > 0.45;
+}

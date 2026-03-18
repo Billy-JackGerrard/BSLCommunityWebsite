@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { atcb_action } from "add-to-calendar-button";
 import type { Event } from "../../utils/types";
 import { CATEGORY_COLOURS } from "../../utils/types";
 import { formatDateTimeRange, toLocalDateKey, formatTime } from "../../utils/dates";
 import { humaniseRule } from "../../utils/recurrence";
+import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import "./EventDetails.css";
 
 
@@ -19,43 +19,23 @@ type Props = {
 };
 
 function ShareButton({ eventId }: { eventId: number }) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyToClipboard();
   const shareUrl = `${window.location.origin}/event/${eventId}`;
-  async function handleShare() {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard blocked — nothing to do, button state stays unchanged
-    }
-  }
   return (
-    <button className="event-detail-share-btn" onClick={handleShare}>
+    <button className="event-detail-share-btn" onClick={() => copy(shareUrl)}>
       {copied ? "Copied ✓" : "Share event"}
     </button>
   );
 }
 
 function LinkButtons({ url }: { url: string }) {
-  const [copied, setCopied] = useState(false);
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard blocked — nothing to do, button state stays unchanged
-    }
-  }
-
+  const { copied, copy } = useCopyToClipboard();
   return (
     <div className="event-detail-link-buttons">
       <a className="event-detail-link-btn" href={url} target="_blank" rel="noopener noreferrer">
         Visit Website ↗
       </a>
-      <button className="event-detail-copy-btn" onClick={handleCopy}>
+      <button className="event-detail-copy-btn" onClick={() => copy(url)}>
         {copied ? "Copied ✓" : "Copy Link"}
       </button>
     </div>

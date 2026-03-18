@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { View } from "../utils/views";
 import "./PrivacyBanner.css";
 
@@ -12,6 +12,22 @@ export default function PrivacyBanner({ onNavigate }: Props) {
   const [dismissed, setDismissed] = useState(
     () => localStorage.getItem(STORAGE_KEY) === "1"
   );
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  // Set a CSS variable on :root so .page-view gets matching bottom padding
+  useEffect(() => {
+    if (dismissed) {
+      document.documentElement.style.setProperty("--privacy-banner-height", "0px");
+      return;
+    }
+    const update = () => {
+      const h = bannerRef.current?.offsetHeight ?? 0;
+      document.documentElement.style.setProperty("--privacy-banner-height", `${h}px`);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [dismissed]);
 
   if (dismissed) return null;
 
@@ -21,7 +37,7 @@ export default function PrivacyBanner({ onNavigate }: Props) {
   };
 
   return (
-    <div className="privacy-banner" role="region" aria-label="Privacy notice">
+    <div className="privacy-banner" ref={bannerRef} role="region" aria-label="Privacy notice">
       <p className="privacy-banner-text">
         This site collects event submission data to run the Edinburgh BSL Community calendar.{" "}
         <button

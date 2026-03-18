@@ -78,7 +78,7 @@ export default function Login({ onLogin }: Props) {
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem", fontStyle: "italic" }}>
             Enter your email and we'll send you a reset link.
           </p>
-          {error && <div className="form-error">{error}</div>}
+          {error && <div className="form-error" role="alert">{error}</div>}
           <div className="form-field">
             <label htmlFor="forgot-email" className="form-label">Email</label>
             <input
@@ -132,7 +132,7 @@ export default function Login({ onLogin }: Props) {
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem", fontStyle: "italic" }}>
             Choose a new password for your account.
           </p>
-          {error && <div className="form-error">{error}</div>}
+          {error && <div className="form-error" role="alert">{error}</div>}
           <div className="form-field">
             <label htmlFor="reset-password" className="form-label">New Password</label>
             <input
@@ -190,7 +190,7 @@ export default function Login({ onLogin }: Props) {
     <div className="login-page">
       <div className="page-card login-card">
         <h2 className="login-title">Admin Login</h2>
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error" role="alert">{error}</div>}
         <div className="form-field">
           <label htmlFor="login-email" className="form-label">Email</label>
           <input

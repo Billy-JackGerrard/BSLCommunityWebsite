@@ -1,19 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import type { ContactType } from "../utils/types";
+import type { ContactType, ContactMessage } from "../utils/types";
 import "./AdminMessages.css";
-
-type ContactMessage = {
-  id: string;
-  type: ContactType;
-  name: string | null;
-  email: string | null;
-  title: string | null;
-  message: string;
-  created_at: string;
-  is_admin: boolean;
-  reply_to_id: string | null;
-};
 
 const TYPE_LABELS: Record<ContactType, string> = {
   general: "General",
@@ -271,7 +259,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
                 {replyingToId === msg.id ? "Cancel Reply" : "Reply"}
               </button>
             )}
-            {editingId !== msg.id && (
+            {editingId !== msg.id && msg.is_admin && msg.email === userEmail && (
               <button
                 className="msgs-action-btn"
                 onClick={() => handleEditStart(msg)}
@@ -298,7 +286,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
       <div className="msgs-container">
         <h2 className="msgs-title">Messages</h2>
 
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error" role="alert">{error}</div>}
 
         {/* Compose */}
         <div className="msgs-compose">
@@ -342,11 +330,11 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
             {[1, 2, 3].map(i => (
               <div key={i} className="msgs-card">
                 <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.6rem" }}>
-                  <div className="skeleton" style={{ height: "1rem", width: "20%", borderRadius: "4px" }} />
-                  <div className="skeleton" style={{ height: "1rem", width: "25%", borderRadius: "4px" }} />
+                  <div className="skeleton skeleton-lg" style={{ width: "20%" }} />
+                  <div className="skeleton skeleton-lg" style={{ width: "25%" }} />
                 </div>
-                <div className="skeleton" style={{ height: "0.85rem", width: "85%", borderRadius: "4px", marginBottom: "0.4rem" }} />
-                <div className="skeleton" style={{ height: "0.85rem", width: "65%", borderRadius: "4px" }} />
+                <div className="skeleton skeleton-md skeleton-mb-sm" style={{ width: "85%" }} />
+                <div className="skeleton skeleton-md" style={{ width: "65%" }} />
               </div>
             ))}
           </div>

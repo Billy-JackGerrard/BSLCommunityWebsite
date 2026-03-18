@@ -1,23 +1,14 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS, isLightColor } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import EventDetails from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
-
-/** Returns true if a hex colour is perceptually light (better with dark text). */
-function isLightColor(hex: string): boolean {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  // sRGB relative luminance (WCAG formula)
-  const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return L > 0.45;
-}
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SEARCH_RESULT_LIMIT = 10;
@@ -286,17 +277,19 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
   }, [initialEventId, initialEventDate]);
 
 
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
+
   const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return [];
+    if (!debouncedSearchQuery.trim()) return [];
     const matches: Event[] = [];
     for (const e of allEvents) {
-      if (matchesSearch(e, searchQuery)) {
+      if (matchesSearch(e, debouncedSearchQuery)) {
         matches.push(e);
         if (matches.length === SEARCH_RESULT_LIMIT) break;
       }
     }
     return matches;
-  }, [searchQuery, allEvents]);
+  }, [debouncedSearchQuery, allEvents]);
 
   const handleResultClick = (event: Event) => {
     const d = new Date(event.starts_at);
@@ -473,8 +466,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
               <div className="calendar-panel-list" style={{ padding: "0.75rem" }}>
                 {[1, 2].map(i => (
                   <div key={i} style={{ padding: "0.75rem 0", borderBottom: "1px solid var(--color-border-subtle)" }}>
-                    <div className="skeleton" style={{ height: "0.9rem", width: "65%", marginBottom: "0.5rem", borderRadius: "4px" }} />
-                    <div className="skeleton" style={{ height: "0.75rem", width: "40%", borderRadius: "4px" }} />
+                    <div className="skeleton skeleton-md skeleton-mb" style={{ width: "65%" }} />
+                    <div className="skeleton skeleton-sm" style={{ width: "40%" }} />
                   </div>
                 ))}
               </div>
@@ -531,17 +524,19 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
           </>
         )}
 
-        {/* Always-visible bottom: legend */}
-        <div className="calendar-panel-bottom">
-          <div className="calendar-panel-legend">
-            {CATEGORIES.map(c => (
-              <div key={c} className="calendar-panel-legend-item">
-                <span className="calendar-panel-legend-dot" style={{ background: CATEGORY_COLOURS[c] }} />
-                <span className="calendar-panel-legend-label">{c}</span>
-              </div>
-            ))}
+        {/* Always-visible bottom: legend (hidden when filters are open, since they show colours) */}
+        {filtersCollapsed && (
+          <div className="calendar-panel-bottom">
+            <div className="calendar-panel-legend">
+              {CATEGORIES.map(c => (
+                <div key={c} className="calendar-panel-legend-item">
+                  <span className="calendar-panel-legend-dot" style={{ background: CATEGORY_COLOURS[c] }} />
+                  <span className="calendar-panel-legend-label">{c}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* ── Mobile-only filter bar — fixed bottom ── */}

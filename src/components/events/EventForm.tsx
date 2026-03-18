@@ -311,7 +311,7 @@ export default function EventForm({
 
   return (
     <form className="eventform-root" noValidate onSubmit={handleSubmit}>
-      {displayError && <div className="form-error" ref={errorRef}>{displayError}</div>}
+      {displayError && <div className="form-error" ref={errorRef} role="alert">{displayError}</div>}
 
       <div className="form-field">
         <label htmlFor="ef-title" className="form-label">Title *</label>

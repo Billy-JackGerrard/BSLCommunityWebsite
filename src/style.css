@@ -39,6 +39,9 @@
   /* Error border — for buttons/panels with a danger outline */
   --color-border-error: rgba(220, 38, 38, 0.3);
 
+  /* Badge */
+  --color-bg-badge: #ef4444;
+
   /* Z-index layers — reference these instead of bare numbers */
   --z-navbar:      100;
   --z-mobile-menu: 200;
@@ -155,6 +158,8 @@ button:focus-visible {
 
     --color-border-error: rgba(248, 113, 113, 0.3);
 
+    --color-bg-badge: #f87171;
+
     --color-shadow: rgba(0, 0, 0, 0.5);
     --shadow-sm: 0 1px 4px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.3);
     --shadow-md: 0 1px 3px rgba(0,0,0,0.2), 0 4px 20px rgba(0,0,0,0.4);
@@ -171,6 +176,8 @@ button:focus-visible {
 
 .page-view {
   animation: page-fade-in 0.18s ease-out;
+  /* Extra bottom space so the fixed privacy banner never covers content */
+  padding-bottom: var(--privacy-banner-height, 0px);
 }
 
 /* =====================================================
@@ -200,6 +207,13 @@ button:focus-visible {
   );
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
+
+/* Skeleton size helpers — combine with .skeleton, e.g. class="skeleton skeleton-sm" */
+.skeleton-sm  { height: 0.75rem; }
+.skeleton-md  { height: 0.85rem; }
+.skeleton-lg  { height: 1rem; }
+.skeleton-mb  { margin-bottom: 0.5rem; }
+.skeleton-mb-sm { margin-bottom: 0.4rem; }
 
 /* =====================================================
    SHARED FORM & CARD UTILITIES

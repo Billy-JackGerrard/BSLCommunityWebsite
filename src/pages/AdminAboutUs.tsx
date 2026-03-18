@@ -96,7 +96,7 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
       <div className="admin-about-container" ref={containerRef}>
         <h2 className="admin-about-title">Edit About Us</h2>
 
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error" role="alert">{error}</div>}
 
         {loading ? (
           <p className="admin-about-loading">Loading…</p>

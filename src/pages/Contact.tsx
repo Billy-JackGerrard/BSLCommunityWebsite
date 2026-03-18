@@ -90,7 +90,7 @@ export default function Contact() {
           Questions, bug reports, or ideas — we'd love to hear from you.
         </p>
 
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error" role="alert">{error}</div>}
 
         {/* Type selector */}
         <div className="form-field">

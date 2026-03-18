@@ -5,6 +5,7 @@ import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 import EventDetailCard from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
@@ -50,6 +51,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
   const searchWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let isCurrent = true;
     const now = new Date();
     const end = new Date(now);
     end.setFullYear(end.getFullYear() + 1);
@@ -62,6 +64,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
       .lte("starts_at", end.toISOString())
       .order("starts_at", { ascending: true })
       .then(({ data, error }) => {
+        if (!isCurrent) return;
         if (error) {
           setError(error.message);
         } else {
@@ -69,6 +72,8 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
         }
         setLoading(false);
       });
+
+    return () => { isCurrent = false; };
   }, []);
 
   // Focus input when search opens; clear query when it closes
@@ -92,8 +97,10 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
     setExpandedId(prev => (prev === id ? null : id));
   }
 
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
+
   const visibleEvents = events.filter(ev =>
-    matchesSearch(ev, searchQuery) &&
+    matchesSearch(ev, debouncedSearchQuery) &&
     (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
     passesDateFilter(ev, dateFilter)
   );
@@ -149,7 +156,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
         <div className={`event-list-container${expandedId !== null ? " event-list-container--split" : ""}`}>
           <div className="event-list-items-col">
             {error ? (
-            <div className="form-error">{error}</div>
+            <div className="form-error" role="alert">{error}</div>
           ) : loading ? (
               <div className="event-list-loading">
                 {Array.from({ length: 5 }).map((_, i) => (

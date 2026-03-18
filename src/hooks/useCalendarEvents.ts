@@ -60,8 +60,9 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
   }, [fromKey, toKey]);
 
   // Forward-looking events for the search dropdown (up to 1 year ahead).
-  // Re-fetches when the calendar window changes so results stay fresh.
+  // Fetched once on mount — independent of the calendar scroll window.
   useEffect(() => {
+    let isCurrent = true;
     const fetchAll = async () => {
       const now = new Date();
       const searchEnd = new Date(now);
@@ -71,10 +72,11 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
         .gte("starts_at", now.toISOString())
         .lte("starts_at", searchEnd.toISOString());
 
-      setAllEvents(data || []);
+      if (isCurrent) setAllEvents(data || []);
     };
     fetchAll();
-  }, [fromKey, toKey]);
+    return () => { isCurrent = false; };
+  }, []);
 
   // Build eventsByDate map from the fetched events
   const eventsByDate = useMemo(() => {

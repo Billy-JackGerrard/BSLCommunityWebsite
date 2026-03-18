@@ -5,7 +5,7 @@
     top: 60px;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: var(--privacy-banner-height, 0px);
     display: flex;
     flex-direction: row;
     overflow: hidden;
@@ -558,6 +558,8 @@
         background: rgba(0, 0, 0, 0.45);
         z-index: var(--z-backdrop);
         animation: backdrop-in 0.25s ease;
+        touch-action: none;           /* prevent scroll-through on touch */
+        overscroll-behavior: contain;  /* stop scroll chaining */
     }
 
     @keyframes backdrop-in {
@@ -585,6 +587,7 @@
     /* Only slide up when there are events (or loading) — not on empty days */
     .calendar-panel--mobile-open {
         transform: translateY(0);
+        overscroll-behavior: contain;  /* stop scroll chaining to calendar behind */
     }
 
     .calendar-panel-empty { display: none; }
