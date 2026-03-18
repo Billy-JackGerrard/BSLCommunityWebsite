@@ -7,6 +7,7 @@ type Props = {
   isLoggedIn: boolean;
   pendingCount: number;
   messagesCount: number;
+  adminName?: string | null;
   onNavigate: (view: View) => void;
   onLogout: () => void;
   showCalendarControls?: boolean;
@@ -21,6 +22,7 @@ export default function Navbar({
   isLoggedIn,
   pendingCount,
   messagesCount,
+  adminName,
   onNavigate,
   onLogout,
   showCalendarControls,
@@ -149,6 +151,7 @@ export default function Navbar({
 
         {isLoggedIn ? (
           <>
+            {adminName && <span className="navbar-admin-name">{adminName}</span>}
             <button className="navbar-link navbar-link--logout" onClick={logout}>
               Log out
             </button>

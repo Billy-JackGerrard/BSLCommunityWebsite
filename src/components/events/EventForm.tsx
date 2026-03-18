@@ -310,7 +310,7 @@ export default function EventForm({
   }, [displayError]);
 
   return (
-    <form className="eventform-root" onSubmit={handleSubmit}>
+    <form className="eventform-root" noValidate onSubmit={handleSubmit}>
       {displayError && <div className="form-error" ref={errorRef}>{displayError}</div>}
 
       <div className="form-field">

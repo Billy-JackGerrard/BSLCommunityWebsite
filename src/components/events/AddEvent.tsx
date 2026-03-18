@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useTurnstile } from "../../hooks/useTurnstile";
 import EventForm from "./EventForm";
@@ -9,32 +8,18 @@ import "./AddEvent.css";
 
 type Props = {
   prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
+  isAdmin?: boolean;
 };
 
-export default function AddEvent({ prefillDate }: Props) {
+export default function AddEvent({ prefillDate, isAdmin = false }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [formKey, setFormKey] = useState(0);
 
   const { containerRef: turnstileRef, token: turnstileToken, reset: resetTurnstile } =
     useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY as string, formKey);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
-      setIsAdmin(!!session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event: AuthChangeEvent, session: Session | null) => {
-        setIsAdmin(!!session);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   const handleSubmit = async (rows: EventFormRow[]) => {
     setLoading(true);
@@ -74,9 +59,8 @@ export default function AddEvent({ prefillDate }: Props) {
       }
     }
 
-    // Fetch session only to get the user ID for admin_id; use isAdmin state for the flag
-    const { data: { session } }: { data: { session: Session | null } } =
-      await supabase.auth.getSession();
+    // Fetch session only to get the user ID for admin_id
+    const { data: { session } } = await supabase.auth.getSession();
 
     // All occurrences are inserted upfront. For non-admins they are all
     // unapproved — the queue deduplicates by recurrence_id so only the first

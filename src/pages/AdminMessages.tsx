@@ -32,12 +32,13 @@ function formatTimestamp(iso: string): string {
   });
 }
 
-export default function AdminMessages({ userEmail, onMessagesCountChange }: { userEmail: string | null; onMessagesCountChange?: (count: number) => void }) {
+export default function AdminMessages({ userEmail, adminName, onMessagesCountChange }: { userEmail: string | null; adminName?: string | null; onMessagesCountChange?: (count: number) => void }) {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [compose, setCompose] = useState("");
-  const [composeName, setComposeName] = useState("");
+  const [composeType, setComposeType] = useState<ContactType>("general");
+  const [composeName, setComposeName] = useState(adminName ?? "");
   const [composeTitle, setComposeTitle] = useState("");
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -81,7 +82,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, title: composeTitle.trim() || null, message: compose.trim(), is_admin: true, reply_to_id: null })
+      .insert({ type: composeType, name: composeName.trim() || null, email: userEmail, title: composeTitle.trim() || null, message: compose.trim(), is_admin: true, reply_to_id: null })
       .select()
       .single();
 
@@ -94,6 +95,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
     setCompose("");
     setComposeTitle("");
+    setComposeType("general");
     setMessages(prev => [data, ...prev]);
   };
 
@@ -181,9 +183,10 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     <div key={msg.id} className={`msgs-card${msg.is_admin ? " msgs-card--admin" : ""}${isReply ? " msgs-card--reply" : ""}`}>
       <div className="msgs-card-header">
         <div className="msgs-meta">
-          {msg.is_admin ? (
+          {msg.is_admin && (
             <span className="msgs-badge msgs-badge--admin">Admin</span>
-          ) : (
+          )}
+          {!isReply && (
             <span className={`msgs-badge msgs-badge--${msg.type}`}>
               {TYPE_LABELS[msg.type]}
             </span>
@@ -299,6 +302,18 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
         {/* Compose */}
         <div className="msgs-compose">
+          <div className="contact-type-tabs">
+            {(["general", "bug", "suggestion"] as ContactType[]).map(t => (
+              <button
+                key={t}
+                type="button"
+                className={`contact-type-tab ${composeType === t ? "contact-type-tab--active" : ""}`}
+                onClick={() => setComposeType(t)}
+              >
+                {TYPE_LABELS[t]}
+              </button>
+            ))}
+          </div>
           <input
             className="form-input"
             type="text"

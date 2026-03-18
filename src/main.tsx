@@ -25,6 +25,7 @@ import type { View } from "./utils/views.ts";
 function App() {
   const [view, setView] = useState<View>("calendar");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [adminName, setAdminName] = useState<string | null>(null);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
@@ -94,12 +95,14 @@ const fetchMessagesCount = useCallback(async () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
       setUserEmail(session?.user?.email ?? null);
+      setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
       if (session) { fetchPendingCount(); fetchMessagesCount(); }
     }).catch(console.error);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
       setUserEmail(session?.user?.email ?? null);
+      setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
       if (session) { fetchPendingCount(); fetchMessagesCount(); }
       if (!session) {
         setView("calendar");
@@ -185,6 +188,7 @@ const fetchMessagesCount = useCallback(async () => {
         isLoggedIn={isLoggedIn}
         pendingCount={pendingCount}
         messagesCount={messagesCount}
+        adminName={adminName}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
         showCalendarControls={view === "calendar" || view === "list"}
@@ -220,7 +224,7 @@ const fetchMessagesCount = useCallback(async () => {
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
-        {view === "add-event"  && <AddEvent prefillDate={addEventDate} />}
+        {view === "add-event"  && <AddEvent prefillDate={addEventDate} isAdmin={isLoggedIn} />}
         {view === "delete-event" && isLoggedIn && deletingEvent && (
           <DeleteEventConfirm
             event={deletingEvent}
@@ -242,7 +246,7 @@ const fetchMessagesCount = useCallback(async () => {
             onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
           />
         )}
-        {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} onMessagesCountChange={setMessagesCount} />}
+        {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}
         {view === "contact" && <Contact />}
         {view === "about" && <AboutUs isLoggedIn={isLoggedIn} onEdit={() => handleNavigate("admin-about")} />}
         {view === "admin-about" && isLoggedIn && (
