@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import type { Event } from "../../utils/types";
-import "./AddEvent.css";
+import "./shared-card.css";
 import "./EditEvent.css";
 
 type Props = {

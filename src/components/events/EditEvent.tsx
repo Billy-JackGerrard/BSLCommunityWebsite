@@ -9,7 +9,7 @@ import type { EventFormRow } from "./EventForm";
 import type { Event } from "../../utils/types";
 import EditEventScopePrompt from "./EditEventScopePrompt";
 import type { RecurringScope } from "./EditEventScopePrompt";
-import "./AddEvent.css";
+import "./shared-card.css";
 import "./EditEvent.css";
 
 type Props = {
@@ -121,7 +121,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
         : null;
 
       const patchPromises = (futures ?? []).map(
-        (future: { id: string; starts_at: string }) => {
+        (future: { id: number; starts_at: string }) => {
           const futureStart   = new Date(future.starts_at).getTime();
           const shiftedStart  = new Date(futureStart + startDelta).toISOString();
           const shiftedFinish = duration !== null

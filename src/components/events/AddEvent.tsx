@@ -4,6 +4,7 @@ import { supabase } from "../../supabaseClient";
 import { useTurnstile } from "../../hooks/useTurnstile";
 import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
+import "./shared-card.css";
 import "./AddEvent.css";
 
 type Props = {

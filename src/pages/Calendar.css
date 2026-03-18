@@ -12,6 +12,17 @@
     z-index: 1;
 }
 
+/* ── Error banner ── */
+.calendar-error-banner {
+    background: var(--color-error-bg, #fef2f2);
+    color: var(--color-text-error);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin: 0.5rem 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
 /* ── Left column: the scrollable calendar ── */
 .calendar-col {
     display: flex;
@@ -442,7 +453,6 @@
     padding: 1px 4px;
     font-size: 0.62rem;
     font-weight: 600;
-    color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -545,6 +555,9 @@
 
     /* Smaller cells on mobile */
     .calendar-cell { min-height: 3.5rem; }
+
+    /* Slightly larger chip text for readability on mobile */
+    .calendar-event-chip { font-size: 0.68rem; }
 
     /* Bigger touch targets for panel controls */
     .calendar-panel-add-btn  { height: 44px; padding: 0 0.75rem; }

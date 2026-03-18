@@ -109,3 +109,17 @@
   color: var(--color-text-muted);
   opacity: 0.7;
 }
+
+/* Stack date + time vertically on very narrow screens */
+@media (max-width: 400px) {
+  .datetime-row {
+    flex-direction: column;
+  }
+
+  .datetime-row .form-input[type="date"],
+  .datetime-row .form-input[type="time"] {
+    flex: unset;
+    width: 100%;
+    font-size: 16px; /* prevent iOS zoom */
+  }
+}

@@ -89,7 +89,7 @@
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: 2px;
-  color: var( --color-text-primary);
+  color: var(--color-text-primary);
   padding: 0.5rem 0.7rem;
   font-size: 0.9rem;
   font-family: inherit;
@@ -126,8 +126,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.7rem;
-  background: rgba(232, 197, 71, 0.07);
-  border: 1px solid rgba(232, 197, 71, 0.2);
+  background: var(--color-bg-accent-tint);
+  border: 1px solid var(--color-border-accent);
   border-radius: 2px;
 }
 

@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "../supabaseClient";
+import type { Section } from "../utils/types";
 import "./AdminAboutUs.css";
-
-type Section = {
-  title: string;
-  paragraphs: string[];
-};
 
 type Props = {
   onSaved: () => void;

@@ -321,7 +321,7 @@
 
 .event-detail-share-btn:hover {
     border-color: var(--color-text-muted);
-    color: var(--color-text);
+    color: var(--color-text-primary);
 }
 
 /* ── Add to Calendar button ── */

@@ -9,6 +9,16 @@ import EventDetails from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
 
+/** Returns true if a hex colour is perceptually light (better with dark text). */
+function isLightColor(hex: string): boolean {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  // sRGB relative luminance (WCAG formula)
+  const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return L > 0.45;
+}
+
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SEARCH_RESULT_LIMIT = 10;
 const MONTHS_BEFORE_INIT = 2;
@@ -121,7 +131,10 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
                         <span
                           key={j}
                           className="calendar-event-chip"
-                          style={{ background: CATEGORY_COLOURS[ev.category] }}
+                          style={{
+                            background: CATEGORY_COLOURS[ev.category],
+                            color: isLightColor(CATEGORY_COLOURS[ev.category]) ? "#1e293b" : "#fff",
+                          }}
                         >
                           {ev.title}
                         </span>
@@ -175,9 +188,9 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const windowStart = monthKeys[0];
   const windowEnd   = monthKeys[monthKeys.length - 1];
 
-  const { selectedCategories, setSelectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
+  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
 
-  const { eventsByDate: rawEventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
+  const { eventsByDate: rawEventsByDate, allEvents, loading, error: fetchError } = useCalendarEvents(windowStart, windowEnd);
 
   const eventsByDate = useMemo(() => {
     if (selectedCategories.size === 0 && dateFilter === "all") return rawEventsByDate;
@@ -200,7 +213,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
       year: new Date().getFullYear(),
     };
   });
-  const [expandedEventId, setExpandedEventId] = useState<string | null>(initialEventId ?? null);
+  const [expandedEventId, setExpandedEventId] = useState<number | null>(initialEventId ? Number(initialEventId) : null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -271,7 +284,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
     const month = initialEventDate.getMonth();
     const year = initialEventDate.getFullYear();
     setSelected({ day, month, year });
-    setExpandedEventId(initialEventId);
+    setExpandedEventId(initialEventId ? Number(initialEventId) : null);
     setTimeout(() => {
       monthRefs.current.get(`${year}-${month}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
@@ -316,9 +329,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const handleToggleEvent = (ev: Event) => {
     setExpandedEventId(prev => {
-      const evId = String(ev.id);
-      const next = prev === evId ? null : evId;
-      onEventExpand?.(next ? ev : null);
+      const next = prev === ev.id ? null : ev.id;
+      onEventExpand?.(next !== null ? ev : null);
       return next;
     });
   };
@@ -335,6 +347,12 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   return (
     <div className="calendar-page">
+
+      {fetchError && (
+        <div className="calendar-error-banner" role="alert">
+          Failed to load events. Please try refreshing the page.
+        </div>
+      )}
 
       {/* ── Left: scrollable calendar ── */}
       <div className="calendar-col">
@@ -475,7 +493,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             ) : (
               <div className="calendar-panel-list">
                 {selectedEvents.map(ev => {
-                  const isExpanded = expandedEventId !== null && String(expandedEventId) === String(ev.id);
+                  const isExpanded = expandedEventId !== null && expandedEventId === ev.id;
                   return (
                     <div key={ev.id} className="calendar-panel-event-wrap">
                       {isExpanded ? (

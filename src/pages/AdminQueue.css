@@ -61,7 +61,7 @@
 }
 
 .queue-card:hover {
-  border-color: rgba(232, 197, 71, 0.35);
+  border-color: var(--color-border-accent-strong);
 }
 
 .queue-card--selected {
@@ -77,7 +77,6 @@
 
 .queue-event-title {
   color: var(--color-accent);
-  font-family: Georgia, serif;
   font-size: 1.1rem;
   font-weight: bold;
 }
@@ -104,8 +103,8 @@
   font-family: monospace;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
-  background: rgba(232, 197, 71, 0.08);
-  border: 1px solid rgba(232, 197, 71, 0.2);
+  background: var(--color-bg-accent-tint);
+  border: 1px solid var(--color-border-accent);
   border-radius: 2px;
   padding: 0.2rem 0.5rem;
 }
@@ -123,7 +122,6 @@
   border-radius: 2px;
   font-size: 0.9rem;
   font-weight: bold;
-  font-family: Georgia, serif;
   cursor: pointer;
   transition: opacity 0.15s;
   min-width: 0;

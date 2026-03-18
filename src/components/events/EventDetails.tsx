@@ -17,7 +17,7 @@ type Props = {
   showAddToCalendar?: boolean;
 };
 
-function ShareButton({ eventId }: { eventId: string | number }) {
+function ShareButton({ eventId }: { eventId: number }) {
   const [copied, setCopied] = useState(false);
   const shareUrl = `${window.location.origin}/event/${eventId}`;
   async function handleShare() {

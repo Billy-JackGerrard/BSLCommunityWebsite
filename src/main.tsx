@@ -74,10 +74,10 @@ function App() {
   }, []);
 
 const fetchMessagesCount = useCallback(async () => {
-    const { count } = await supabase
+    const { count, error } = await supabase
       .from("contact_messages")
       .select("id", { count: "exact", head: true });
-    setMessagesCount(count ?? 0);
+    if (!error) setMessagesCount(count ?? 0);
   }, []);
 
   const fetchPendingCount = useCallback(async () => {

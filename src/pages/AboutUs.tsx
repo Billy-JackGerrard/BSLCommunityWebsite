@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import type { Section } from "../utils/types";
 import "./AboutUs.css";
-
-type Section = {
-  title: string;
-  paragraphs: string[];
-};
 
 type AboutContent = {
   sections: Section[];

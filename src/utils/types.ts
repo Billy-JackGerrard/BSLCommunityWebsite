@@ -78,6 +78,12 @@ export type Category = typeof CATEGORIES[number];
 
 export type ContactType = "general" | "bug" | "suggestion";
 
+/** Shared type for AboutUs / AdminAboutUs page sections. */
+export type Section = {
+  title: string;
+  paragraphs: string[];
+};
+
 export const CATEGORY_COLOURS: Record<Category, string> = {
   "Kids Activities":     "#f97316",
   "Performance & Film":  "#a855f7",

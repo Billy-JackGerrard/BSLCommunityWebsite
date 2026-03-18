@@ -5,7 +5,7 @@ import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
-import type { DateFilter } from "../utils/eventFilters";
+
 import EventDetailCard from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
 import "./EventList.css";
@@ -42,7 +42,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const { selectedCategories, setSelectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
+  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
   const [searchQuery, setSearchQuery] = useState("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);

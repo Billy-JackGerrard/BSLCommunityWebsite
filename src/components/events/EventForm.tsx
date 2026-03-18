@@ -43,6 +43,13 @@ type Props = {
   children?: React.ReactNode;
 };
 
+const ADVANCED_ACCESS_OPTIONS: Record<string, string[]> = {
+  Audio: ["Hearing loop (T-loop)", "Audio description"],
+  Physical: ["Wheelchair accessible", "Step-free access", "Accessible toilets", "Quiet room available"],
+  Sensory: ["Low sensory environment", "Relaxed performance"],
+};
+const ALL_ADVANCED_OPTIONS = Object.values(ADVANCED_ACCESS_OPTIONS).flat();
+
 export default function EventForm({
   initialValues,
   prefillDate,
@@ -80,13 +87,6 @@ export default function EventForm({
   const categoryRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
-
-  const ADVANCED_ACCESS_OPTIONS = {
-    Audio: ["Hearing loop (T-loop)", "Audio description"],
-    Physical: ["Wheelchair accessible", "Step-free access", "Accessible toilets", "Quiet room available"],
-    Sensory: ["Low sensory environment", "Relaxed performance"],
-  };
-  const ALL_ADVANCED_OPTIONS = Object.values(ADVANCED_ACCESS_OPTIONS).flat();
 
   const [accessibility, setAccessibility] = useState<string[]>(
     (initialValues?.accessibility ?? []).filter(o => !o.startsWith("Other: "))
@@ -200,7 +200,8 @@ export default function EventForm({
     setFinishesAt(date && time ? `${date}T${time}` : "");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     setInternalError(null);
 
     if (!title || !startsAt) {
@@ -305,7 +306,7 @@ export default function EventForm({
   }, [displayError]);
 
   return (
-    <div className="eventform-root">
+    <form className="eventform-root" onSubmit={handleSubmit}>
       {displayError && <div className="form-error" ref={errorRef}>{displayError}</div>}
 
       <div className="form-field">
@@ -623,13 +624,12 @@ export default function EventForm({
         )}
         <button
           className="btn-primary"
-          onClick={handleSubmit}
           disabled={submitting || submitDisabled || !!(finishesAt && startsAt && finishesAt <= startsAt)}
-          type="button"
+          type="submit"
         >
           {submitting ? submittingLabel : submitLabel}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

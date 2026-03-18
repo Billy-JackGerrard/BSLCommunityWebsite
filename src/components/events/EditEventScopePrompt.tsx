@@ -1,4 +1,4 @@
-import "./AddEvent.css";
+import "./shared-card.css";
 import "./EditEvent.css";
 
 export type RecurringScope = "single" | "all-future";
