@@ -40,6 +40,7 @@ type Props = {
   isLoggedIn: boolean;
   onEditEvent: (event: Event) => void;
   onDeleteEvent?: (event: Event) => void;
+  onDuplicateEvent?: (event: Event) => void;
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
   searchOpen: boolean;
   onToggleSearch: () => void;
@@ -154,7 +155,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDuplicateEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -502,6 +503,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
                             onClose={() => { setExpandedEventId(null); onEventExpand?.(null); }}
                             onEdit={onEditEvent}
                             onDelete={onDeleteEvent}
+                            onDuplicate={onDuplicateEvent}
                           />
                         </div>
                       ) : (

@@ -13,6 +13,7 @@ type Props = {
   onClose: () => void;
   onEdit: (event: Event) => void;
   onDelete?: (event: Event) => void;
+  onDuplicate?: (event: Event) => void;
   actions?: React.ReactNode;
   showAddToCalendar?: boolean;
 };
@@ -61,7 +62,7 @@ function LinkButtons({ url }: { url: string }) {
   );
 }
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, actions, showAddToCalendar = true }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, onDuplicate, actions, showAddToCalendar = true }: Props) {
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
@@ -227,6 +228,11 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
 
       <div className="event-detail-cal-row">
         <ShareButton eventId={event.id} />
+        {onDuplicate && (
+          <button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)}>
+            ⧉ Duplicate Event
+          </button>
+        )}
       </div>
 
       {showAddToCalendar && (

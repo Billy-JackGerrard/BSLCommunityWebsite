@@ -34,6 +34,7 @@ function App() {
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
+  const [duplicatingEvent, setDuplicatingEvent] = useState<Event | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [listSearchOpen, setListSearchOpen] = useState(false);
   const [initialEventId, setInitialEventId] = useState<string | undefined>(() => {
@@ -129,7 +130,7 @@ const fetchMessagesCount = useCallback(async () => {
   };
 
   const handleNavigate = (v: View) => {
-    if (v !== "add-event") setAddEventDate(undefined);
+    if (v !== "add-event") { setAddEventDate(undefined); setDuplicatingEvent(null); }
     if (v !== "calendar") {
       setSearchOpen(false);
       if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
@@ -175,6 +176,13 @@ const fetchMessagesCount = useCallback(async () => {
     const mm = String(date.month + 1).padStart(2, "0");
     const dd = String(date.day).padStart(2, "0");
     setAddEventDate(`${date.year}-${mm}-${dd}`);
+    setDuplicatingEvent(null);
+    setView("add-event");
+  };
+
+  const handleDuplicateEvent = (event: Event) => {
+    setDuplicatingEvent(event);
+    setAddEventDate(undefined);
     setView("add-event");
   };
 
@@ -199,6 +207,7 @@ const fetchMessagesCount = useCallback(async () => {
             isLoggedIn={isLoggedIn}
             onEditEvent={ev => handleEditEvent(ev, "calendar")}
             onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "calendar") : undefined}
+            onDuplicateEvent={handleDuplicateEvent}
             onAddEvent={handleAddEventFromCalendar}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
@@ -213,12 +222,13 @@ const fetchMessagesCount = useCallback(async () => {
             isLoggedIn={isLoggedIn}
             onEditEvent={ev => handleEditEvent(ev, "list")}
             onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "list") : undefined}
+            onDuplicateEvent={handleDuplicateEvent}
             searchOpen={listSearchOpen}
             onToggleSearch={handleListToggleSearch}
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
-        {view === "add-event"  && <AddEvent prefillDate={addEventDate} isAdmin={isLoggedIn} />}
+        {view === "add-event"  && <AddEvent prefillDate={addEventDate} prefillEvent={duplicatingEvent ?? undefined} isAdmin={isLoggedIn} />}
         {view === "delete-event" && isLoggedIn && deletingEvent && (
           <DeleteEventConfirm
             event={deletingEvent}

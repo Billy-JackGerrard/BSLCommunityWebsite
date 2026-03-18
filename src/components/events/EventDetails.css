@@ -324,6 +324,27 @@
     color: var(--color-text-primary);
 }
 
+/* ── Duplicate button ── */
+.event-detail-duplicate-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    padding: 0.45rem 0.75rem;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 0.4rem;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.event-detail-duplicate-btn:hover {
+    border-color: var(--color-text-muted);
+    color: var(--color-text-primary);
+}
+
 /* ── Add to Calendar button ── */
 .event-detail-cal-row {
     border-top: 1px solid var(--color-border);

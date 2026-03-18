@@ -14,6 +14,7 @@ type Props = {
   isLoggedIn: boolean;
   onEditEvent: (event: Event) => void;
   onDeleteEvent?: (event: Event) => void;
+  onDuplicateEvent?: (event: Event) => void;
   searchOpen?: boolean;
   onToggleSearch?: () => void;
 };
@@ -37,7 +38,7 @@ function groupByMonth(events: Event[]): MonthGroup[] {
   });
 }
 
-export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, searchOpen, onToggleSearch }: Props) {
+export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDuplicateEvent, searchOpen, onToggleSearch }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -193,6 +194,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
                               onClose={() => setExpandedId(null)}
                               onEdit={onEditEvent}
                               onDelete={onDeleteEvent}
+                              onDuplicate={onDuplicateEvent}
                             />
                           </div>
                         )}
@@ -212,6 +214,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
                 onClose={() => setExpandedId(null)}
                 onEdit={onEditEvent}
                 onDelete={onDeleteEvent}
+                onDuplicate={onDuplicateEvent}
               />
             </div>
           )}

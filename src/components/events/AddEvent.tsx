@@ -3,15 +3,17 @@ import { supabase } from "../../supabaseClient";
 import { useTurnstile } from "../../hooks/useTurnstile";
 import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
+import type { Event } from "../../utils/types";
 import "./shared-card.css";
 import "./AddEvent.css";
 
 type Props = {
   prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
+  prefillEvent?: Event;  // pre-populates all fields when duplicating an event
   isAdmin?: boolean;
 };
 
-export default function AddEvent({ prefillDate, isAdmin = false }: Props) {
+export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [error, setError] = useState<string | null>(null);
@@ -135,6 +137,7 @@ export default function AddEvent({ prefillDate, isAdmin = false }: Props) {
 
         <EventForm
           key={formKey}
+          initialValues={prefillEvent}
           prefillDate={prefillDate}
           showRecurrence={true}
           submitLabel="Add Event"
