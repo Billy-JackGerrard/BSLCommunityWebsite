@@ -1,6 +1,6 @@
 import { atcb_action } from "add-to-calendar-button";
 import type { Event } from "../../utils/types";
-import { CATEGORY_COLOURS } from "../../utils/types";
+import { CATEGORY_COLOURS, formatAddress } from "../../utils/types";
 import { formatDateTimeRange, toLocalDateKey, formatTime } from "../../utils/dates";
 import { humaniseRule } from "../../utils/recurrence";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
@@ -107,7 +107,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         <div className="event-detail-row">
           <span className="event-detail-icon">📍</span>
           <span className="event-detail-text">
-            {[event.location, event.postcode].filter(Boolean).join(", ")}
+            {[event.location, event.address && formatAddress(event.address)].filter(Boolean).join(" — ")}
           </span>
         </div>
       )}

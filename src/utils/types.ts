@@ -1,5 +1,20 @@
 import type { RecurrenceRule } from "./recurrence";
 
+export type EventAddress = {
+  road?: string;
+  house_number?: string;
+  suburb?: string;
+  city?: string;
+  state?: string;
+  postcode?: string;
+  country?: string;
+};
+
+export function formatAddress(addr: EventAddress): string {
+  const street = [addr.house_number, addr.road].filter(Boolean).join(" ");
+  return [street, addr.suburb, addr.city, addr.postcode].filter(Boolean).join(", ");
+}
+
 /** Core event shape — returned by all approved-event queries. */
 export type Event = {
   id: number;
@@ -8,7 +23,9 @@ export type Event = {
   description?: string;
   event_type?: 'in_person' | 'online' | 'both';
   location?: string;
-  postcode?: string;
+  address?: EventAddress;
+  latitude?: number;
+  longitude?: number;
   price?: string;
   booking_info?: BookingInfo;
   starts_at: string;

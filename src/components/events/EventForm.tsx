@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime, formatLocalDateTime } from "../../utils/dates";
-import type { Event, Category, AgeRating } from "../../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS } from "../../utils/types";
+import type { Event, EventAddress, Category, AgeRating } from "../../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS, formatAddress } from "../../utils/types";
+import { useLocationSearch } from "../../hooks/useLocationSearch";
+import type { NominatimResult } from "../../hooks/useLocationSearch";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
 
@@ -15,7 +17,9 @@ export type EventFormRow = {
   description: string | null;
   event_type: 'in_person' | 'online' | 'both';
   location: string | null;
-  postcode: string | null;
+  address: EventAddress | null;
+  latitude: number | null;
+  longitude: number | null;
   starts_at: string;
   finishes_at: string | null;
   contact_name: string | null;
@@ -69,7 +73,12 @@ export default function EventForm({
   const [isInPerson, setIsInPerson] = useState(initialValues?.event_type !== 'online');
   const [isOnline, setIsOnline] = useState(initialValues?.event_type === 'online' || initialValues?.event_type === 'both');
   const [location, setLocation] = useState(initialValues?.location ?? "");
-  const [postcode, setPostcode] = useState(initialValues?.postcode ?? "");
+  const [address, setAddress] = useState<EventAddress | null>(initialValues?.address ?? null);
+  const [latitude, setLatitude] = useState<number | null>(initialValues?.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(initialValues?.longitude ?? null);
+  const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
+  const locationFieldRef = useRef<HTMLDivElement>(null);
+  const { results: locationResults, loading: locationLoading, clear: clearLocationResults } = useLocationSearch(location);
   const [startsAt, setStartsAt] = useState(() => {
     if (initialValues?.starts_at) return isoToLocal(initialValues.starts_at);
     if (prefillDate) return `${prefillDate}T09:00`;
@@ -123,6 +132,36 @@ export default function EventForm({
     return () => document.removeEventListener("mousedown", handler);
   }, [categoryOpen]);
 
+  useEffect(() => {
+    if (!locationDropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (locationFieldRef.current && !locationFieldRef.current.contains(e.target as Node))
+        setLocationDropdownOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [locationDropdownOpen]);
+
+  const handleLocationSelect = (result: NominatimResult) => {
+    const name = result.address?.amenity || result.name || result.display_name.split(",")[0];
+    setLocation(name);
+
+    const addr: EventAddress = {
+      road: result.address?.road,
+      house_number: result.address?.house_number,
+      suburb: result.address?.suburb,
+      city: result.address?.city,
+      state: result.address?.state,
+      postcode: result.address?.postcode,
+      country: result.address?.country,
+    };
+    setAddress(addr);
+    setLatitude(parseFloat(result.lat));
+    setLongitude(parseFloat(result.lon));
+    setLocationDropdownOpen(false);
+    clearLocationResults();
+  };
+
   const prevInitialRef = useRef<Event | undefined>(initialValues);
   useEffect(() => {
     if (initialValues && initialValues !== prevInitialRef.current) {
@@ -132,7 +171,9 @@ export default function EventForm({
       setIsInPerson(initialValues.event_type !== 'online');
       setIsOnline(initialValues.event_type === 'online' || initialValues.event_type === 'both');
       setLocation(initialValues.location ?? "");
-      setPostcode(initialValues.postcode ?? "");
+      setAddress(initialValues.address ?? null);
+      setLatitude(initialValues.latitude ?? null);
+      setLongitude(initialValues.longitude ?? null);
       setStartsAt(initialValues.starts_at ? isoToLocal(initialValues.starts_at) : "");
       setFinishesAt(initialValues.finishes_at ? isoToLocal(initialValues.finishes_at) : "");
       setContactName(initialValues.contact_name ?? "");
@@ -248,14 +289,6 @@ export default function EventForm({
       setInternalError("Please enter a location for this in-person event.");
       return;
     }
-    if (isInPerson && !postcode) {
-      setInternalError("Please enter a postcode for this in-person event.");
-      return;
-    }
-    if (isInPerson && postcode && !/^[A-Za-z]{1,2}\d[A-Za-z\d]?\s*\d[A-Za-z]{2}$/.test(postcode.trim())) {
-      setInternalError("Please enter a valid UK postcode (e.g. EH1 1AA).");
-      return;
-    }
     if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
       setInternalError("Please enter a valid email address.");
       return;
@@ -283,7 +316,9 @@ export default function EventForm({
       description: description || null,
       event_type: isInPerson && isOnline ? 'both' : isOnline ? 'online' : 'in_person',
       location: isInPerson ? (location || null) : null,
-      postcode: isInPerson ? (postcode || null) : null,
+      address: isInPerson ? (address ?? null) : null,
+      latitude: isInPerson ? (latitude ?? null) : null,
+      longitude: isInPerson ? (longitude ?? null) : null,
       starts_at: start.toISOString(),
       finishes_at: finish ? finish.toISOString() : null,
       contact_name: contactName || null,
@@ -410,29 +445,53 @@ export default function EventForm({
         <>
           <div className="form-field">
             <label htmlFor="ef-location" className="form-label">Location *</label>
-            <input
-              id="ef-location"
-              className="form-input"
-              type="text"
-              placeholder="e.g. Blackwood Bar"
-              maxLength={150}
-              value={location}
-              onChange={e => setLocation(e.target.value)}
-            />
+            <div className="location-field-wrapper" ref={locationFieldRef}>
+              <input
+                id="ef-location"
+                className="form-input"
+                type="text"
+                placeholder="e.g. Blackwood Bar"
+                maxLength={150}
+                value={location}
+                onChange={e => {
+                  setLocation(e.target.value);
+                  setLocationDropdownOpen(true);
+                  // Clear structured data when user types manually
+                  setAddress(null);
+                  setLatitude(null);
+                  setLongitude(null);
+                }}
+                onFocus={() => { if (locationResults.length > 0) setLocationDropdownOpen(true); }}
+              />
+              {locationDropdownOpen && locationResults.length > 0 && (
+                <div className="location-dropdown">
+                  {locationResults.map(r => (
+                    <button
+                      key={r.place_id}
+                      type="button"
+                      className="location-dropdown-option"
+                      onMouseDown={e => { e.preventDefault(); handleLocationSelect(r); }}
+                    >
+                      <span className="location-dropdown-name">
+                        {r.address?.amenity || r.name || r.display_name.split(",")[0]}
+                      </span>
+                      <span className="location-dropdown-detail">
+                        {r.display_name.split(",").slice(1, 3).join(",").trim()}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {locationLoading && <span className="location-search-hint">Searching...</span>}
+            </div>
           </div>
 
-          <div className="form-field">
-            <label htmlFor="ef-postcode" className="form-label">Postcode *</label>
-            <input
-              id="ef-postcode"
-              className="form-input"
-              type="text"
-              placeholder="e.g. EH1 1AA"
-              maxLength={10}
-              value={postcode}
-              onChange={e => setPostcode(e.target.value)}
-            />
-          </div>
+          {address && (
+            <div className="form-field">
+              <label className="form-label">Address</label>
+              <div className="location-address-display">{formatAddress(address)}</div>
+            </div>
+          )}
         </>
       )}
 
