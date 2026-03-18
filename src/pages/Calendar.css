@@ -325,12 +325,18 @@
 .calendar-search-result-title { color: var(--color-text-primary); font-family: 'Inter', system-ui, Arial, sans-serif; font-size: 0.95rem; font-weight: bold; }
 .calendar-search-result-date  { color: var(--color-text-muted); font-family: monospace; font-size: 0.75rem; }
 
-/* ── Filter bar — sits flush at top of calendar-col when open ── */
-.calendar-filter-wrap {
-    flex-shrink: 0;
-    background: var(--color-bg-inset);
-    border-bottom: 1px solid var(--color-border);
-    padding: 0.6rem 0.75rem;
+/* ── Desktop filter panel — top of event panel column ── */
+.calendar-panel-filters {
+    display: none;
+}
+
+/* ── Mobile filter bar — fixed bottom ── */
+.calendar-mobile-filters {
+    display: none;
+}
+
+.calendar-filter-toggle {
+    display: none;
 }
 
 /* ── Scrollable months ── */
@@ -496,6 +502,42 @@
     display: none;
 }
 
+/* ── Desktop: filter panel at top of event panel column ── */
+@media (min-width: 701px) {
+    .calendar-panel-filters {
+        display: block;
+        flex-shrink: 0;
+        border-bottom: 1px solid var(--color-border);
+        padding: 0.5rem 0.75rem;
+        background: var(--color-bg-inset);
+    }
+
+    .calendar-panel-filter-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        color: var(--color-text-muted);
+        font-family: inherit;
+    }
+
+    .calendar-panel-filter-toggle-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .calendar-panel-filter-toggle-arrow {
+        font-size: 0.55rem;
+        line-height: 1;
+    }
+}
+
 /* ── Mobile: panel slides up from bottom ── */
 @media (max-width: 700px) {
     .calendar-page {
@@ -546,6 +588,7 @@
     }
 
     .calendar-panel-empty { display: none; }
+    .calendar-panel-filters { display: none; }
 
     .calendar-day-number  { font-size: 0.8rem; }
     .calendar-day-label   { font-size: 0.6rem; letter-spacing: 0.03em; }
@@ -562,6 +605,52 @@
     /* Bigger touch targets for panel controls */
     .calendar-panel-add-btn  { height: 44px; padding: 0 0.75rem; }
     .calendar-panel-close    { width: 44px; height: 44px; }
+
+    /* Mobile filter bar — fixed bottom */
+    .calendar-mobile-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: calc(var(--z-dropdown) + 1);
+        background: var(--color-bg-card);
+        border-top: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    }
+
+    .calendar-mobile-filters--collapsed {
+        padding-top: 0;
+        padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    }
+
+    .calendar-filter-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        color: var(--color-text-muted);
+        font-family: inherit;
+    }
+
+    .calendar-filter-toggle-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .calendar-filter-toggle-arrow {
+        font-size: 0.55rem;
+        line-height: 1;
+    }
 }
 
 /* ── Inline event expansion ── */

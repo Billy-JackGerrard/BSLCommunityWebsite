@@ -43,8 +43,6 @@ type Props = {
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
   searchOpen: boolean;
   onToggleSearch: () => void;
-  filtersOpen: boolean;
-  onFiltersActiveChange: (active: boolean) => void;
   onScrollToTodayReady: (fn: () => void) => void;
   initialEventId?: string;
   initialEventDate?: Date;
@@ -156,7 +154,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, filtersOpen, onFiltersActiveChange, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -222,11 +220,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef    = useRef<HTMLDivElement>(null);
-
-  // Notify parent when filters become active/inactive (for the navbar button indicator)
-  useEffect(() => {
-    onFiltersActiveChange(selectedCategories.size > 0 || dateFilter !== "all");
-  }, [selectedCategories, dateFilter, onFiltersActiveChange]);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(true);
 
   // Close search dropdown on outside click
   useEffect(() => {
@@ -395,19 +389,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
           </div>
         )}
 
-        {/* Filter bar — shown below search when open */}
-        {filtersOpen && (
-          <div className="calendar-filter-wrap">
-            <FilterPanel
-              selectedCategories={selectedCategories}
-              onToggleCategory={toggleCategory}
-              onClearCategories={clearCategories}
-              dateFilter={dateFilter}
-              onSetDateFilter={setDateFilter}
-            />
-          </div>
-        )}
-
         <div className="calendar-scroll-container" ref={scrollContainerRef}>
           {monthKeys.map(mk => {
             const key = `${mk.year}-${mk.month}`;
@@ -441,6 +422,23 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
       {/* ── Right: event panel ── */}
       <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""}`}>
+
+        {/* Desktop filter toggle — top of panel column */}
+        <div className={`calendar-panel-filters${filtersCollapsed ? " calendar-panel-filters--collapsed" : ""}`}>
+          <button className="calendar-panel-filter-toggle" onClick={() => setFiltersCollapsed(c => !c)} aria-expanded={!filtersCollapsed}>
+            <span className="calendar-panel-filter-toggle-label">Filters</span>
+            <span className="calendar-panel-filter-toggle-arrow">{filtersCollapsed ? "▶" : "▼"}</span>
+          </button>
+          {!filtersCollapsed && (
+            <FilterPanel
+              selectedCategories={selectedCategories}
+              onToggleCategory={toggleCategory}
+              onClearCategories={clearCategories}
+              dateFilter={dateFilter}
+              onSetDateFilter={setDateFilter}
+            />
+          )}
+        </div>
 
         {!selected ? (
           <div className="calendar-panel-empty">
@@ -542,6 +540,27 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── Mobile-only filter bar — fixed bottom ── */}
+      <div className={`calendar-mobile-filters${filtersCollapsed ? " calendar-mobile-filters--collapsed" : ""}`}>
+        <button
+          className="calendar-filter-toggle"
+          onClick={() => setFiltersCollapsed(c => !c)}
+          aria-expanded={!filtersCollapsed}
+        >
+          <span className="calendar-filter-toggle-label">Filters</span>
+          <span className="calendar-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
+        </button>
+        {!filtersCollapsed && (
+          <FilterPanel
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            onClearCategories={clearCategories}
+            dateFilter={dateFilter}
+            onSetDateFilter={setDateFilter}
+          />
+        )}
       </div>
 
     </div>

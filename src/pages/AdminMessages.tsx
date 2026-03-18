@@ -38,7 +38,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
   const [error, setError] = useState<string | null>(null);
   const [compose, setCompose] = useState("");
   const [composeType, setComposeType] = useState<ContactType>("general");
-  const [composeName, setComposeName] = useState(adminName ?? "");
+  const composeName = adminName ?? null;
   const [composeTitle, setComposeTitle] = useState("");
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -82,7 +82,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
 
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: composeType, name: composeName.trim() || null, email: userEmail, title: composeTitle.trim() || null, message: compose.trim(), is_admin: true, reply_to_id: null })
+      .insert({ type: composeType, name: composeName, email: userEmail, title: composeTitle.trim() || null, message: compose.trim(), is_admin: true, reply_to_id: null })
       .select()
       .single();
 
@@ -106,7 +106,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
 
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, message: replyText.trim(), is_admin: true, reply_to_id: parentId })
+      .insert({ type: "general", name: composeName, email: userEmail, message: replyText.trim(), is_admin: true, reply_to_id: parentId })
       .select()
       .single();
 
@@ -314,13 +314,6 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
               </button>
             ))}
           </div>
-          <input
-            className="form-input"
-            type="text"
-            placeholder="Your name"
-            value={composeName}
-            onChange={e => setComposeName(e.target.value)}
-          />
           <input
             className="form-input"
             type="text"

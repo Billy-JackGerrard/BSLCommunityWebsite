@@ -36,8 +36,6 @@ function App() {
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
   const [searchOpen, setSearchOpen] = useState(false);
   const [listSearchOpen, setListSearchOpen] = useState(false);
-  const [calendarFiltersOpen, setCalendarFiltersOpen] = useState(false);
-  const [calendarFiltersActive, setCalendarFiltersActive] = useState(false);
   const [initialEventId, setInitialEventId] = useState<string | undefined>(() => {
     const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
     return match ? match[1] : undefined;
@@ -46,7 +44,7 @@ function App() {
   const scrollToTodayRef = useRef<(() => void) | null>(null);
   const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
   const handleListToggleSearch = useCallback(() => setListSearchOpen(o => !o), []);
-  const handleToggleCalendarFilters = useCallback(() => setCalendarFiltersOpen(o => !o), []);
+
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
   useEffect(() => {
@@ -139,7 +137,7 @@ const fetchMessagesCount = useCallback(async () => {
       setInitialEventDate(undefined);
     }
     if (v !== "list") setListSearchOpen(false);
-    if (v !== "calendar") setCalendarFiltersOpen(false);
+
     setView(v);
   };
 
@@ -194,8 +192,6 @@ const fetchMessagesCount = useCallback(async () => {
         showCalendarControls={view === "calendar" || view === "list"}
         onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
         onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
-        onToggleFilters={view === "calendar" ? handleToggleCalendarFilters : undefined}
-        filtersActive={view === "calendar" ? calendarFiltersActive : undefined}
       />
       <div key={view} className="page-view" style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
@@ -206,8 +202,6 @@ const fetchMessagesCount = useCallback(async () => {
             onAddEvent={handleAddEventFromCalendar}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
-            filtersOpen={calendarFiltersOpen}
-            onFiltersActiveChange={setCalendarFiltersActive}
             onScrollToTodayReady={handleScrollToTodayReady}
             initialEventId={initialEventId}
             initialEventDate={initialEventDate}
