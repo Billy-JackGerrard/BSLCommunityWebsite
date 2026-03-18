@@ -8,6 +8,7 @@ type ContactMessage = {
   type: ContactType;
   name: string | null;
   email: string | null;
+  title: string | null;
   message: string;
   created_at: string;
   is_admin: boolean;
@@ -37,11 +38,13 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   const [error, setError] = useState<string | null>(null);
   const [compose, setCompose] = useState("");
   const [composeName, setComposeName] = useState("");
+  const [composeTitle, setComposeTitle] = useState("");
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [editTitle, setEditTitle] = useState("");
   const [savingId, setSavingId] = useState<string | null>(null);
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -78,7 +81,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, message: compose.trim(), is_admin: true, reply_to_id: null })
+      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, title: composeTitle.trim() || null, message: compose.trim(), is_admin: true, reply_to_id: null })
       .select()
       .single();
 
@@ -90,6 +93,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     }
 
     setCompose("");
+    setComposeTitle("");
     setMessages(prev => [data, ...prev]);
   };
 
@@ -119,6 +123,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   const handleEditStart = (msg: ContactMessage) => {
     setEditingId(msg.id);
     setEditText(msg.message);
+    setEditTitle(msg.title || "");
     setConfirmDelete(null);
     setReplyingToId(null);
   };
@@ -130,7 +135,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
     const { error: dbError } = await supabase
       .from("contact_messages")
-      .update({ message: editText.trim() })
+      .update({ message: editText.trim(), title: editTitle.trim() || null })
       .eq("id", id);
 
     setSavingId(null);
@@ -140,9 +145,10 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
       return;
     }
 
-    setMessages(prev => prev.map(m => m.id === id ? { ...m, message: editText.trim() } : m));
+    setMessages(prev => prev.map(m => m.id === id ? { ...m, message: editText.trim(), title: editTitle.trim() || null } : m));
     setEditingId(null);
     setEditText("");
+    setEditTitle("");
   };
 
   const handleDelete = async (id: string) => {
@@ -194,11 +200,21 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
       {editingId === msg.id ? (
         <div className="msgs-edit">
+          {!isReply && (
+            <input
+              className="form-input"
+              type="text"
+              placeholder="Title"
+              value={editTitle}
+              onChange={e => setEditTitle(e.target.value)}
+              autoFocus
+            />
+          )}
           <textarea
             className="form-input msgs-compose-textarea"
             value={editText}
             onChange={e => setEditText(e.target.value)}
-            autoFocus
+            autoFocus={isReply}
           />
           <div className="msgs-actions">
             <button
@@ -218,7 +234,10 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
           </div>
         </div>
       ) : (
-        <p className="msgs-body">{msg.message}</p>
+        <>
+          {msg.title && <h3 className="msgs-card-title">{msg.title}</h3>}
+          <p className="msgs-body">{msg.message}</p>
+        </>
       )}
 
       <div className="msgs-actions">
@@ -249,7 +268,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
                 {replyingToId === msg.id ? "Cancel Reply" : "Reply"}
               </button>
             )}
-            {msg.is_admin && msg.email === userEmail && editingId !== msg.id && (
+            {editingId !== msg.id && (
               <button
                 className="msgs-action-btn"
                 onClick={() => handleEditStart(msg)}
@@ -286,6 +305,13 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
             placeholder="Your name"
             value={composeName}
             onChange={e => setComposeName(e.target.value)}
+          />
+          <input
+            className="form-input"
+            type="text"
+            placeholder="Title"
+            value={composeTitle}
+            onChange={e => setComposeTitle(e.target.value)}
           />
           <textarea
             className="form-input msgs-compose-textarea"
