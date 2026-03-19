@@ -595,11 +595,10 @@ button:focus-visible {
   }
 }
 
-/* Prevent iOS auto-zoom on input focus */
 @media (max-width: 700px) {
   :root { --navbar-h: 68px; }
-  .form-input,
-  .search-bar-input { font-size: 16px; }
+  /* Prevent iOS auto-zoom on input focus — must be ≥ 16px */
+  .form-input { font-size: 16px; }
 }
 
 /* =====================================================
@@ -632,7 +631,7 @@ button:focus-visible {
   border: none;
   outline: none;
   color: var(--color-text-primary);
-  font-size: 0.9rem;
+  font-size: 1rem; /* 16px — prevents iOS auto-zoom on focus */
   font-family: var(--font-mono);
   width: 100%;
   min-width: 0;

@@ -557,3 +557,129 @@
 
     --color-calendar-label-bg:   rgba(26, 10, 16, 0.9);
 }
+
+/* =====================================================
+   PARCHMENT LIGHT — warm cream / accessible
+   Optimised for readability and dyslexia:
+   - Warm cream background avoids white glare
+   - Warm dark-brown text avoids pure-black contrast
+   - Calm blue accent avoids red/green (colour-blind safe)
+   - Contrast ratio ~10:1 (WCAG AAA, not extreme 21:1)
+   ===================================================== */
+:root[data-theme="parchment"] {
+    --color-bg-page:    #F8F4E3;
+    --color-bg-card:    #FDFBF2;
+    --color-bg-inset:   #EDE8D2;
+    --color-bg-header:  #2D6A9F;
+    --color-bg-error:   #FFF0EE;
+
+    --color-border:        #CFC5A5;
+    --color-border-subtle: #E5E0CC;
+
+    --color-accent: #2D6A9F;
+
+    --color-text-primary: #3A2E1E;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #7A6A52;
+    --color-text-error:   #B83232;
+    --color-text-link:    #1A5491;
+
+    --color-bg-accent-tint:        rgba(45, 106, 159, 0.08);
+    --color-border-accent:         rgba(45, 106, 159, 0.22);
+    --color-border-accent-strong:  rgba(45, 106, 159, 0.38);
+    --color-bg-today:              rgba(45, 106, 159, 0.14);
+    --color-bg-surface-raised:     rgba(90, 80, 60, 0.08);
+
+    --color-text-success: #276A3A;
+    --color-border-error: rgba(184, 50, 50, 0.28);
+    --color-bg-badge: #B87333;
+
+    --color-accent-gradient: linear-gradient(135deg, #1A5491 0%, #2D6A9F 50%, #4A8FC0 100%);
+
+    --color-shadow-accent: 45, 106, 159;
+
+    --color-navbar-glass:        rgba(22, 50, 78, 0.93);
+    --color-navbar-glass-mobile: rgba(18, 44, 70, 0.97);
+    --color-navbar-browse-bg:    rgba(74, 143, 192, 0.2);
+    --color-navbar-browse-border:rgba(74, 143, 192, 0.38);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0A0E18 0%, #142233 20%, #1E3D5C 45%, #2D6A9F 70%, #4A8FC0 100%);
+    --color-hero-orb-1:          #4A8FC0;
+    --color-hero-orb-2:          #7FBCE0;
+    --color-hero-orb-3:          #B8A878;
+    --color-hero-shimmer:        #A8CEDE;
+    --color-cta-text:            #1A5491;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0A0E18 0%, #142233 35%, #1E3D5C 65%, #2D6A9F 100%);
+
+    --color-calendar-label-bg:   rgba(237, 232, 210, 0.9);
+
+    /* Generous, soft rounding — less visually jarring */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    /* Warm-tinted shadows */
+    --shadow-xs: 0 1px 2px rgba(58, 46, 30, 0.05);
+    --shadow-sm: 0 1px 4px rgba(58, 46, 30, 0.07), 0 2px 8px rgba(58, 46, 30, 0.06);
+    --shadow-md: 0 1px 3px rgba(58, 46, 30, 0.07), 0 4px 16px rgba(58, 46, 30, 0.09);
+    --shadow-lg: 0 4px 12px rgba(58, 46, 30, 0.09), 0 12px 32px rgba(58, 46, 30, 0.11);
+    --shadow-xl: 0 8px 24px rgba(58, 46, 30, 0.12), 0 24px 48px rgba(58, 46, 30, 0.15);
+}
+
+/* =====================================================
+   PARCHMENT DARK
+   ===================================================== */
+:root[data-theme="parchment"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #1A1612;
+    --color-bg-card:    #24201A;
+    --color-bg-inset:   #1E1A14;
+    --color-bg-header:  #1A4D73;
+    --color-bg-error:   #3A1818;
+
+    --color-border:        #3D3528;
+    --color-border-subtle: #2E2820;
+
+    --color-accent: #7FBCE0;
+
+    --color-text-primary: #F0EAD6;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #A89070;
+    --color-text-error:   #E08080;
+    --color-text-link:    #7FBCE0;
+
+    --color-bg-accent-tint:        rgba(127, 188, 224, 0.1);
+    --color-border-accent:         rgba(127, 188, 224, 0.22);
+    --color-border-accent-strong:  rgba(127, 188, 224, 0.38);
+    --color-bg-today:              rgba(45, 106, 159, 0.25);
+    --color-bg-surface-raised:     rgba(168, 144, 112, 0.1);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(224, 128, 128, 0.3);
+    --color-bg-badge: #C8943A;
+
+    --color-shadow: rgba(0, 0, 0, 0.55);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.18);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.22), 0 4px 20px rgba(0,0,0,0.38);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.38);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.32), 0 24px 48px rgba(0,0,0,0.42);
+
+    --color-accent-gradient: linear-gradient(135deg, #7FBCE0 0%, #A8D4EE 50%, #C8E8F8 100%);
+
+    --color-shadow-accent: 127, 188, 224;
+
+    --color-navbar-glass:        rgba(14, 32, 50, 0.94);
+    --color-navbar-glass-mobile: rgba(12, 28, 44, 0.97);
+    --color-navbar-browse-bg:    rgba(127, 188, 224, 0.15);
+    --color-navbar-browse-border:rgba(127, 188, 224, 0.3);
+
+    --color-hero-gradient:       linear-gradient(135deg, #060810 0%, #0E1620 20%, #142338 45%, #1A4D73 70%, #142338 100%);
+    --color-hero-shimmer:        #A8CEDE;
+    --color-cta-text:            #7FBCE0;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #060810 0%, #0E1620 25%, #142338 55%, #1A4D73 100%);
+
+    --color-calendar-label-bg:   rgba(26, 22, 18, 0.9);
+}

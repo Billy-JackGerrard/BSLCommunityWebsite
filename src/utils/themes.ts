@@ -6,7 +6,8 @@ export type ThemeName =
   | "ember"
   | "amethyst"
   | "forest"
-  | "rose";
+  | "rose"
+  | "parchment";
 
 export interface ThemeMeta {
   name: ThemeName;
@@ -21,6 +22,7 @@ export const THEMES: readonly ThemeMeta[] = [
   { name: "amethyst", label: "Amethyst" },
   { name: "forest", label: "Forest" },
   { name: "rose", label: "Rose" },
+  { name: "parchment", label: "Parchment" },
 ] as const;
 
 export const THEME_NAMES: readonly ThemeName[] = THEMES.map((t) => t.name);

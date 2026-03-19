@@ -529,14 +529,15 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
           <span className="calendar-filter-toggle-label">Filters</span>
           <span className="calendar-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
         </button>
-        <FilterPanel
-          selectedCategories={selectedCategories}
-          onToggleCategory={toggleCategory}
-          onClearCategories={clearCategories}
-          dateFilter={dateFilter}
-          onSetDateFilter={setDateFilter}
-          compact={filtersCollapsed}
-        />
+        {!filtersCollapsed && (
+          <FilterPanel
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            onClearCategories={clearCategories}
+            dateFilter={dateFilter}
+            onSetDateFilter={setDateFilter}
+          />
+        )}
       </div>
 
     </div>

@@ -170,14 +170,15 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
             <span className="event-list-filter-toggle-label">Filters</span>
             <span className="event-list-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
           </button>
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-            compact={filtersCollapsed}
-          />
+          {!filtersCollapsed && (
+            <FilterPanel
+              selectedCategories={selectedCategories}
+              onToggleCategory={toggleCategory}
+              onClearCategories={clearCategories}
+              dateFilter={dateFilter}
+              onSetDateFilter={setDateFilter}
+            />
+          )}
         </div>
 
         {/* Events column — LEFT on desktop */}

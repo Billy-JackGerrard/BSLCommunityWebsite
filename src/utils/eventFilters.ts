@@ -61,6 +61,7 @@ export function matchesSearch(event: Event, query: string): boolean {
     .join(" ")
     .toLowerCase();
   return query
+    .toLowerCase()
     .split(/\s+/)
     .filter(Boolean)
     .every(word => haystack.includes(word));
