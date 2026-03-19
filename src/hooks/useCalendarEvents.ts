@@ -68,11 +68,16 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
       const searchEnd = new Date(now);
       searchEnd.setFullYear(searchEnd.getFullYear() + 1);
 
-      const { data } = await approvedEvents()
+      const { data, error: fetchError } = await approvedEvents()
         .gte("starts_at", now.toISOString())
         .lte("starts_at", searchEnd.toISOString());
 
-      if (isCurrent) setAllEvents(data || []);
+      if (!isCurrent) return;
+      if (fetchError) {
+        console.error("Failed to fetch search events:", fetchError.message);
+      } else {
+        setAllEvents(data || []);
+      }
     };
     fetchAll();
     return () => { isCurrent = false; };

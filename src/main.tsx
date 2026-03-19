@@ -23,6 +23,23 @@ import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
+/** Fetch a single approved event by ID. Returns the event or null. */
+async function fetchEventById(id: string): Promise<Event | null> {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("id", id)
+    .eq("approved", true)
+    .single();
+
+  if (error) {
+    // PGRST116 = "no rows returned" — expected for invalid/deleted event IDs
+    if (error.code !== "PGRST116") console.error("Failed to fetch event:", error.message);
+    return null;
+  }
+  return data as Event;
+}
+
 function App() {
   const [view, setView] = useState<View>("calendar");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,19 +67,12 @@ function App() {
   useEffect(() => {
     const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
     if (!match) return;
-    void Promise.resolve(
-      supabase
-        .from("events")
-        .select("*")
-        .eq("id", match[1])
-        .eq("approved", true)
-        .single()
-    ).then(({ data }) => {
-      if (data) {
-        setViewingEvent(data as Event);
+    fetchEventById(match[1]).then(event => {
+      if (event) {
+        setViewingEvent(event);
         setView("event");
       }
-    }).catch(() => { /* event not found — ignore */ });
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleViewEvent = useCallback((event: Event) => {
@@ -77,19 +87,12 @@ function App() {
     const handler = () => {
       const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
       if (match) {
-        void Promise.resolve(
-          supabase
-            .from("events")
-            .select("*")
-            .eq("id", match[1])
-            .eq("approved", true)
-            .single()
-        ).then(({ data }) => {
-          if (data) {
-            setViewingEvent(data as Event);
+        fetchEventById(match[1]).then(event => {
+          if (event) {
+            setViewingEvent(event);
             setView("event");
           }
-        }).catch(() => {});
+        });
       } else {
         setViewingEvent(null);
         setView(postEventReturn);
@@ -121,14 +124,14 @@ const fetchMessagesCount = useCallback(async () => {
       setIsLoggedIn(!!session);
       setUserEmail(session?.user?.email ?? null);
       setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
-      if (session) { fetchPendingCount(); fetchMessagesCount(); }
+      if (session) { fetchPendingCount().catch(console.error); fetchMessagesCount().catch(console.error); }
     }).catch(console.error);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
       setUserEmail(session?.user?.email ?? null);
       setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
-      if (session) { fetchPendingCount(); fetchMessagesCount(); }
+      if (session) { fetchPendingCount().catch(console.error); fetchMessagesCount().catch(console.error); }
       if (!session) {
         setView("calendar");
         setPendingCount(0);

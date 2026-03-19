@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import type { ContactType } from "../utils/types";
+import { isValidEmail } from "../utils/validation";
 import "./Contact.css";
 
 const TYPE_LABELS: Record<ContactType, string> = {
@@ -29,7 +30,7 @@ export default function Contact() {
       setError("Please enter a message before sending.");
       return;
     }
-    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (email.trim() && !isValidEmail(email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -148,6 +149,7 @@ export default function Contact() {
             id="contact-message"
             className="form-input contact-textarea"
             placeholder={TYPE_PLACEHOLDERS[type]}
+            maxLength={2000}
             value={message}
             onChange={e => setMessage(e.target.value)}
           />

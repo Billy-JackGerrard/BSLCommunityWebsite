@@ -6,6 +6,7 @@ import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { useClickOutside } from "../hooks/useClickOutside";
 import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
 
@@ -206,15 +207,10 @@ export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggle
   const [filtersCollapsed, setFiltersCollapsed] = useState(true);
 
   // Close search dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        if (searchOpen) { onToggleSearch(); setSearchQuery(""); }
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+  const closeSearch = useCallback(() => {
+    if (searchOpen) { onToggleSearch(); setSearchQuery(""); }
   }, [searchOpen, onToggleSearch]);
+  useClickOutside(dropdownRef, closeSearch, searchOpen);
 
   // Infinite scroll – load more months when near top/bottom
   useEffect(() => {

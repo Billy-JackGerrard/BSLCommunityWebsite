@@ -105,6 +105,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
 
       {(event.event_type === 'in_person' || event.event_type === 'both') && (() => {
         const displayText = [event.location, event.address && formatAddress(event.address)].filter(Boolean).join(" — ");
+        if (!displayText && !event.latitude && !event.longitude) return null;
         const mapsUrl = event.latitude && event.longitude
           ? `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayText)}`;
@@ -112,7 +113,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
           <div className="event-detail-row">
             <span className="event-detail-icon">📍</span>
             <a className="event-detail-link" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-              {displayText}
+              {displayText || "View on map"}
             </a>
           </div>
         );

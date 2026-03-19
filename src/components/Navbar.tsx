@@ -41,7 +41,7 @@ export default function Navbar({
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand" onClick={() => navigate("calendar")} role="button">
+      <button className="navbar-brand" onClick={() => navigate("calendar")} type="button">
         <svg className="navbar-logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
           <rect x="8.5" y="18" width="15"  height="10"   rx="3"    fill="white"/>
           <rect x="4"   y="14" width="3.5" height="7"    rx="1.75" fill="white" transform="rotate(-40 7.75 17.5)"/>
@@ -53,7 +53,7 @@ export default function Navbar({
         <span className="navbar-brand-text">
           Edinburgh BSL <span className="navbar-brand-sub">Community</span>
         </span>
-      </div>
+      </button>
 
       {showCalendarControls && (
         <button className="navbar-calendar-btn navbar-today--mobile" onClick={onScrollToToday}>Today</button>

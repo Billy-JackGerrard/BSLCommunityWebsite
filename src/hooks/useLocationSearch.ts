@@ -50,7 +50,7 @@ export function useLocationSearch(query: string) {
 
     fetch(`${NOMINATIM_URL}?${params}`, {
       signal: controller.signal,
-      headers: { "Accept": "application/json" },
+      headers: { "Accept": "application/json", "User-Agent": "EdinburghBSLEvents/1.0" },
     })
       .then(res => res.json())
       .then((data: NominatimResult[]) => {

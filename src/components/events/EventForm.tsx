@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime, formatLocalDateTime } from "../../utils/dates";
@@ -6,6 +6,8 @@ import type { Event, EventAddress, Category, AgeRating } from "../../utils/types
 import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS, formatAddress } from "../../utils/types";
 import { useLocationSearch } from "../../hooks/useLocationSearch";
 import type { NominatimResult } from "../../hooks/useLocationSearch";
+import { isValidEmail } from "../../utils/validation";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
 
@@ -126,25 +128,10 @@ export default function EventForm({
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    if (!categoryOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (categoryRef.current && !categoryRef.current.contains(e.target as Node))
-        setCategoryOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [categoryOpen]);
-
-  useEffect(() => {
-    if (!locationDropdownOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (locationFieldRef.current && !locationFieldRef.current.contains(e.target as Node))
-        setLocationDropdownOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [locationDropdownOpen]);
+  const closeCategoryDropdown = useCallback(() => setCategoryOpen(false), []);
+  const closeLocationDropdown = useCallback(() => setLocationDropdownOpen(false), []);
+  useClickOutside(categoryRef, closeCategoryDropdown, categoryOpen);
+  useClickOutside(locationFieldRef, closeLocationDropdown, locationDropdownOpen);
 
   const handleLocationSelect = (result: NominatimResult) => {
     const name = result.address?.amenity || result.name || result.display_name.split(",")[0];
@@ -293,7 +280,7 @@ export default function EventForm({
       setInternalError("Please enter a location for this in-person event.");
       return;
     }
-    if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+    if (contactEmail && !isValidEmail(contactEmail)) {
       setInternalError("Please enter a valid email address.");
       return;
     }

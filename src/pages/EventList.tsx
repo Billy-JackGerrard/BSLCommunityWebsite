@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
@@ -7,6 +7,7 @@ import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
+import { useClickOutside } from "../hooks/useClickOutside";
 import FilterPanel from "../components/FilterPanel";
 import "./EventList.css";
 
@@ -78,15 +79,10 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
   }, [searchOpen]);
 
   // Close search on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (searchWrapRef.current && !searchWrapRef.current.contains(e.target as Node)) {
-        if (searchOpen) { onToggleSearch?.(); setSearchQuery(""); }
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+  const closeSearch = useCallback(() => {
+    if (searchOpen) { onToggleSearch?.(); setSearchQuery(""); }
   }, [searchOpen, onToggleSearch]);
+  useClickOutside(searchWrapRef, closeSearch, searchOpen);
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
 

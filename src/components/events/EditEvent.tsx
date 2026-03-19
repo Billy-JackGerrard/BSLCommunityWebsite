@@ -104,42 +104,53 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       onSaved(data as Event);
 
     } else {
-      // Fetch all future occurrences using the original starts_at so we
-      // correctly identify which rows to update regardless of any time shift
-      // the user may have applied.
-      const { data: futures, error: fetchErr } = await supabase
+      const origStart  = new Date(event.starts_at).getTime();
+      const newStart   = new Date(row.starts_at).getTime();
+      const startDelta = newStart - origStart;
+
+      const seriesFilter = () => supabase
         .from("events")
         .select("id, starts_at")
         .eq("recurrence->>id", event.recurrence!.id)
         .gte("starts_at", event.starts_at);
 
-      if (fetchErr) { setError(fetchErr.message); setSaving(false); return; }
+      if (startDelta === 0) {
+        // No time shift — bulk update all future occurrences in a single query
+        const { error: bulkErr } = await supabase
+          .from("events")
+          .update({ ...patch, finishes_at: row.finishes_at })
+          .eq("recurrence->>id", event.recurrence!.id)
+          .gte("starts_at", event.starts_at);
 
-      const origStart  = new Date(event.starts_at).getTime();
-      const newStart   = new Date(row.starts_at).getTime();
-      const startDelta = newStart - origStart;
-      const duration   = row.finishes_at
-        ? new Date(row.finishes_at).getTime() - newStart
-        : null;
+        if (bulkErr) { setError(bulkErr.message); setSaving(false); return; }
+      } else {
+        // Time was shifted — each occurrence needs its own start/finish
+        const { data: futures, error: fetchErr } = await seriesFilter();
+        if (fetchErr) { setError(fetchErr.message); setSaving(false); return; }
 
-      const patchPromises = (futures ?? []).map(
-        (future: { id: number; starts_at: string }) => {
-          const futureStart   = new Date(future.starts_at).getTime();
-          const shiftedStart  = new Date(futureStart + startDelta).toISOString();
-          const shiftedFinish = duration !== null
-            ? new Date(futureStart + startDelta + duration).toISOString()
-            : null;
+        const duration = row.finishes_at
+          ? new Date(row.finishes_at).getTime() - newStart
+          : null;
 
-          return supabase
-            .from("events")
-            .update({ ...patch, starts_at: shiftedStart, finishes_at: shiftedFinish })
-            .eq("id", future.id);
-        }
-      );
+        const patchPromises = (futures ?? []).map(
+          (future: { id: number; starts_at: string }) => {
+            const futureStart   = new Date(future.starts_at).getTime();
+            const shiftedStart  = new Date(futureStart + startDelta).toISOString();
+            const shiftedFinish = duration !== null
+              ? new Date(futureStart + startDelta + duration).toISOString()
+              : null;
 
-      const results = await Promise.all(patchPromises);
-      const firstErr = results.find(r => r.error)?.error;
-      if (firstErr) { setError(firstErr.message); setSaving(false); return; }
+            return supabase
+              .from("events")
+              .update({ ...patch, starts_at: shiftedStart, finishes_at: shiftedFinish })
+              .eq("id", future.id);
+          }
+        );
+
+        const results = await Promise.all(patchPromises);
+        const firstErr = results.find(r => r.error)?.error;
+        if (firstErr) { setError(firstErr.message); setSaving(false); return; }
+      }
 
       // Re-fetch the current event to return the updated version.
       const { data: updated, error: refetchErr } = await supabase

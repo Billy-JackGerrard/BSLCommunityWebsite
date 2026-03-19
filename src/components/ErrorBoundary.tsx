@@ -44,7 +44,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           onClick={() => window.location.reload()}
           style={{
             background: "var(--color-accent)",
-            color: "#ffffff",
+            color: "var(--color-text-dark)",
             border: "none",
             borderRadius: "6px",
             padding: "0.6rem 1.6rem",

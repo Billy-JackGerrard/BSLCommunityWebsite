@@ -35,14 +35,22 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false }:
         return;
       }
 
-      const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
-        },
-        body: JSON.stringify({ turnstileToken }),
-      });
+      let verifyRes: Response;
+      try {
+        verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
+          },
+          body: JSON.stringify({ turnstileToken }),
+        });
+      } catch {
+        setError("Network error — please check your connection and try again.");
+        resetTurnstile();
+        setLoading(false);
+        return;
+      }
 
       if (!verifyRes.ok) {
         setError("Captcha verification failed. Please try again.");
