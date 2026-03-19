@@ -23,7 +23,7 @@
   
   .editrecur-summary-text {
     color: var(--color-accent);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.78rem;
     flex: 1;
     min-width: 0;
@@ -33,7 +33,7 @@
     background: transparent;
     border: 1px solid var(--color-border-subtle);
     color: var(--color-text-muted);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     padding: 0.25rem 0.6rem;
     border-radius: 999px;
@@ -59,7 +59,7 @@
   .editrecur-picker-note {
     background: var(--color-bg-error);
     color: var(--color-text-error);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     line-height: 1.5;
     padding: 0.5rem 0.75rem;
@@ -68,7 +68,7 @@
   
   .editrecur-changed-badge {
     color: var(--color-accent);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     padding: 0.35rem 0.6rem;
     background: var(--color-bg-accent-tint);
@@ -131,14 +131,14 @@
   }
   
   .editrecur-choice-title {
-    font-family: Georgia, serif;
+    font-family: var(--font-display);
     font-size: 0.9rem;
     font-weight: bold;
   }
   
   .editrecur-choice-desc {
     font-size: 0.78rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     opacity: 0.7;
   }
   
@@ -151,7 +151,7 @@
     padding: 0.85rem 1rem;
     cursor: pointer;
     text-align: left;
-    font-family: Georgia, serif;
+    font-family: var(--font-display);
     font-size: 0.9rem;
     font-weight: bold;
     transition: opacity 0.15s;
@@ -172,7 +172,7 @@
     background: none;
     border: none;
     color: var(--color-text-muted);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.78rem;
     cursor: pointer;
     padding: 0;

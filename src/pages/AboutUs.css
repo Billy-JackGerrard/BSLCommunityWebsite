@@ -33,7 +33,7 @@
   right: 0;
   padding: 0.25rem 0.65rem;
   font-size: 0.75rem;
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: bold;
   border-radius: 2px;
   cursor: pointer;

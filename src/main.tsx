@@ -151,7 +151,11 @@ function App() {
     const targetPath = PAGE_PATHS[v] ?? "/";
     if (window.location.pathname !== targetPath) window.history.pushState({}, "", targetPath);
 
-    setView(v);
+    if ((document as any).startViewTransition) {
+      (document as any).startViewTransition(() => setView(v));
+    } else {
+      setView(v);
+    }
   };
 
   const handleEditEvent = (event: Event, returnTo: View = "calendar") => {

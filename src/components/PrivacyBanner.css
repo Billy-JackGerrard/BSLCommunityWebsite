@@ -1,3 +1,8 @@
+@keyframes banner-slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
 .privacy-banner {
   position: fixed;
   bottom: 0;
@@ -13,6 +18,7 @@
   border-top: 1px solid var(--color-border);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
   flex-wrap: wrap;
+  animation: banner-slide-up 0.4s var(--ease-out);
 }
 
 .privacy-banner-text {

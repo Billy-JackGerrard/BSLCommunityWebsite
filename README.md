@@ -75,9 +75,6 @@ scrape data for events.
 eg theatre websites for their bsl interpreted event info
 
 
-add info abt the whastapp to the about us page
-
-
 
 Recommended Next Steps
 High Impact, Relatively Quick
@@ -89,10 +86,6 @@ Landing/home page — Right now the site drops straight into the calendar. A sim
 
 Medium Impact, More Involved
 Event submission feedback loop — A confirmation email to event submitters (via a Supabase Edge Function) and an email to admins when a new submission arrives. Currently both sides are flying blind. This is probably the biggest friction point for event organisers.
-
-
-Bigger Investments (When Ready)
-Map view — Leaflet + OpenStreetMap, free, no API key needed. Huge for local event discovery.
 
 Event images — Even a simple category-based placeholder system would improve the visual experience significantly before committing to full image uploads.
 

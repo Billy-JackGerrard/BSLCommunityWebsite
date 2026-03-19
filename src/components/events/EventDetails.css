@@ -1,13 +1,15 @@
 .event-detail-card {
     background: var(--color-bg-card);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     padding: 1.5rem;
     position: relative;
     width: 100%;
     box-sizing: border-box;
-    animation: detail-in 0.2s ease;
-    border-top: 3px solid var(--color-accent);
+    animation: detail-in 0.3s var(--ease-out);
+    border-top: 3px solid transparent;
+    border-image: var(--color-accent-gradient) 1;
+    border-image-slice: 1;
 }
 
 @media (min-width: 700px) {
@@ -21,7 +23,7 @@
 }
 
 @keyframes detail-in {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -40,7 +42,7 @@
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-size: 0.8rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
     padding: 0.4rem 0.85rem;
     border-radius: 2px;
@@ -70,7 +72,7 @@
     border: 1px solid var(--color-border-subtle);
     color: var(--color-accent);
     font-size: 0.72rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
     padding: 0.25rem 0.7rem;
     border-radius: 999px;
@@ -88,7 +90,7 @@
     border: 1px solid var(--color-border-subtle);
     color: var(--color-text-error);
     font-size: 0.72rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
     padding: 0.25rem 0.7rem;
     border-radius: 999px;
@@ -116,7 +118,7 @@
 .event-detail-category {
     display: inline-block;
     font-size: 0.7rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #fff;
@@ -128,7 +130,7 @@
 
 .event-detail-datetime {
     color: var(--color-text-primary);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.78rem;
     opacity: 0.65;
     line-height: 1.5;
@@ -141,7 +143,7 @@
     gap: 0.35rem;
     margin-top: 0.45rem;
     color: var(--color-accent);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.06em;
     background: var(--color-bg-accent-tint);
@@ -201,7 +203,7 @@
 
 .event-detail-contact-heading {
     color: var(--color-accent);
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -231,7 +233,7 @@
 .event-detail-address {
     color: var(--color-text-muted);
     font-size: 0.75rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.03em;
 }
 
@@ -274,7 +276,7 @@
     border: 1px solid var(--color-accent);
     color: var(--color-accent);
     font-size: 0.75rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.04em;
     padding: 0.2rem 0.6rem;
     border-radius: 2px;
@@ -308,7 +310,7 @@
     border: 1px solid var(--color-border-subtle);
     color: var(--color-text-muted);
     font-size: 0.75rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.04em;
     padding: 0.2rem 0.6rem;
     border-radius: 2px;
@@ -330,17 +332,21 @@
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-size: 0.8rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
     padding: 0.45rem 0.75rem;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast),
+                border-color var(--duration-fast),
+                transform var(--duration-fast) var(--ease-out);
 }
 
 .event-detail-share-btn:hover {
     border-color: var(--color-text-muted);
     color: var(--color-text-primary);
+    transform: translateY(-1px);
 }
 
 /* ── Duplicate button ── */
@@ -350,7 +356,7 @@
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-size: 0.8rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
     padding: 0.45rem 0.75rem;
     border-radius: 2px;
@@ -377,7 +383,7 @@
     border: 1px solid var(--color-accent);
     color: var(--color-accent);
     font-size: 0.8rem;
-    font-family: monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
     padding: 0.45rem 0.75rem;
     border-radius: 2px;

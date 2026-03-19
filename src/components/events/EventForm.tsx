@@ -74,12 +74,14 @@ export default function EventForm({
   const [startsAt, setStartsAt] = useState(() => {
     if (initialValues?.starts_at) return isoToLocal(initialValues.starts_at);
     if (prefillDate) return `${prefillDate}T09:00`;
-    return "";
+    const now = new Date();
+    return formatLocalDateTime(now);
   });
   const [finishesAt, setFinishesAt] = useState(() => {
     if (initialValues?.finishes_at) return isoToLocal(initialValues.finishes_at);
     if (prefillDate) return `${prefillDate}T10:00`;
-    return "";
+    const inOneHour = new Date(Date.now() + 60 * 60 * 1000);
+    return formatLocalDateTime(inOneHour);
   });
   const [contactName, setContactName] = useState(initialValues?.contact_name ?? "");
   const [contactEmail, setContactEmail] = useState(initialValues?.contact_email ?? "");

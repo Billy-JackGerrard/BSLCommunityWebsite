@@ -8,6 +8,7 @@ import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/ev
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 import { useClickOutside } from "../hooks/useClickOutside";
+import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
 import "./EventList.css";
 
@@ -34,6 +35,38 @@ function groupByMonth(events: Event[]): MonthGroup[] {
     const [year, month] = key.split("-").map(Number);
     return { label: `${MONTHS[month]} ${year}`, events: evs };
   });
+}
+
+function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: (event: Event) => void }) {
+  const { ref, isInView } = useInView({ threshold: 0.05 });
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} className={`event-list-month${isInView ? " in-view" : ""}`}>
+      <h2 className="event-list-month-heading">{group.label}</h2>
+      <div className="event-list-items">
+        {group.events.map(ev => (
+          <div key={ev.id} className="event-list-item-wrap">
+            <button
+              className="event-list-item"
+              onClick={() => onViewEvent(ev)}
+            >
+              <span
+                className="event-list-dot"
+                style={{ background: CATEGORY_COLOURS[ev.category] }}
+                aria-hidden="true"
+              />
+              <span className="sr-only">{ev.category}</span>
+              <span className="event-list-title">{ev.title}</span>
+              <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
+              {ev.location && (
+                <span className="event-list-location">📍 {ev.location}</span>
+              )}
+              <span className="event-list-chevron">▶</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: Props) {
@@ -128,32 +161,7 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
               </div>
             ) : (
               groups.map(group => (
-                <section key={group.label} className="event-list-month">
-                  <h2 className="event-list-month-heading">{group.label}</h2>
-                  <div className="event-list-items">
-                    {group.events.map(ev => (
-                      <div key={ev.id} className="event-list-item-wrap">
-                        <button
-                          className="event-list-item"
-                          onClick={() => onViewEvent(ev)}
-                        >
-                          <span
-                            className="event-list-dot"
-                            style={{ background: CATEGORY_COLOURS[ev.category] }}
-                            aria-hidden="true"
-                          />
-                          <span className="sr-only">{ev.category}</span>
-                          <span className="event-list-title">{ev.title}</span>
-                          <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
-                          {ev.location && (
-                            <span className="event-list-location">📍 {ev.location}</span>
-                          )}
-                          <span className="event-list-chevron">▶</span>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </section>
+                <MonthSection key={group.label} group={group} onViewEvent={onViewEvent} />
               ))
             )}
           </div>

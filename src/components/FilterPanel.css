@@ -19,12 +19,15 @@
   height: 30px;
   padding: 0 0.75rem;
   font-size: 0.72rem;
-  font-family: monospace;
+  font-family: var(--font-mono);
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast),
+              transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .filter-panel-date-btn:hover,
@@ -39,6 +42,8 @@
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 /* ── Category dots ── */
@@ -80,6 +85,12 @@
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.filter-panel-cat--active .filter-panel-cat-dot {
+  box-shadow: 0 0 0 3px currentColor;
+  opacity: 0.5;
 }
 
 .filter-panel-cat-label {

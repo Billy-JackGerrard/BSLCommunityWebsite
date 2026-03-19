@@ -73,7 +73,7 @@
   padding: 0.3rem 0.75rem;
   font-size: 0.8rem;
   font-weight: bold;
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   border-radius: 2px;
   cursor: pointer;
   transition: opacity 0.15s;
@@ -110,7 +110,7 @@
   align-self: flex-start;
   padding: 0.3rem 0.75rem;
   font-size: 0.8rem;
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: bold;
   border-radius: 2px;
   cursor: pointer;
@@ -129,7 +129,7 @@
   width: 100%;
   padding: 0.6rem;
   font-size: 0.85rem;
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
@@ -156,7 +156,7 @@
 .admin-about-cancel-btn {
   padding: 0.5rem 1.25rem;
   font-size: 0.9rem;
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: bold;
   border-radius: 2px;
   cursor: pointer;
@@ -183,7 +183,7 @@
   border-radius: 2px;
   font-size: 0.9rem;
   font-weight: bold;
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   cursor: pointer;
   transition: opacity 0.15s;
 }

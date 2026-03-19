@@ -3,7 +3,7 @@
 .addevent-hint {
   color: var(--color-text-muted);
   font-size: 0.72rem;
-  font-family: monospace;
+  font-family: var(--font-mono);
   margin-top: 0.35rem;
 }
 

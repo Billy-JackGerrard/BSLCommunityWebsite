@@ -7,6 +7,7 @@ import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
 
@@ -48,6 +49,7 @@ type MonthBlockProps = {
 
 function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, monthRef }: MonthBlockProps) {
   const { month, year } = monthKey;
+  const { ref: inViewRef, isInView } = useInView({ threshold: 0.05, rootMargin: "0px 0px -30px 0px" });
   const rawFirstDay = new Date(year, month, 1).getDay(); // 0=Sun…6=Sat
   const firstDay    = (rawFirstDay + 6) % 7;             // 0=Mon…6=Sun
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -67,8 +69,14 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
   const eventsOnDay = (day: number): Event[] =>
     eventsByDate.get(toLocalDateKey(new Date(year, month, day).toISOString())) ?? [];
 
+  // Merge the IntersectionObserver ref with the parent's callback ref
+  const combinedRef = useCallback((el: HTMLDivElement | null) => {
+    inViewRef(el);
+    monthRef?.(el);
+  }, [inViewRef, monthRef]);
+
   return (
-    <div className="calendar-month-block" ref={monthRef} data-month={month} data-year={year}>
+    <div className={`calendar-month-block${isInView ? " in-view" : ""}`} ref={combinedRef} data-month={month} data-year={year}>
       <div className="calendar-month-label">
         <span className="calendar-month-label-name">{MONTHS[month]}</span>
         <span className="calendar-month-label-year">{year}</span>

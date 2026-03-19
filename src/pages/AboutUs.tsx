@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import type { Section } from "../utils/types";
+import { useInView } from "../hooks/useInView";
 import "./AboutUs.css";
 
 type AboutContent = {
@@ -18,6 +19,20 @@ type Props = {
   isLoggedIn: boolean;
   onEdit: () => void;
 };
+
+function AboutSection({ section }: { section: Section }) {
+  const { ref, isInView } = useInView({ threshold: 0.1 });
+  return (
+    <section ref={ref as React.Ref<HTMLElement>} className={`about-section scroll-reveal${isInView ? " in-view" : ""}`}>
+      <h3 className="section-label">{section.title}</h3>
+      {section.paragraphs.map((para, j) => (
+        <p key={j} className="about-body">
+          {renderParagraph(para)}
+        </p>
+      ))}
+    </section>
+  );
+}
 
 export default function AboutUs({ isLoggedIn, onEdit }: Props) {
   const [content, setContent] = useState<AboutContent | null>(null);
@@ -56,14 +71,7 @@ export default function AboutUs({ isLoggedIn, onEdit }: Props) {
           <p className="about-body about-empty">No content yet.</p>
         ) : (
           content.sections.map((section, i) => (
-            <section key={i} className="about-section">
-              <h3 className="section-label">{section.title}</h3>
-              {section.paragraphs.map((para, j) => (
-                <p key={j} className="about-body">
-                  {renderParagraph(para)}
-                </p>
-              ))}
-            </section>
+            <AboutSection key={i} section={section} />
           ))
         )}
 

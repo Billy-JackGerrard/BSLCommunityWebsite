@@ -72,6 +72,7 @@
 
   .contact-success-icon {
     flex-shrink: 0;
+    animation: success-pop 0.4s var(--ease-out);
   }
 
   .contact-success-msg {
