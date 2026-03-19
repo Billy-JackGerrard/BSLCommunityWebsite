@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./hooks/useAuth";
+import { useTheme } from "./hooks/useTheme";
 import Calendar from "./pages/Calendar.tsx";
 import Login from "./pages/Login.tsx";
 import AdminQueue from "./pages/AdminQueue.tsx";
@@ -78,6 +79,9 @@ async function fetchEventById(id: string): Promise<Event | null> {
 }
 
 function App() {
+  // ── Theme ─────────────────────────────────────────────────────────────
+  const { theme, toggleTheme } = useTheme();
+
   // ── Auth ────────────────────────────────────────────────────────────────
   const {
     isLoggedIn, adminName, userEmail,
@@ -277,6 +281,8 @@ function App() {
         showCalendarControls={view === "calendar" || view === "list"}
         onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
         onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
       <div key={view} className="page-view" style={{ paddingTop: "var(--navbar-h)" }}>
         {view === "calendar" && (

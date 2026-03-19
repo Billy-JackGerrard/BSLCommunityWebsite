@@ -149,7 +149,7 @@
 }
 
 .queue-btn--approve:hover {
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 16px rgba(var(--color-shadow-accent), 0.3);
 }
 
 .queue-btn--reject {

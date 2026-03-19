@@ -76,7 +76,7 @@
 
 .map-home-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.3);
 }
 
 .map-toolbar-filters--desktop {
@@ -279,7 +279,7 @@
 
 .map-popup-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 8px rgba(var(--color-shadow-accent), 0.3);
 }
 
 /* ── Mobile responsive ── */

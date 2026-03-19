@@ -334,17 +334,13 @@
     position: sticky;
     top: 0;
     z-index: var(--z-sticky);
-    background: rgba(226, 232, 240, 0.85);
+    background: var(--color-calendar-label-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--color-border);
 }
 
-@media (prefers-color-scheme: dark) {
-    .calendar-month-label {
-        background: rgba(22, 32, 50, 0.85);
-    }
-}
+/* Dark mode handled by --color-calendar-label-bg in [data-dark] token block */
 
 .calendar-month-label-name {
     font-size: 1.05rem;
@@ -449,11 +445,9 @@
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    .calendar-cell--today { background: rgba(59, 130, 246, 0.22); }
-    .calendar-cell--empty   { background: var(--color-bg-page); }
-    .calendar-cell--weekend:not(.calendar-cell--empty):not(.calendar-cell--selected) { background: var(--color-bg-inset); }
-}
+[data-dark] .calendar-cell--today { background: var(--color-bg-today); }
+[data-dark] .calendar-cell--empty { background: var(--color-bg-page); }
+[data-dark] .calendar-cell--weekend:not(.calendar-cell--empty):not(.calendar-cell--selected) { background: var(--color-bg-inset); }
 
 .calendar-day-number { font-size: 0.8rem; color: var(--color-text-primary); align-self: flex-end; line-height: 1; margin-bottom: 2px; }
 .calendar-cell--today    .calendar-day-number { color: var(--color-accent); font-weight: bold; }
@@ -636,13 +630,13 @@
     }
 
     .calendar-view-btn--today {
-        background: rgba(37, 99, 235, 0.12);
-        border-color: rgba(37, 99, 235, 0.3);
+        background: var(--color-bg-accent-tint);
+        border-color: var(--color-border-accent-strong);
         color: var(--color-accent);
     }
 
     .calendar-view-btn--today:hover {
-        background: rgba(37, 99, 235, 0.2);
+        background: var(--color-border-accent);
         border-color: var(--color-accent);
         color: var(--color-accent);
     }

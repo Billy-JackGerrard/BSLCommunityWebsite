@@ -64,7 +64,7 @@
 
 .privacy-banner-dismiss:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.3);
   border-color: transparent;
 }
 

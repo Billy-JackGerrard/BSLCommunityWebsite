@@ -83,6 +83,27 @@
   /* Accent gradient */
   --color-accent-gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
 
+  /* Accent shadow — raw RGB triplet for use in rgba() with varying opacities */
+  --color-shadow-accent: 37, 99, 235;
+
+  /* Navbar glass surfaces */
+  --color-navbar-glass:        rgba(23, 49, 120, 0.88);
+  --color-navbar-glass-mobile: rgba(23, 49, 120, 0.96);
+  --color-navbar-browse-bg:    rgba(59, 130, 246, 0.2);
+  --color-navbar-browse-border:rgba(59, 130, 246, 0.35);
+
+  /* Hero / landing page */
+  --color-hero-gradient:       linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #1d4ed8 50%, #2563eb 75%, #3b82f6 100%);
+  --color-hero-orb-1:          #60a5fa;
+  --color-hero-orb-2:          #a78bfa;
+  --color-hero-orb-3:          #34d399;
+  --color-hero-shimmer:        #93c5fd;
+  --color-cta-text:            #1d4ed8;
+  --color-bottom-cta-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #2563eb 100%);
+
+  /* Calendar label */
+  --color-calendar-label-bg:   rgba(226, 232, 240, 0.85);
+
   /* Letter-spacing */
   --ls-tight: -0.02em;
   --ls-wide: 0.06em;
@@ -93,7 +114,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--color-text-primary);
   background-color: var(--color-bg-page);
 
@@ -173,10 +194,10 @@ button:focus-visible {
 }
 
 /* =====================================================
-   DARK MODE
+   CLASSIC DARK — activated via data-dark attribute on <html>
    ===================================================== */
-@media (prefers-color-scheme: dark) {
-  :root {
+:root[data-dark] {
+    color-scheme: dark;
     --color-bg-page:    #0f172a;   /* deep slate — outer page */
     --color-bg-card:    #1e293b;   /* dark slate — cards, panels */
     --color-bg-inset:   #162032;   /* darker — inputs, inset panels */
@@ -214,7 +235,230 @@ button:focus-visible {
     --shadow-xl: 0 8px 24px rgba(0,0,0,0.3), 0 24px 48px rgba(0,0,0,0.4);
 
     --color-accent-gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-  }
+
+    /* Dark mode overrides for new variables */
+    --color-shadow-accent: 59, 130, 246;
+    --color-navbar-glass:        rgba(13, 30, 75, 0.9);
+    --color-navbar-glass-mobile: rgba(13, 30, 75, 0.96);
+    --color-hero-gradient:       linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e3a8a 50%, #1d4ed8 75%, #1e3a8a 100%);
+    --color-bottom-cta-gradient: linear-gradient(135deg, #020617 0%, #0f172a 30%, #1e3a8a 60%, #1d4ed8 100%);
+    --color-calendar-label-bg:   rgba(22, 32, 50, 0.85);
+}
+
+/* =====================================================
+   OCEAN LIGHT — cyan/turquoise + purple theme
+   ===================================================== */
+:root[data-theme="ocean"] {
+    --color-bg-page:    #E0F7F7;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #CCF0F0;
+    --color-bg-header:  #38D9D9;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #A8E4E4;
+    --color-border-subtle: #D4F1F1;
+
+    --color-accent: #7C3AED;
+
+    --color-text-link: #7C3AED;
+
+    --color-bg-accent-tint:        rgba(124, 58, 237, 0.07);
+    --color-border-accent:         rgba(124, 58, 237, 0.2);
+    --color-border-accent-strong:  rgba(124, 58, 237, 0.35);
+    --color-bg-today:              rgba(56, 217, 217, 0.18);
+
+    --color-accent-gradient: linear-gradient(135deg, #7C3AED 0%, #9F67FF 100%);
+
+    --color-shadow-accent: 124, 58, 237;
+
+    --color-navbar-glass:        rgba(45, 210, 210, 0.92);
+    --color-navbar-glass-mobile: rgba(38, 195, 195, 0.97);
+    --color-navbar-browse-bg:    rgba(124, 58, 237, 0.2);
+    --color-navbar-browse-border:rgba(124, 58, 237, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0A2E2E 0%, #1A6B6B 25%, #28AAAA 50%, #38D9D9 75%, #4DE8E8 100%);
+    --color-hero-orb-1:          #4DD8D8;
+    --color-hero-orb-2:          #9F67FF;
+    --color-hero-orb-3:          #34d399;
+    --color-hero-shimmer:        #80F0F0;
+    --color-cta-text:            #7C3AED;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0A2E2E 0%, #1A6B6B 40%, #28AAAA 70%, #38D9D9 100%);
+
+    --color-calendar-label-bg:   rgba(210, 240, 240, 0.88);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+}
+
+/* =====================================================
+   OCEAN DARK
+   ===================================================== */
+:root[data-theme="ocean"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #0A1A2A;
+    --color-bg-card:    #142233;
+    --color-bg-inset:   #0E1B2B;
+    --color-bg-header:  #1A8A8A;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #1E4A4A;
+    --color-border-subtle: #162E3E;
+
+    --color-accent: #A78BFA;
+
+    --color-text-primary: #e2e8f0;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #94a3b8;
+    --color-text-error:   #f87171;
+    --color-text-link:    #A78BFA;
+
+    --color-bg-accent-tint:        rgba(167, 139, 250, 0.12);
+    --color-border-accent:         rgba(167, 139, 250, 0.25);
+    --color-border-accent-strong:  rgba(167, 139, 250, 0.4);
+    --color-bg-today:              rgba(56, 217, 217, 0.22);
+    --color-bg-surface-raised:     rgba(148, 163, 184, 0.12);
+
+    --color-text-success: #6ed4a0;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #fb923c;
+
+    --color-shadow: rgba(0, 0, 0, 0.5);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.2), 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.25), 0 12px 32px rgba(0,0,0,0.35);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.3), 0 24px 48px rgba(0,0,0,0.4);
+
+    --color-accent-gradient: linear-gradient(135deg, #A78BFA 0%, #C4B5FD 100%);
+
+    --color-shadow-accent: 167, 139, 250;
+
+    --color-navbar-glass:        rgba(20, 100, 100, 0.92);
+    --color-navbar-glass-mobile: rgba(20, 100, 100, 0.96);
+    --color-navbar-browse-bg:    rgba(167, 139, 250, 0.2);
+    --color-navbar-browse-border:rgba(167, 139, 250, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #020A14 0%, #0A1E2E 25%, #1A5555 50%, #28AAAA 75%, #1A5555 100%);
+    --color-hero-shimmer:        #80F0F0;
+    --color-cta-text:            #A78BFA;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #020A14 0%, #0A1E2E 30%, #1A5555 60%, #28AAAA 100%);
+
+    --color-calendar-label-bg:   rgba(14, 27, 43, 0.88);
+}
+
+/* =====================================================
+   EMBER LIGHT — warm orange/amber with sharp editorial feel
+   ===================================================== */
+:root[data-theme="ember"] {
+    --color-bg-page:    #FEF7F0;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #FFF0E1;
+    --color-bg-header:  #E85D04;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #F5D0A9;
+    --color-border-subtle: #FAEBD7;
+
+    --color-accent: #C2410C;
+
+    --color-text-link: #C2410C;
+
+    --color-bg-accent-tint:        rgba(194, 65, 12, 0.06);
+    --color-border-accent:         rgba(194, 65, 12, 0.18);
+    --color-border-accent-strong:  rgba(194, 65, 12, 0.32);
+    --color-bg-today:              rgba(232, 93, 4, 0.14);
+
+    --color-accent-gradient: linear-gradient(135deg, #C2410C 0%, #E85D04 50%, #F59E0B 100%);
+
+    --color-shadow-accent: 194, 65, 12;
+
+    --color-navbar-glass:        rgba(60, 20, 0, 0.92);
+    --color-navbar-glass-mobile: rgba(55, 18, 0, 0.97);
+    --color-navbar-browse-bg:    rgba(245, 158, 11, 0.2);
+    --color-navbar-browse-border:rgba(245, 158, 11, 0.4);
+
+    --color-hero-gradient:       linear-gradient(135deg, #1C0A00 0%, #431407 20%, #7C2D12 40%, #C2410C 60%, #E85D04 80%, #F59E0B 100%);
+    --color-hero-orb-1:          #F59E0B;
+    --color-hero-orb-2:          #EF4444;
+    --color-hero-orb-3:          #F97316;
+    --color-hero-shimmer:        #FDBA74;
+    --color-cta-text:            #9A3412;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #1C0A00 0%, #431407 30%, #7C2D12 55%, #C2410C 75%, #E85D04 100%);
+
+    --color-calendar-label-bg:   rgba(254, 243, 230, 0.9);
+
+    /* Sharp, editorial corners */
+    --radius-sm: 3px;
+    --radius-md: 5px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+
+    /* Warm-tinted shadows */
+    --shadow-xs: 0 1px 2px rgba(60, 20, 0, 0.06);
+    --shadow-sm: 0 1px 4px rgba(60, 20, 0, 0.08), 0 2px 8px rgba(60, 20, 0, 0.06);
+    --shadow-md: 0 1px 3px rgba(60, 20, 0, 0.08), 0 4px 16px rgba(60, 20, 0, 0.1);
+    --shadow-lg: 0 4px 12px rgba(60, 20, 0, 0.1), 0 12px 32px rgba(60, 20, 0, 0.12);
+    --shadow-xl: 0 8px 24px rgba(60, 20, 0, 0.14), 0 24px 48px rgba(60, 20, 0, 0.16);
+}
+
+/* =====================================================
+   EMBER DARK
+   ===================================================== */
+:root[data-theme="ember"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #140A00;
+    --color-bg-card:    #1F1008;
+    --color-bg-inset:   #180C02;
+    --color-bg-header:  #9A3412;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #3D1C00;
+    --color-border-subtle: #2A1200;
+
+    --color-accent: #FB923C;
+
+    --color-text-primary: #FDE8D0;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #C4956C;
+    --color-text-error:   #f87171;
+    --color-text-link:    #FB923C;
+
+    --color-bg-accent-tint:        rgba(251, 146, 60, 0.1);
+    --color-border-accent:         rgba(251, 146, 60, 0.22);
+    --color-border-accent-strong:  rgba(251, 146, 60, 0.38);
+    --color-bg-today:              rgba(232, 93, 4, 0.22);
+    --color-bg-surface-raised:     rgba(200, 150, 100, 0.1);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #F59E0B;
+
+    --color-shadow: rgba(0, 0, 0, 0.6);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.25), 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.35), 0 24px 48px rgba(0,0,0,0.45);
+
+    --color-accent-gradient: linear-gradient(135deg, #FB923C 0%, #F59E0B 50%, #FBBF24 100%);
+
+    --color-shadow-accent: 251, 146, 60;
+
+    --color-navbar-glass:        rgba(40, 12, 0, 0.94);
+    --color-navbar-glass-mobile: rgba(35, 10, 0, 0.97);
+    --color-navbar-browse-bg:    rgba(251, 146, 60, 0.15);
+    --color-navbar-browse-border:rgba(251, 146, 60, 0.3);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0A0400 0%, #1C0A00 20%, #431407 45%, #7C2D12 70%, #431407 100%);
+    --color-hero-shimmer:        #FDBA74;
+    --color-cta-text:            #FB923C;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0A0400 0%, #1C0A00 25%, #431407 50%, #7C2D12 80%, #431407 100%);
+
+    --color-calendar-label-bg:   rgba(20, 10, 0, 0.9);
 }
 
 /* =====================================================
@@ -330,7 +574,7 @@ button:focus-visible {
 
 .form-input:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(var(--color-shadow-accent), 0.12);
 }
 
 /* Inline per-field validation message */
@@ -371,7 +615,7 @@ button:focus-visible {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 6px 20px rgba(var(--color-shadow-accent), 0.35);
   border-color: transparent;
 }
 
@@ -484,7 +728,7 @@ button:focus-visible {
   border-color: transparent;
   color: var(--color-text-dark);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 8px rgba(var(--color-shadow-accent), 0.25);
 }
 
 /* =====================================================

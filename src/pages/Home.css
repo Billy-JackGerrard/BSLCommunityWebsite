@@ -28,7 +28,7 @@
 .home-hero-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #1d4ed8 50%, #2563eb 75%, #3b82f6 100%);
+  background: var(--color-hero-gradient);
   background-size: 400% 400%;
   animation: hero-gradient 15s ease infinite;
   z-index: 0;
@@ -54,7 +54,7 @@
 .home-hero-orb--1 {
   width: 500px;
   height: 500px;
-  background: #60a5fa;
+  background: var(--color-hero-orb-1);
   top: -150px;
   right: -150px;
 }
@@ -62,7 +62,7 @@
 .home-hero-orb--2 {
   width: 400px;
   height: 400px;
-  background: #a78bfa;
+  background: var(--color-hero-orb-2);
   bottom: -100px;
   left: -100px;
   animation-delay: -7s;
@@ -71,7 +71,7 @@
 .home-hero-orb--3 {
   width: 300px;
   height: 300px;
-  background: #34d399;
+  background: var(--color-hero-orb-3);
   top: 40%;
   left: 60%;
   animation-delay: -14s;
@@ -130,7 +130,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #34d399;
+  background: var(--color-hero-orb-3);
   box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
   animation: badge-pulse 2s ease-in-out infinite;
 }
@@ -157,7 +157,7 @@
     110deg,
     #ffffff 0%,
     #ffffff 40%,
-    #93c5fd 50%,
+    var(--color-hero-shimmer) 50%,
     #ffffff 60%,
     #ffffff 100%
   );
@@ -256,7 +256,7 @@
 /* Solid white CTA variant */
 .home-cta-btn--solid {
   background: #ffffff;
-  color: #1d4ed8;
+  color: var(--color-cta-text);
   border-color: transparent;
   font-weight: 700;
 }
@@ -265,9 +265,9 @@
 
 .home-cta-btn--solid:hover {
   background: #ffffff;
-  color: #1d4ed8;
+  color: var(--color-cta-text);
   border-color: transparent;
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(var(--color-shadow-accent), 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* Light variant — solid white pill for dark backgrounds */
@@ -284,7 +284,7 @@
   background: #ffffff;
   color: var(--color-accent);
   border-color: transparent;
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 32px rgba(var(--color-shadow-accent), 0.3);
 }
 
 /* ── Scroll indicator ── */
@@ -719,7 +719,7 @@
 
 .home-bottom-cta {
   padding: 6rem 2rem;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #2563eb 100%);
+  background: var(--color-bottom-cta-gradient);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -931,22 +931,21 @@
    DARK MODE
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@media (prefers-color-scheme: dark) {
-  .home-hero-bg {
-    background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e3a8a 50%, #1d4ed8 75%, #1e3a8a 100%);
-    background-size: 400% 400%;
-  }
+/* Dark mode — hero/CTA gradients now use variables from [data-dark] token block */
+[data-dark] .home-hero-bg {
+  background: var(--color-hero-gradient);
+  background-size: 400% 400%;
+}
 
-  .home-about-card {
-    background: var(--color-bg-inset);
-  }
+[data-dark] .home-about-card {
+  background: var(--color-bg-inset);
+}
 
-  .home-bottom-cta {
-    background: linear-gradient(135deg, #020617 0%, #0f172a 30%, #1e3a8a 60%, #1d4ed8 100%);
-  }
+[data-dark] .home-bottom-cta {
+  background: var(--color-bottom-cta-gradient);
+}
 
-  .home-stats-inner {
-    background: var(--color-bg-card);
-    border-color: var(--color-border);
-  }
+[data-dark] .home-stats-inner {
+  background: var(--color-bg-card);
+  border-color: var(--color-border);
 }

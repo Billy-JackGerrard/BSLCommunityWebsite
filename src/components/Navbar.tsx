@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { View } from "../utils/views";
+import type { ThemeName } from "../hooks/useTheme";
 import "./Navbar.css";
 
 type Props = {
@@ -12,6 +13,8 @@ type Props = {
   showCalendarControls?: boolean;
   onScrollToToday?: () => void;
   onToggleSearch?: () => void;
+  theme?: ThemeName;
+  onToggleTheme?: () => void;
 };
 
 export default function Navbar({
@@ -24,6 +27,8 @@ export default function Navbar({
   showCalendarControls,
   onScrollToToday,
   onToggleSearch,
+  theme,
+  onToggleTheme,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -136,6 +141,17 @@ export default function Navbar({
             {pendingCount > 0 && (
               <span className="navbar-pending-badge">{pendingCount}</span>
             )}
+          </button>
+        )}
+
+        {onToggleTheme && (
+          <button
+            className="navbar-link navbar-theme-toggle"
+            onClick={() => { onToggleTheme(); setMenuOpen(false); }}
+            aria-label={`Switch theme (currently ${theme})`}
+            type="button"
+          >
+            {theme === "classic" ? "Ocean" : theme === "ocean" ? "Ember" : "Classic"}
           </button>
         )}
 

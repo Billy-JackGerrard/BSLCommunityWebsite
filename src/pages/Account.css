@@ -97,18 +97,16 @@
 }
 
 /* ── Dark mode ── */
-@media (prefers-color-scheme: dark) {
-  .account-success {
-    background: rgba(22, 163, 74, 0.12);
-    border-color: rgba(22, 163, 74, 0.25);
-    color: #4ade80;
-  }
+[data-dark] .account-success {
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.25);
+  color: #4ade80;
+}
 
-  .account-logout-btn:hover {
-    background: rgba(239, 68, 68, 0.12);
-    border-color: #f87171;
-    color: #fca5a5;
-  }
+[data-dark] .account-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #f87171;
+  color: #fca5a5;
 }
 
 @media (max-width: 480px) {

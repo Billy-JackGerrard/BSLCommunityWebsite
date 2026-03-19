@@ -222,7 +222,7 @@
 
 .admin-home-save-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 16px rgba(var(--color-shadow-accent), 0.3);
 }
 
 .admin-home-save-btn:disabled {
