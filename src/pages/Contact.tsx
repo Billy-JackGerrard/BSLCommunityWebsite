@@ -20,6 +20,7 @@ export default function Contact() {
   const [type, setType] = useState<ContactType>("general");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +41,7 @@ export default function Contact() {
 
     const { error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type, name: name.trim() || null, email: email.trim() || null, message: message.trim() });
+      .insert({ type, name: name.trim() || null, email: email.trim() || null, title: title.trim() || null, message: message.trim() });
 
     setLoading(false);
 
@@ -56,6 +57,7 @@ export default function Contact() {
     setType("general");
     setName("");
     setEmail("");
+    setTitle("");
     setMessage("");
     setError(null);
     setSubmitted(false);
@@ -139,6 +141,21 @@ export default function Contact() {
             placeholder="e.g. jane@example.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
+          />
+        </div>
+
+        {/* Title */}
+        <div className="form-field">
+          <label htmlFor="contact-title" className="form-label">
+            Title <span className="contact-optional">(optional)</span>
+          </label>
+          <input
+            id="contact-title"
+            className="form-input"
+            type="text"
+            placeholder="e.g. Question about upcoming events"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
           />
         </div>
 
