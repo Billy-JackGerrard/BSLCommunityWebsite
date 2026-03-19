@@ -126,14 +126,9 @@
     padding: 0 0.25rem;
 }
 
-.navbar-link--logout {
-    color: rgba(255, 180, 180, 0.9);
-}
-
-.navbar-link--logout:hover {
-    border-color: rgba(255, 180, 180, 0.6);
-    color: #ffb4b4;
-    background: rgba(255, 100, 100, 0.12);
+.navbar-link--account {
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* ── Queue/Messages buttons — relative so the badge can anchor to them ── */

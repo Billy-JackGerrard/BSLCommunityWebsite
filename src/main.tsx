@@ -10,6 +10,9 @@ import Login from "./pages/Login.tsx";
 import AdminQueue from "./pages/AdminQueue.tsx";
 import AdminMessages from "./pages/AdminMessages.tsx";
 import AdminAboutUs from "./pages/AdminAboutUs.tsx";
+import Account from "./pages/Account.tsx";
+import Home from "./pages/Home.tsx";
+import AdminHome from "./pages/AdminHome.tsx";
 import Contact from "./pages/Contact.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
@@ -26,6 +29,7 @@ import type { View } from "./utils/views.ts";
 
 /** Public pages that get their own shareable URL path. */
 const PAGE_PATHS: Partial<Record<View, string>> = {
+  home: "/home",
   map: "/map",
   about: "/about",
   contact: "/contact",
@@ -135,6 +139,8 @@ function App() {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
     if (view === "admin-messages" && !isLoggedIn) setView("login");
     if (view === "admin-about" && !isLoggedIn) setView("login");
+    if (view === "admin-home" && !isLoggedIn) setView("login");
+    if (view === "account" && !isLoggedIn) setView("login");
     if (view === "edit-event" && !isLoggedIn) setView("calendar");
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
@@ -222,7 +228,6 @@ function App() {
         messagesCount={messagesCount}
         adminName={adminName}
         onNavigate={handleNavigate}
-        onLogout={handleAppLogout}
         showCalendarControls={view === "calendar" || view === "list"}
         onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
         onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
@@ -287,6 +292,26 @@ function App() {
           <AdminAboutUs
             onSaved={() => handleNavigate("about")}
             onCancel={() => handleNavigate("about")}
+          />
+        )}
+        {view === "home" && (
+          <Home
+            isLoggedIn={isLoggedIn}
+            onEdit={() => handleNavigate("admin-home")}
+            onNavigate={() => handleNavigate("calendar")}
+          />
+        )}
+        {view === "admin-home" && isLoggedIn && (
+          <AdminHome
+            onSaved={() => handleNavigate("home")}
+            onCancel={() => handleNavigate("home")}
+          />
+        )}
+        {view === "account" && isLoggedIn && (
+          <Account
+            email={userEmail}
+            displayName={adminName}
+            onLogout={handleAppLogout}
           />
         )}
         {view === "privacy" && <PrivacyPolicy />}

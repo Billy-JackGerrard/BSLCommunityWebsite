@@ -9,7 +9,6 @@ type Props = {
   messagesCount: number;
   adminName?: string | null;
   onNavigate: (view: View) => void;
-  onLogout: () => void;
   showCalendarControls?: boolean;
   onScrollToToday?: () => void;
   onToggleSearch?: () => void;
@@ -22,7 +21,6 @@ export default function Navbar({
   messagesCount,
   adminName,
   onNavigate,
-  onLogout,
   showCalendarControls,
   onScrollToToday,
   onToggleSearch,
@@ -31,11 +29,6 @@ export default function Navbar({
 
   function navigate(view: View) {
     onNavigate(view);
-    setMenuOpen(false);
-  }
-
-  function logout() {
-    onLogout();
     setMenuOpen(false);
   }
 
@@ -77,6 +70,13 @@ export default function Navbar({
             <button className="navbar-link" onClick={() => { setMenuOpen(false); onToggleSearch?.(); }}>Search</button>
           </div>
         )}
+
+        <button
+          className={`navbar-link ${currentView === "home" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("home")}
+        >
+          Home
+        </button>
 
         <button
           className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
@@ -145,12 +145,12 @@ export default function Navbar({
         </button>
 
         {isLoggedIn ? (
-          <>
-            {adminName && <span className="navbar-admin-name">{adminName}</span>}
-            <button className="navbar-link navbar-link--logout" onClick={logout}>
-              Log out
-            </button>
-          </>
+          <button
+            className={`navbar-link navbar-link--account ${currentView === "account" ? "navbar-link--active" : ""}`}
+            onClick={() => navigate("account")}
+          >
+            {adminName ?? "Account"}
+          </button>
         ) : (
           <button
             className={`navbar-link ${currentView === "login" ? "navbar-link--active" : ""}`}

@@ -1,0 +1,136 @@
+.home-page {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+.home-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 4rem 2rem 3rem;
+  background: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border-subtle);
+  text-align: center;
+}
+
+.home-hero-text {
+  max-width: 640px;
+}
+
+.home-headline {
+  color: var(--color-accent);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+.home-subtitle {
+  color: var(--color-text-primary);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin: 0 0 2rem;
+}
+
+.home-cta-btn {
+  display: inline-block;
+  padding: 0.65rem 1.75rem;
+  background: var(--color-accent);
+  color: var(--color-text-dark);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.home-cta-btn:hover {
+  opacity: 0.85;
+}
+
+.home-edit-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: bold;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.home-edit-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+/* ── Sections ───────────────────────────────────────────────────────────── */
+
+.home-sections-area {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.home-card {
+  max-width: 660px;
+  width: 100%;
+}
+
+.home-section {
+  margin-bottom: 1.75rem;
+}
+
+.home-section:last-child {
+  margin-bottom: 0;
+}
+
+.home-body {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0 0 0.75rem;
+}
+
+.home-body:last-child {
+  margin-bottom: 0;
+}
+
+.home-body strong {
+  color: var(--color-text-primary);
+}
+
+.home-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .home-hero {
+    min-height: 50vh;
+    padding: 3rem 1.25rem 2.5rem;
+  }
+
+  .home-headline {
+    font-size: 1.65rem;
+  }
+
+  .home-sections-area {
+    padding: 1rem;
+  }
+}
