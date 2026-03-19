@@ -25,7 +25,7 @@ export function useLocationSearch(query: string) {
   const [results, setResults] = useState<NominatimResult[]>([]);
   const [loading, setLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-  const debouncedQuery = useDebouncedValue(query, 300);
+  const debouncedQuery = useDebouncedValue(query, 500);
 
   useEffect(() => {
     if (debouncedQuery.length < 3) {
@@ -54,7 +54,10 @@ export function useLocationSearch(query: string) {
       signal: controller.signal,
       headers: { "Accept": "application/json", "User-Agent": "EdinburghBSLEvents/1.0" },
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`Nominatim ${res.status}`);
+        return res.json();
+      })
       .then((data: NominatimResult[]) => {
         if (!controller.signal.aborted) {
           setResults(data);

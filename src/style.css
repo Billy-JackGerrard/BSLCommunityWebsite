@@ -380,3 +380,8 @@ button:focus-visible {
   color: var(--color-text-dark);
   font-weight: bold;
 }
+
+/* Prevent iOS auto-zoom on input focus */
+@media (max-width: 700px) {
+  .form-input { font-size: 16px; }
+}

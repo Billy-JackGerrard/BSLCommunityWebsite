@@ -573,6 +573,9 @@
     /* Slightly larger chip text for readability on mobile */
     .calendar-event-chip { font-size: 0.68rem; }
 
+    /* Prevent iOS auto-zoom on input focus */
+    .calendar-search-input { font-size: 16px; }
+
     /* Bigger touch targets for panel controls */
     .calendar-panel-add-btn  { height: 44px; padding: 0 0.75rem; }
     .calendar-panel-close    { width: 44px; height: 44px; }

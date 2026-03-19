@@ -252,6 +252,7 @@ export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggle
   }, [scrollToToday, onScrollToTodayReady]);
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
+  const isSearchPending = searchQuery.trim() !== debouncedSearchQuery.trim();
 
   const searchResults = useMemo(() => {
     if (!debouncedSearchQuery.trim()) return [];
@@ -325,7 +326,12 @@ export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggle
             </div>
             {searchQuery.trim().length > 0 && (
               <div className="calendar-search-dropdown">
-                {searchResults.length === 0 ? (
+                {isSearchPending ? (
+                  <div className="calendar-search-dropdown-empty">
+                    <span className="location-search-spinner" aria-hidden="true" />
+                    Searching…
+                  </div>
+                ) : searchResults.length === 0 ? (
                   <div className="calendar-search-dropdown-empty">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                       <circle cx="11" cy="11" r="8"/>

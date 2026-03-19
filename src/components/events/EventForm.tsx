@@ -79,8 +79,9 @@ export default function EventForm({
   const [latitude, setLatitude] = useState<number | null>(initialValues?.latitude ?? null);
   const [longitude, setLongitude] = useState<number | null>(initialValues?.longitude ?? null);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
+  const [locationQuery, setLocationQuery] = useState("");
   const locationFieldRef = useRef<HTMLDivElement>(null);
-  const { results: locationResults, loading: locationLoading, clear: clearLocationResults } = useLocationSearch(location);
+  const { results: locationResults, loading: locationLoading, clear: clearLocationResults } = useLocationSearch(locationQuery);
   const [startsAt, setStartsAt] = useState(() => {
     if (initialValues?.starts_at) return isoToLocal(initialValues.starts_at);
     if (prefillDate) return `${prefillDate}T09:00`;
@@ -136,6 +137,7 @@ export default function EventForm({
   const handleLocationSelect = (result: NominatimResult) => {
     const name = result.address?.amenity || result.name || result.display_name.split(",")[0];
     setLocation(name);
+    setLocationQuery("");
 
     const addr: EventAddress = {
       road: result.address?.road,
@@ -162,6 +164,7 @@ export default function EventForm({
       setIsInPerson(initialValues.event_type !== 'online');
       setIsOnline(initialValues.event_type === 'online' || initialValues.event_type === 'both');
       setLocation(initialValues.location ?? "");
+      setLocationQuery("");
       setAddress(initialValues.address ?? null);
       setLatitude(initialValues.latitude ?? null);
       setLongitude(initialValues.longitude ?? null);
@@ -446,6 +449,7 @@ export default function EventForm({
                 value={location}
                 onChange={e => {
                   setLocation(e.target.value);
+                  setLocationQuery(e.target.value);
                   setLocationDropdownOpen(true);
                   // Clear structured data when user types manually
                   setAddress(null);
