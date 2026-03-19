@@ -17,7 +17,7 @@ export default function LocationField({ location, address, onLocationChange, onA
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [locationQuery, setLocationQuery] = useState("");
   const locationFieldRef = useRef<HTMLDivElement>(null);
-  const { results: locationResults, loading: locationLoading, error: locationError, clear: clearLocationResults } = useLocationSearch(locationQuery);
+  const { results: locationResults, loading: locationLoading, error: locationError, clear: clearLocationResults } = useLocationSearch(locationQuery, { viewbox: "-3.35,55.88,-3.05,56.01", bounded: "0" });
 
   const closeLocationDropdown = useCallback(() => setLocationDropdownOpen(false), []);
   useClickOutside(locationFieldRef, closeLocationDropdown, locationDropdownOpen);

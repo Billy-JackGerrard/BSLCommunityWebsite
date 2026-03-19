@@ -21,7 +21,7 @@ export type NominatimResult = {
 
 const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 
-export function useLocationSearch(query: string) {
+export function useLocationSearch(query: string, options?: { viewbox?: string; bounded?: "0" | "1" }) {
   const [results, setResults] = useState<NominatimResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,9 +49,11 @@ export function useLocationSearch(query: string) {
       countrycodes: "gb",
       limit: "5",
       addressdetails: "1",
-      viewbox: "-3.35,55.88,-3.05,56.01",
-      bounded: "0",
     });
+    if (options?.viewbox) {
+      params.set("viewbox", options.viewbox);
+      params.set("bounded", options.bounded ?? "0");
+    }
 
     fetch(`${NOMINATIM_URL}?${params}`, {
       signal: controller.signal,

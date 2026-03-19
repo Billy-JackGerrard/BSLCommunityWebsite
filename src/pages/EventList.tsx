@@ -4,7 +4,7 @@ import { CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import { useFilters } from "../hooks/useFilters";
 import { useUpcomingEvents } from "../hooks/useUpcomingEvents";
-import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
+import { passesDateFilter, passesDistanceFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
@@ -75,7 +75,7 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
 
   const [showPast, setShowPast] = useState(false);
   const { events, loading, error } = useUpcomingEvents(showPast);
-  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
+  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter } = useFilters();
 
   function switchTimeline(past: boolean) {
     setShowPast(past);
@@ -103,9 +103,17 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
   const visibleEvents = events.filter(ev =>
     matchesSearch(ev, debouncedSearchQuery) &&
     (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
-    passesDateFilter(ev, dateFilter)
+    passesDateFilter(ev, dateFilter) &&
+    (distanceFilter === null || passesDistanceFilter(ev, distanceFilter.center, distanceFilter.radiusMiles))
   );
   const groups = groupByMonth(visibleEvents);
+
+  const excludedByDistanceCount = distanceFilter === null ? 0 : events.filter(ev =>
+    matchesSearch(ev, debouncedSearchQuery) &&
+    (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
+    passesDateFilter(ev, dateFilter) &&
+    (ev.latitude == null || ev.longitude == null)
+  ).length;
 
   return (
     <div className="event-list-page">
@@ -177,6 +185,9 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
               onClearCategories={clearCategories}
               dateFilter={dateFilter}
               onSetDateFilter={setDateFilter}
+              distanceFilter={distanceFilter}
+              onSetDistanceFilter={setDistanceFilter}
+              onClearDistanceFilter={clearDistanceFilter}
             />
           )}
         </div>
@@ -208,14 +219,21 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
               </div>
             ) : groups.length === 0 ? (
               <div className="event-list-empty">
-                {selectedCategories.size > 0 || dateFilter !== "all"
+                {selectedCategories.size > 0 || dateFilter !== "all" || distanceFilter !== null
                   ? "No events match your current filters."
                   : showPast ? "No past events found." : "No upcoming events found."}
               </div>
             ) : (
-              groups.map(group => (
-                <MonthSection key={group.label} group={group} onViewEvent={onViewEvent} />
-              ))
+              <>
+                {groups.map(group => (
+                  <MonthSection key={group.label} group={group} onViewEvent={onViewEvent} />
+                ))}
+                {excludedByDistanceCount > 0 && (
+                  <p className="filter-panel-distance-notice">
+                    {excludedByDistanceCount} event{excludedByDistanceCount !== 1 ? "s" : ""} without a map location {excludedByDistanceCount !== 1 ? "are" : "is"} hidden by the distance filter.
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -228,6 +246,9 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
             onClearCategories={clearCategories}
             dateFilter={dateFilter}
             onSetDateFilter={setDateFilter}
+            distanceFilter={distanceFilter}
+            onSetDistanceFilter={setDistanceFilter}
+            onClearDistanceFilter={clearDistanceFilter}
           />
         </aside>
 

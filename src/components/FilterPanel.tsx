@@ -1,6 +1,8 @@
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { DATE_FILTER_LABELS } from "../utils/eventFilters";
 import type { DateFilter } from "../utils/eventFilters";
+import type { DistanceFilter } from "../hooks/useFilters";
+import DistanceFilterSection from "./DistanceFilterSection";
 import "./FilterPanel.css";
 
 // Re-export so callers can import type + labels from one place
@@ -13,6 +15,9 @@ type Props = {
   onClearCategories: () => void;
   dateFilter: DateFilter;
   onSetDateFilter: (f: DateFilter) => void;
+  distanceFilter: DistanceFilter;
+  onSetDistanceFilter: (f: NonNullable<DistanceFilter>) => void;
+  onClearDistanceFilter: () => void;
   /** Show only category dots — hides date filters and clear button */
   compact?: boolean;
 };
@@ -23,6 +28,9 @@ export default function FilterPanel({
   onClearCategories,
   dateFilter,
   onSetDateFilter,
+  distanceFilter,
+  onSetDistanceFilter,
+  onClearDistanceFilter,
   compact,
 }: Props) {
   return (
@@ -39,6 +47,13 @@ export default function FilterPanel({
             </button>
           ))}
         </div>
+      )}
+      {!compact && (
+        <DistanceFilterSection
+          distanceFilter={distanceFilter}
+          onSetDistanceFilter={onSetDistanceFilter}
+          onClearDistanceFilter={onClearDistanceFilter}
+        />
       )}
       <div className="filter-panel-cats">
         <button

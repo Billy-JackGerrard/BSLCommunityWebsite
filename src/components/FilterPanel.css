@@ -44,6 +44,167 @@
   box-shadow: 0 2px 8px rgba(var(--color-shadow-accent), 0.3);
 }
 
+/* ── Distance filter ── */
+.filter-panel-distance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-panel-distance-radii {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.filter-panel-distance-center {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  position: relative;
+}
+
+.filter-panel-distance-geo-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  height: 28px;
+  padding: 0 0.65rem;
+  font-size: 0.72rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: all 0.2s var(--ease-out);
+}
+
+.filter-panel-distance-geo-btn:hover:not(:disabled),
+.filter-panel-distance-geo-btn:focus-visible {
+  background: var(--color-bg-accent-tint);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  outline: none;
+}
+
+.filter-panel-distance-geo-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.filter-panel-distance-or {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+}
+
+.filter-panel-distance-search {
+  position: relative;
+  flex: 1;
+  min-width: 120px;
+}
+
+.filter-panel-distance-input {
+  width: 100%;
+  height: 28px;
+  padding: 0 0.55rem;
+  font-size: 0.72rem;
+  font-family: inherit;
+  background: var(--color-bg-inset, var(--color-bg-secondary));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.filter-panel-distance-input:focus {
+  border-color: var(--color-accent);
+}
+
+.filter-panel-distance-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.filter-panel-distance-dropdown-option {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.filter-panel-distance-dropdown-option:hover {
+  background: var(--color-bg-accent-tint);
+}
+
+.filter-panel-distance-dropdown-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.filter-panel-distance-dropdown-detail {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+}
+
+.filter-panel-distance-dropdown-loading {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.filter-panel-distance-confirmed {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-panel-distance-confirmed-label {
+  font-size: 0.72rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.filter-panel-distance-change-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.68rem;
+  color: var(--color-accent);
+  padding: 0;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+.filter-panel-distance-error {
+  font-size: 0.68rem;
+  color: var(--color-error, #e55);
+  width: 100%;
+}
+
+.filter-panel-distance-notice {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin: 0.25rem 0 0;
+}
+
 /* ── Category dots ── */
 .filter-panel-cats {
   display: flex;

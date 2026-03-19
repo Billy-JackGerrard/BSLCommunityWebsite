@@ -529,6 +529,7 @@
         width: 100%;
         background: transparent;
         border: none;
+        outline: none;
         cursor: pointer;
         padding: 0.25rem 0;
         color: var(--color-text-muted);

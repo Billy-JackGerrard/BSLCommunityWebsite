@@ -5,7 +5,7 @@ import { supabase } from "../supabaseClient";
 import { useFilters } from "../hooks/useFilters";
 import FilterPanel from "../components/FilterPanel";
 import { MONTHS, formatDate, formatTime } from "../utils/dates";
-import { passesDateFilter } from "../utils/eventFilters";
+import { passesDateFilter, passesDistanceFilter } from "../utils/eventFilters";
 import type { Event, Category } from "../utils/types";
 import { CATEGORY_COLOURS, isLightColor } from "../utils/types";
 import "./MapView.css";
@@ -75,7 +75,7 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
-  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
+  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter } = useFilters();
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -119,9 +119,10 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
       if (e.latitude == null || e.longitude == null) return false;
       if (selectedCategories.size > 0 && !selectedCategories.has(e.category)) return false;
       if (!passesDateFilter(e, dateFilter)) return false;
+      if (distanceFilter !== null && !passesDistanceFilter(e, distanceFilter.center, distanceFilter.radiusMiles)) return false;
       return true;
     });
-  }, [events, selectedCategories, dateFilter]);
+  }, [events, selectedCategories, dateFilter, distanceFilter]);
 
   // Count online-only events (no coordinates)
   const onlineCount = useMemo(() => {
@@ -311,6 +312,9 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
             onClearCategories={clearCategories}
             dateFilter={dateFilter}
             onSetDateFilter={setDateFilter}
+            distanceFilter={distanceFilter}
+            onSetDistanceFilter={setDistanceFilter}
+            onClearDistanceFilter={clearDistanceFilter}
             compact
           />
         </div>
@@ -356,6 +360,9 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
             onClearCategories={clearCategories}
             dateFilter={dateFilter}
             onSetDateFilter={setDateFilter}
+            distanceFilter={distanceFilter}
+            onSetDistanceFilter={setDistanceFilter}
+            onClearDistanceFilter={clearDistanceFilter}
           />
         </div>
       )}

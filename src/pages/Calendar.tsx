@@ -4,7 +4,7 @@ import type { Event } from "../utils/types";
 import { CATEGORY_COLOURS, isLightColor } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import { useFilters } from "../hooks/useFilters";
-import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
+import { passesDateFilter, passesDistanceFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
@@ -182,22 +182,23 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
   const windowStart = monthKeys[0];
   const windowEnd   = monthKeys[monthKeys.length - 1];
 
-  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
+  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter } = useFilters();
 
   const { eventsByDate: rawEventsByDate, allEvents, loading, error: fetchError, retry } = useCalendarEvents(windowStart, windowEnd);
 
   const eventsByDate = useMemo(() => {
-    if (selectedCategories.size === 0 && dateFilter === "all") return rawEventsByDate;
+    if (selectedCategories.size === 0 && dateFilter === "all" && distanceFilter === null) return rawEventsByDate;
     const filtered = new Map<string, Event[]>();
     for (const [key, evs] of rawEventsByDate) {
       const kept = evs.filter(ev =>
         (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
-        passesDateFilter(ev, dateFilter)
+        passesDateFilter(ev, dateFilter) &&
+        (distanceFilter === null || passesDistanceFilter(ev, distanceFilter.center, distanceFilter.radiusMiles))
       );
       if (kept.length > 0) filtered.set(key, kept);
     }
     return filtered;
-  }, [rawEventsByDate, selectedCategories, dateFilter]);
+  }, [rawEventsByDate, selectedCategories, dateFilter, distanceFilter]);
 
   const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(() => {
     if (window.innerWidth <= 700) return null;
@@ -439,6 +440,9 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
               onClearCategories={clearCategories}
               dateFilter={dateFilter}
               onSetDateFilter={setDateFilter}
+              distanceFilter={distanceFilter}
+              onSetDistanceFilter={setDistanceFilter}
+              onClearDistanceFilter={clearDistanceFilter}
             />
           )}
         </div>
@@ -536,6 +540,9 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
             onClearCategories={clearCategories}
             dateFilter={dateFilter}
             onSetDateFilter={setDateFilter}
+            distanceFilter={distanceFilter}
+            onSetDistanceFilter={setDistanceFilter}
+            onClearDistanceFilter={clearDistanceFilter}
           />
         )}
       </div>

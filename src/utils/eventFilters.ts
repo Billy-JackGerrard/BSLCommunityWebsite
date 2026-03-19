@@ -51,6 +51,29 @@ export function passesDateFilter(event: Event, filter: DateFilter): boolean {
   return true;
 }
 
+export type DistanceCenter = { lat: number; lng: number };
+
+function haversineDistanceMiles(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 3958.8;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/**
+ * Returns true if the event is within radiusMiles of center.
+ * Events without lat/lng always return false when the filter is active.
+ */
+export function passesDistanceFilter(event: Event, center: DistanceCenter, radiusMiles: number): boolean {
+  if (event.latitude == null || event.longitude == null) return false;
+  return haversineDistanceMiles(center.lat, center.lng, event.latitude, event.longitude) <= radiusMiles;
+}
+
 /**
  * Returns true if the event matches all words in the search query
  * (case-insensitive, space-separated words, searches title + description + location).
