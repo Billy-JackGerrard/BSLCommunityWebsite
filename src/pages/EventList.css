@@ -62,11 +62,14 @@
   display: none;
 }
 
-/* Pull the view switcher flush with the top/sides of the page container */
+/* Pull the view switcher flush with the top/sides and make it sticky */
 @media (max-width: 700px) {
   .event-list-view-switcher {
     margin: -2rem -1rem 1rem;
     width: calc(100% + 2rem);
+    position: sticky;
+    top: 0;
+    z-index: calc(var(--z-navbar) - 1);
   }
 }
 

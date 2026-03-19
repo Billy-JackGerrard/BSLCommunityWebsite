@@ -57,7 +57,10 @@
   color: var(--color-text-primary);
 }
 
-.map-today-btn {
+.map-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   background: var(--color-accent-gradient);
   color: #fff;
   border: none;
@@ -71,7 +74,7 @@
   transition: all 0.2s var(--ease-out);
 }
 
-.map-today-btn:hover {
+.map-home-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
 }
@@ -316,8 +319,8 @@
   }
 
   .map-online-badge {
-    bottom: auto;
-    top: calc(var(--map-toolbar-height, 48px) + 0.5rem);
+    bottom: 0.75rem;
+    top: auto;
     left: 0.5rem;
     font-size: 0.72rem;
   }

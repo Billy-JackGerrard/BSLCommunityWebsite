@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { Event } from "../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
+import { CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import { useFilters } from "../hooks/useFilters";
 import { useUpcomingEvents } from "../hooks/useUpcomingEvents";
-import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
+import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
@@ -217,40 +217,13 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
 
         {/* Sidebar — RIGHT on desktop, hidden on mobile */}
         <aside className="event-list-sidebar">
-          {!showPast && (
-            <>
-              <div className="event-list-sidebar-title">When</div>
-              {(["all", "week", "weekend", "month"] as const).map(f => (
-                <button
-                  key={f}
-                  className={`category-filter-btn${dateFilter === f ? " category-filter-btn--selected" : ""}`}
-                  onClick={() => setDateFilter(f)}
-                >
-                  {DATE_FILTER_LABELS[f]}
-                </button>
-              ))}
-            </>
-          )}
-          <div className="event-list-sidebar-title event-list-sidebar-title--section">Categories</div>
-          <button
-            className={`category-filter-btn${selectedCategories.size === 0 ? " category-filter-btn--selected" : ""}`}
-            onClick={clearCategories}
-          >
-            All
-          </button>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              className={`category-filter-btn${selectedCategories.has(cat) ? " category-filter-btn--selected" : ""}`}
-              onClick={() => toggleCategory(cat)}
-            >
-              <span
-                className="category-dot"
-                style={{ background: CATEGORY_COLOURS[cat] }}
-              />
-              <span className="category-filter-label">{cat}</span>
-            </button>
-          ))}
+          <FilterPanel
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            onClearCategories={clearCategories}
+            dateFilter={dateFilter}
+            onSetDateFilter={setDateFilter}
+          />
         </aside>
 
       </div>

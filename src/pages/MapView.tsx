@@ -236,11 +236,20 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
     });
   }, []);
 
-  const goToToday = useCallback(() => {
-    const now = new Date();
-    setViewMonth(now.getMonth());
-    setViewYear(now.getFullYear());
-    mapRef.current?.setView(EDINBURGH_CENTER, DEFAULT_ZOOM);
+  const goToHome = useCallback(() => {
+    if (!navigator.geolocation) {
+      mapRef.current?.setView(EDINBURGH_CENTER, DEFAULT_ZOOM);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        mapRef.current?.flyTo([pos.coords.latitude, pos.coords.longitude], 14);
+      },
+      () => {
+        // Permission denied or error — fall back to Edinburgh centre
+        mapRef.current?.setView(EDINBURGH_CENTER, DEFAULT_ZOOM);
+      }
+    );
   }, []);
 
   return (
@@ -283,7 +292,13 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
           <button className="map-month-btn" onClick={goToPrevMonth} aria-label="Previous month">&lsaquo;</button>
           <span className="map-month-label">{MONTHS[viewMonth]} {viewYear}</span>
           <button className="map-month-btn" onClick={goToNextMonth} aria-label="Next month">&rsaquo;</button>
-          <button className="map-today-btn" onClick={goToToday}>Today</button>
+          <button className="map-home-btn" onClick={goToHome} aria-label="Go to my location">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Home
+          </button>
         </div>
         <div className="map-toolbar-filters map-toolbar-filters--desktop">
           <FilterPanel
