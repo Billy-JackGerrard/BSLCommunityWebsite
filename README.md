@@ -1,8 +1,5 @@
 TODO
 
-need to rethink the age groups - family AND pg?
-also the symbol for age on show event? not appropriate
-
 apple has dropdown boxes built in - consider using those?
 etc
 
@@ -39,10 +36,6 @@ email announcements?
 
 integrate with socials!!
 
-add a page only visible to admins,
-and on this page people can put comments on it, or suggestions or report bugs etc. next to each entry is a resolved tick button which deletes the entry.
-you could also read messages from the contact us page
-
 when adding events:
 - when their event is approved, they receive an email if they've put one in
 - optionally add an image (but think db memory)
@@ -54,13 +47,8 @@ event queue for admins:
 add predetermined events eg easter sunday, christmas day
 maybe have this a kind of special event / non real event as it doesnt require a location or booking info etc
 
-for category colours,
-ensure that the light colours have black text and vice versa
-
 when you filter you can filter by event by range, region, etc
 
-
-rename startsAt to be "from" and finishes At to be "to"
 
 need better filtering/search options
 
@@ -72,8 +60,7 @@ accessibility review - send directly to their email
 
 people can click I'm going to a certain event - maybe need to wait until after user accounts are set up
 
-Set Up Multiple Views: Provide options for list, grid, or monthly views to cater to different user preferences.
-Also setup a Map View to see where events are this month, maybe with a number with each pin to show how many events are there
+Setup a Map View to see where events are this month, maybe with a number with each pin to show how many events are there
 
 means can filter for city/region etc
 

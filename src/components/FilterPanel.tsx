@@ -46,7 +46,7 @@ export default function FilterPanel({
           onClick={onClearCategories}
         >
           <span className="filter-panel-cat-dot" style={{ background: "var(--color-text-muted)" }} />
-          {!compact && <span className="filter-panel-cat-label">All</span>}
+          <span className="filter-panel-cat-label">All</span>
         </button>
         {CATEGORIES.map(cat => (
           <button

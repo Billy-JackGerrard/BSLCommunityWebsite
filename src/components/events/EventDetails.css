@@ -221,6 +221,20 @@
     text-decoration: underline;
 }
 
+/* ── Location with address ── */
+.event-detail-location {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.event-detail-address {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-family: monospace;
+    letter-spacing: 0.03em;
+}
+
 /* ── Booking row ── */
 .event-detail-booking-row {
     align-items: flex-start;

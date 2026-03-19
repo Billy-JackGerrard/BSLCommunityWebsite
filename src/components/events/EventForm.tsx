@@ -585,7 +585,7 @@ export default function EventForm({
       <div className="form-field">
         <label className="form-label">Accessibility</label>
         <div className="event-type-toggle">
-          {["Delivered in BSL", "BSL/English Interpreter", "Captions"].map(option => (
+          {["Delivered in BSL", "BSL/English Interpreter", "Captioned"].map(option => (
             <button
               key={option}
               type="button"

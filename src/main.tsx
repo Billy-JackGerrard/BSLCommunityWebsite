@@ -23,6 +23,16 @@ import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
+/** Public pages that get their own shareable URL path. */
+const PAGE_PATHS: Partial<Record<View, string>> = {
+  about: "/about",
+  contact: "/contact",
+  privacy: "/privacy",
+};
+const PATH_TO_VIEW = Object.fromEntries(
+  Object.entries(PAGE_PATHS).map(([v, p]) => [p, v as View])
+);
+
 /** Fetch a single approved event by ID. Returns the event or null. */
 async function fetchEventById(id: string): Promise<Event | null> {
   const { data, error } = await supabase
@@ -63,16 +73,21 @@ function App() {
 
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
-  // Deep-link: if URL is /event/{id}, fetch full event and navigate to event page
+  // Deep-link: resolve URL path to the correct view on first load
   useEffect(() => {
-    const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
-    if (!match) return;
-    fetchEventById(match[1]).then(event => {
-      if (event) {
-        setViewingEvent(event);
-        setView("event");
-      }
-    });
+    const path = window.location.pathname;
+    const eventMatch = path.match(/^\/event\/([^/]+)$/);
+    if (eventMatch) {
+      fetchEventById(eventMatch[1]).then(event => {
+        if (event) {
+          setViewingEvent(event);
+          setView("event");
+        }
+      });
+      return;
+    }
+    const pageView = PATH_TO_VIEW[path];
+    if (pageView) setView(pageView);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleViewEvent = useCallback((event: Event) => {
@@ -85,9 +100,10 @@ function App() {
   // Handle browser back/forward
   useEffect(() => {
     const handler = () => {
-      const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
-      if (match) {
-        fetchEventById(match[1]).then(event => {
+      const path = window.location.pathname;
+      const eventMatch = path.match(/^\/event\/([^/]+)$/);
+      if (eventMatch) {
+        fetchEventById(eventMatch[1]).then(event => {
           if (event) {
             setViewingEvent(event);
             setView("event");
@@ -95,7 +111,8 @@ function App() {
         });
       } else {
         setViewingEvent(null);
-        setView(postEventReturn);
+        const pageView = PATH_TO_VIEW[path];
+        setView(pageView ?? postEventReturn);
       }
     };
     window.addEventListener("popstate", handler);
@@ -162,10 +179,10 @@ const fetchMessagesCount = useCallback(async () => {
     if (v !== "add-event") { setAddEventDate(undefined); setDuplicatingEvent(null); }
     if (v !== "calendar") setSearchOpen(false);
     if (v !== "list") setListSearchOpen(false);
-    if (v !== "event") {
-      setViewingEvent(null);
-      if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
-    }
+    if (v !== "event") setViewingEvent(null);
+
+    const targetPath = PAGE_PATHS[v] ?? "/";
+    if (window.location.pathname !== targetPath) window.history.pushState({}, "", targetPath);
 
     setView(v);
   };
@@ -180,6 +197,7 @@ const fetchMessagesCount = useCallback(async () => {
     setEditingEvent(updated);
     if (postEditReturn === "event") setViewingEvent(updated);
     setView(postEditReturn);
+    window.scrollTo({ top: 0 });
   };
 
   const handleEditCancel = () => {

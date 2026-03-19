@@ -104,17 +104,22 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
       )}
 
       {(event.event_type === 'in_person' || event.event_type === 'both') && (() => {
-        const displayText = [event.location, event.address && formatAddress(event.address)].filter(Boolean).join(" — ");
-        if (!displayText && !event.latitude && !event.longitude) return null;
+        const locationName = event.location;
+        const addressText = event.address ? formatAddress(event.address) : null;
+        if (!locationName && !addressText && !event.latitude && !event.longitude) return null;
+        const queryText = [locationName, addressText].filter(Boolean).join(" — ");
         const mapsUrl = event.latitude && event.longitude
           ? `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`
-          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayText)}`;
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(queryText)}`;
         return (
           <div className="event-detail-row">
             <span className="event-detail-icon">📍</span>
-            <a className="event-detail-link" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-              {displayText || "View on map"}
-            </a>
+            <div className="event-detail-location">
+              <a className="event-detail-link" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+                {locationName || "View on map"}
+              </a>
+              {addressText && <span className="event-detail-address">{addressText}</span>}
+            </div>
           </div>
         );
       })()}

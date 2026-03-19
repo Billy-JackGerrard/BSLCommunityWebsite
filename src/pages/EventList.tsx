@@ -42,7 +42,7 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
   const [error, setError] = useState<string | null>(null);
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
 
