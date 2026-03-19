@@ -278,7 +278,7 @@ function App() {
         onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
         onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
       />
-      <div key={view} className="page-view" style={{ paddingTop: "60px" }}>
+      <div key={view} className="page-view" style={{ paddingTop: "var(--navbar-h)" }}>
         {view === "calendar" && (
           <Calendar
             onAddEvent={handleAddEventFromCalendar}

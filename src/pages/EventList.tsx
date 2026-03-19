@@ -112,6 +112,10 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
 
       {/* Mobile view switcher */}
       <div className="calendar-view-switcher event-list-view-switcher">
+        <button className="calendar-view-btn calendar-view-btn--today" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+          Today
+        </button>
+        <div className="calendar-view-switcher-spacer" />
         <button className="calendar-view-btn" onClick={() => onNavigate?.("calendar")}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <rect x="3" y="4" width="18" height="18" rx="2"/>

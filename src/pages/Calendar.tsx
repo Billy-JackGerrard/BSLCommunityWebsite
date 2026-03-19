@@ -321,6 +321,10 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
 
         {/* Mobile view switcher */}
         <div className="calendar-view-switcher">
+          <button className="calendar-view-btn calendar-view-btn--today" onClick={scrollToToday}>
+            Today
+          </button>
+          <div className="calendar-view-switcher-spacer" />
           <button className="calendar-view-btn calendar-view-btn--active" aria-current="page">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="3" y="4" width="18" height="18" rx="2"/>

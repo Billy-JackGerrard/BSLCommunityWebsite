@@ -42,6 +42,9 @@
   /* Badge */
   --color-bg-badge: #f59e0b;
 
+  /* Navbar height — keeps page offsets in sync with the actual bar */
+  --navbar-h: 60px;
+
   /* Z-index layers — reference these instead of bare numbers */
   --z-navbar:      100;
   --z-mobile-menu: 200;
@@ -566,6 +569,7 @@ button:focus-visible {
 
 /* Prevent iOS auto-zoom on input focus */
 @media (max-width: 700px) {
+  :root { --navbar-h: 68px; }
   .form-input,
   .search-bar-input { font-size: 16px; }
 }

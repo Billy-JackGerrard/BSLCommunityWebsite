@@ -41,10 +41,6 @@ export default function Navbar({
         </span>
       </button>
 
-      {showCalendarControls && (
-        <button className="navbar-calendar-btn navbar-today--mobile" onClick={onScrollToToday}>Today</button>
-      )}
-
       <button
         className={`navbar-hamburger${menuOpen ? " navbar-hamburger--open" : ""}`}
         onClick={() => setMenuOpen(o => !o)}

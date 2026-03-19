@@ -2,7 +2,7 @@
 .map-page {
   font-family: inherit;
   position: fixed;
-  top: 60px;
+  top: var(--navbar-h);
   left: 0;
   right: 0;
   bottom: var(--privacy-banner-height, 0px);

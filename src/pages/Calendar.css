@@ -2,7 +2,7 @@
 .calendar-page {
     font-family: inherit;
     position: fixed;
-    top: 60px;
+    top: var(--navbar-h);
     left: 0;
     right: 0;
     bottom: var(--privacy-banner-height, 0px);
@@ -494,7 +494,7 @@
 
 /* ── Event detail full page ── */
 .event-detail-page {
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - var(--navbar-h));
     background: var(--color-bg-page);
     display: flex;
     align-items: flex-start;
@@ -620,16 +620,31 @@
     .calendar-panel-empty { display: none; }
     .calendar-panel-filters { display: none; }
 
-    /* View switcher — top-right toolbar */
+    /* View switcher — toolbar with Today on left, view buttons on right */
     .calendar-view-switcher {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
         gap: 0.25rem;
         padding: 0.4rem 0.5rem;
         flex-shrink: 0;
         background: var(--color-bg-inset);
         border-bottom: 1px solid var(--color-border);
+    }
+
+    .calendar-view-switcher-spacer {
+        flex: 1;
+    }
+
+    .calendar-view-btn--today {
+        background: rgba(37, 99, 235, 0.12);
+        border-color: rgba(37, 99, 235, 0.3);
+        color: var(--color-accent);
+    }
+
+    .calendar-view-btn--today:hover {
+        background: rgba(37, 99, 235, 0.2);
+        border-color: var(--color-accent);
+        color: var(--color-accent);
     }
 
     .calendar-view-btn {
