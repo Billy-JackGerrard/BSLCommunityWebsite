@@ -110,8 +110,15 @@ function App() {
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
 
   // ── Add event flow ─────────────────────────────────────────────────────
-  const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
-  const [duplicatingEvent, setDuplicatingEvent] = useState<Event | null>(null);
+  // Single discriminated-union state so addEventDate and duplicatingEvent are
+  // always derived from the same update — they can never disagree.
+  type AddEventCtx =
+    | { kind: "date"; date: string }
+    | { kind: "duplicate"; event: Event }
+    | null;
+  const [addEventCtx, setAddEventCtx] = useState<AddEventCtx>(null);
+  const addEventDate     = addEventCtx?.kind === "date"      ? addEventCtx.date  : undefined;
+  const duplicatingEvent = addEventCtx?.kind === "duplicate" ? addEventCtx.event : null;
 
   // ── Search state ───────────────────────────────────────────────────────
   const [searchOpen, setSearchOpen] = useState(false);
@@ -196,7 +203,7 @@ function App() {
   };
 
   const handleNavigate = (v: View) => {
-    if (v !== "add-event") { setAddEventDate(undefined); setDuplicatingEvent(null); }
+    if (v !== "add-event") setAddEventCtx(null);
     if (v !== "calendar") setSearchOpen(false);
     if (v !== "list") setListSearchOpen(false);
     if (v !== "event") setViewingEvent(null);
@@ -250,14 +257,12 @@ function App() {
   const handleAddEventFromCalendar = (date: { day: number; month: number; year: number }) => {
     const mm = String(date.month + 1).padStart(2, "0");
     const dd = String(date.day).padStart(2, "0");
-    setAddEventDate(`${date.year}-${mm}-${dd}`);
-    setDuplicatingEvent(null);
+    setAddEventCtx({ kind: "date", date: `${date.year}-${mm}-${dd}` });
     setView("add-event");
   };
 
   const handleDuplicateEvent = (event: Event) => {
-    setDuplicatingEvent(event);
-    setAddEventDate(undefined);
+    setAddEventCtx({ kind: "duplicate", event });
     setView("add-event");
   };
 
