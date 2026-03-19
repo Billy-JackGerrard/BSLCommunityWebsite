@@ -6,7 +6,6 @@ import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
-import EventDetails from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
 
@@ -28,17 +27,11 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
 }
 
 type Props = {
-  isLoggedIn: boolean;
-  onEditEvent: (event: Event) => void;
-  onDeleteEvent?: (event: Event) => void;
-  onDuplicateEvent?: (event: Event) => void;
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
+  onViewEvent: (event: Event) => void;
   searchOpen: boolean;
   onToggleSearch: () => void;
   onScrollToTodayReady: (fn: () => void) => void;
-  initialEventId?: string;
-  initialEventDate?: Date;
-  onEventExpand?: (event: Event | null) => void;
 };
 
 // ── Single month block ──────────────────────────────────────────────────────
@@ -146,7 +139,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDuplicateEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
+export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggleSearch, onScrollToTodayReady }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -203,8 +196,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
       year: new Date().getFullYear(),
     };
   });
-  const [expandedEventId, setExpandedEventId] = useState<number | null>(initialEventId ? Number(initialEventId) : null);
-
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const todayMonthRef = useRef<HTMLDivElement | null>(null);
@@ -242,9 +233,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
   const scrollToToday = useCallback(() => {
     todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
-    if (expandedEventId) onEventExpand?.(null);
-    setExpandedEventId(null);
-  }, [today, expandedEventId, onEventExpand]);
+  }, [today]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -262,20 +251,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
   useEffect(() => {
     onScrollToTodayReady(scrollToToday);
   }, [scrollToToday, onScrollToTodayReady]);
-
-  // Scroll to and select the event's day when initialEventDate arrives (deep-link / browser back)
-  useEffect(() => {
-    if (!initialEventId || !initialEventDate) return;
-    const day = initialEventDate.getDate();
-    const month = initialEventDate.getMonth();
-    const year = initialEventDate.getFullYear();
-    setSelected({ day, month, year });
-    setExpandedEventId(initialEventId ? Number(initialEventId) : null);
-    setTimeout(() => {
-      monthRefs.current.get(`${year}-${month}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
-  }, [initialEventId, initialEventDate]);
-
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
 
@@ -306,21 +281,9 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
   const handleSelectDay = (day: number, month: number, year: number) => {
     if (selected?.day === day && selected?.month === month && selected?.year === year) {
       setSelected(null);
-      if (expandedEventId) onEventExpand?.(null);
-      setExpandedEventId(null);
     } else {
-      if (expandedEventId) onEventExpand?.(null);
       setSelected({ day, month, year });
-      setExpandedEventId(null);
     }
-  };
-
-  const handleToggleEvent = (ev: Event) => {
-    setExpandedEventId(prev => {
-      const next = prev === ev.id ? null : ev.id;
-      onEventExpand?.(next !== null ? ev : null);
-      return next;
-    });
   };
 
   const selectedEvents: Event[] = useMemo(() => {
@@ -411,7 +374,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
 
       {/* ── Mobile backdrop — dims calendar behind the panel ── */}
       {mobilePanelOpen && (
-        <div className="calendar-backdrop" onClick={() => { if (expandedEventId) onEventExpand?.(null); setSelected(null); setExpandedEventId(null); }} aria-hidden="true" />
+        <div className="calendar-backdrop" onClick={() => setSelected(null)} aria-hidden="true" />
       )}
 
       {/* ── Right: event panel ── */}
@@ -458,7 +421,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
                 >
                   + Add Event
                 </button>
-                <button className="calendar-panel-close" onClick={() => { if (expandedEventId) onEventExpand?.(null); setSelected(null); setExpandedEventId(null); }} aria-label="Close">✕</button>
+                <button className="calendar-panel-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
               </div>
             </div>
 
@@ -484,41 +447,25 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
               </div>
             ) : (
               <div className="calendar-panel-list">
-                {selectedEvents.map(ev => {
-                  const isExpanded = expandedEventId !== null && expandedEventId === ev.id;
-                  return (
-                    <div key={ev.id} className="calendar-panel-event-wrap">
-                      {isExpanded ? (
-                        <div className="calendar-panel-event-detail">
-                          <EventDetails
-                            event={ev}
-                            isLoggedIn={isLoggedIn}
-                            onClose={() => { setExpandedEventId(null); onEventExpand?.(null); }}
-                            onEdit={onEditEvent}
-                            onDelete={onDeleteEvent}
-                            onDuplicate={onDuplicateEvent}
-                          />
-                        </div>
-                      ) : (
-                        <button
-                          className="calendar-panel-event"
-                          style={{ borderLeft: `3px solid ${CATEGORY_COLOURS[ev.category]}` }}
-                          onClick={() => handleToggleEvent(ev)}
-                        >
-                          <span className="calendar-panel-event-title">
-                            {ev.title}
-                          </span>
-                          <span className="calendar-panel-event-time">
-                            {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                            {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
-                          </span>
-                          {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
-                          <span className="calendar-panel-event-chevron">▶</span>
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
+                {selectedEvents.map(ev => (
+                  <div key={ev.id} className="calendar-panel-event-wrap">
+                    <button
+                      className="calendar-panel-event"
+                      style={{ borderLeft: `3px solid ${CATEGORY_COLOURS[ev.category]}` }}
+                      onClick={() => onViewEvent(ev)}
+                    >
+                      <span className="calendar-panel-event-title">
+                        {ev.title}
+                      </span>
+                      <span className="calendar-panel-event-time">
+                        {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                        {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
+                      </span>
+                      {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
+                      <span className="calendar-panel-event-chevron">▶</span>
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </>

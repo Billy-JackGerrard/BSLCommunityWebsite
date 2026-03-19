@@ -44,8 +44,6 @@ export function useLocationSearch(query: string) {
       format: "json",
       q: debouncedQuery,
       countrycodes: "gb",
-      viewbox: "-3.35,55.88,-3.05,56.01",
-      bounded: "0",
       limit: "5",
       addressdetails: "1",
     });

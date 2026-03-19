@@ -7,15 +7,11 @@ import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
-import EventDetailCard from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
 import "./EventList.css";
 
 type Props = {
-  isLoggedIn: boolean;
-  onEditEvent: (event: Event) => void;
-  onDeleteEvent?: (event: Event) => void;
-  onDuplicateEvent?: (event: Event) => void;
+  onViewEvent: (event: Event) => void;
   searchOpen?: boolean;
   onToggleSearch?: () => void;
 };
@@ -39,11 +35,10 @@ function groupByMonth(events: Event[]): MonthGroup[] {
   });
 }
 
-export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDuplicateEvent, searchOpen, onToggleSearch }: Props) {
+export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
   const [searchQuery, setSearchQuery] = useState("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
@@ -93,10 +88,6 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
     return () => document.removeEventListener("mousedown", handler);
   }, [searchOpen, onToggleSearch]);
 
-  function toggleExpand(id: number) {
-    setExpandedId(prev => (prev === id ? null : id));
-  }
-
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
 
   const visibleEvents = events.filter(ev =>
@@ -105,7 +96,6 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
     passesDateFilter(ev, dateFilter)
   );
   const groups = groupByMonth(visibleEvents);
-  const expandedEvent = expandedId !== null ? events.find(e => e.id === expandedId) ?? null : null;
 
   return (
     <div className="event-list-page">
@@ -152,7 +142,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
         </div>
 
         {/* Events column — LEFT on desktop */}
-        <div className={`event-list-container${expandedId !== null ? " event-list-container--split" : ""}`}>
+        <div className="event-list-container">
           <div className="event-list-items-col">
             {error ? (
             <div className="form-error" role="alert">{error}</div>
@@ -176,8 +166,8 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
                     {group.events.map(ev => (
                       <div key={ev.id} className="event-list-item-wrap">
                         <button
-                          className={`event-list-item${expandedId === ev.id ? " event-list-item--expanded" : ""}`}
-                          onClick={() => toggleExpand(ev.id)}
+                          className="event-list-item"
+                          onClick={() => onViewEvent(ev)}
                         >
                           <span
                             className="event-list-dot"
@@ -190,20 +180,8 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
                           {ev.location && (
                             <span className="event-list-location">📍 {ev.location}</span>
                           )}
-                          <span className="event-list-chevron">{expandedId === ev.id ? "▼" : "▶"}</span>
+                          <span className="event-list-chevron">▶</span>
                         </button>
-                        {expandedId === ev.id && (
-                          <div className="event-list-detail event-list-detail--mobile">
-                            <EventDetailCard
-                              event={ev}
-                              isLoggedIn={isLoggedIn}
-                              onClose={() => setExpandedId(null)}
-                              onEdit={onEditEvent}
-                              onDelete={onDeleteEvent}
-                              onDuplicate={onDuplicateEvent}
-                            />
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -211,19 +189,6 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
               ))
             )}
           </div>
-
-          {expandedEvent && (
-            <div className="event-list-detail-panel">
-              <EventDetailCard
-                event={expandedEvent}
-                isLoggedIn={isLoggedIn}
-                onClose={() => setExpandedId(null)}
-                onEdit={onEditEvent}
-                onDelete={onDeleteEvent}
-                onDuplicate={onDuplicateEvent}
-              />
-            </div>
-          )}
         </div>
 
         {/* Sidebar — RIGHT on desktop, hidden on mobile */}

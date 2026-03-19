@@ -84,7 +84,11 @@ export default function EventForm({
     if (prefillDate) return `${prefillDate}T09:00`;
     return "";
   });
-  const [finishesAt, setFinishesAt] = useState(initialValues?.finishes_at ? isoToLocal(initialValues.finishes_at) : "");
+  const [finishesAt, setFinishesAt] = useState(() => {
+    if (initialValues?.finishes_at) return isoToLocal(initialValues.finishes_at);
+    if (prefillDate) return `${prefillDate}T10:00`;
+    return "";
+  });
   const [contactName, setContactName] = useState(initialValues?.contact_name ?? "");
   const [contactEmail, setContactEmail] = useState(initialValues?.contact_email ?? "");
   const [url, setUrl] = useState(initialValues?.url ?? "");

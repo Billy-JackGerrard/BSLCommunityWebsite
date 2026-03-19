@@ -651,18 +651,3 @@
     transform: translateY(-50%) translateX(2px);
 }
 
-.calendar-panel-event-detail {
-    animation: panel-detail-in 0.18s ease;
-}
-
-.calendar-panel-event-detail .event-detail-card {
-    box-shadow: none;
-    border-radius: 8px;
-    width: 100%;
-    animation: none;
-}
-
-@keyframes panel-detail-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}

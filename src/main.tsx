@@ -14,6 +14,7 @@ import Contact from "./pages/Contact.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import EventList from "./pages/EventList.tsx";
+import EventPage from "./pages/EventPage.tsx";
 import Navbar from "./components/Navbar.tsx";
 import PrivacyBanner from "./components/PrivacyBanner.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
@@ -37,41 +38,66 @@ function App() {
   const [duplicatingEvent, setDuplicatingEvent] = useState<Event | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [listSearchOpen, setListSearchOpen] = useState(false);
-  const [initialEventId, setInitialEventId] = useState<string | undefined>(() => {
-    const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
-    return match ? match[1] : undefined;
-  });
-  const [initialEventDate, setInitialEventDate] = useState<Date | undefined>(undefined);
+  const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
+  const [postEventReturn, setPostEventReturn] = useState<View>("calendar");
   const scrollToTodayRef = useRef<(() => void) | null>(null);
   const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
   const handleListToggleSearch = useCallback(() => setListSearchOpen(o => !o), []);
 
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
+  // Deep-link: if URL is /event/{id}, fetch full event and navigate to event page
   useEffect(() => {
-    if (!initialEventId) { setInitialEventDate(undefined); return; }
+    const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
+    if (!match) return;
     void Promise.resolve(
       supabase
         .from("events")
-        .select("starts_at")
-        .eq("id", initialEventId)
+        .select("*")
+        .eq("id", match[1])
+        .eq("approved", true)
         .single()
-    ).then(({ data }) => { if (data) setInitialEventDate(new Date(data.starts_at)); })
-     .catch(() => { /* event not found via URL — ignore */ });
-  }, [initialEventId]);
+    ).then(({ data }) => {
+      if (data) {
+        setViewingEvent(data as Event);
+        setView("event");
+      }
+    }).catch(() => { /* event not found — ignore */ });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleEventExpand = useCallback((event: Event | null) => {
-    window.history.pushState({}, "", event ? `/event/${event.id}` : "/");
-  }, []);
+  const handleViewEvent = useCallback((event: Event) => {
+    setViewingEvent(event);
+    setPostEventReturn(view === "event" ? postEventReturn : view as View);
+    window.history.pushState({}, "", `/event/${event.id}`);
+    setView("event");
+  }, [view, postEventReturn]);
 
+  // Handle browser back/forward
   useEffect(() => {
     const handler = () => {
       const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
-      setInitialEventId(match ? match[1] : undefined);
+      if (match) {
+        void Promise.resolve(
+          supabase
+            .from("events")
+            .select("*")
+            .eq("id", match[1])
+            .eq("approved", true)
+            .single()
+        ).then(({ data }) => {
+          if (data) {
+            setViewingEvent(data as Event);
+            setView("event");
+          }
+        }).catch(() => {});
+      } else {
+        setViewingEvent(null);
+        setView(postEventReturn);
+      }
     };
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
-  }, []);
+  }, [postEventReturn]);
 
 const fetchMessagesCount = useCallback(async () => {
     const { count, error } = await supabase
@@ -131,13 +157,12 @@ const fetchMessagesCount = useCallback(async () => {
 
   const handleNavigate = (v: View) => {
     if (v !== "add-event") { setAddEventDate(undefined); setDuplicatingEvent(null); }
-    if (v !== "calendar") {
-      setSearchOpen(false);
-      if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
-      setInitialEventId(undefined);
-      setInitialEventDate(undefined);
-    }
+    if (v !== "calendar") setSearchOpen(false);
     if (v !== "list") setListSearchOpen(false);
+    if (v !== "event") {
+      setViewingEvent(null);
+      if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
+    }
 
     setView(v);
   };
@@ -150,6 +175,7 @@ const fetchMessagesCount = useCallback(async () => {
 
   const handleEditSaved = (updated: Event) => {
     setEditingEvent(updated);
+    if (postEditReturn === "event") setViewingEvent(updated);
     setView(postEditReturn);
   };
 
@@ -165,7 +191,9 @@ const fetchMessagesCount = useCallback(async () => {
 
   const handleDeleted = () => {
     setDeletingEvent(null);
-    setView("calendar");
+    setViewingEvent(null);
+    if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
+    setView(postDeleteReturn === "event" ? postEventReturn : postDeleteReturn);
   };
 
   const handleDeleteCancel = () => {
@@ -204,27 +232,28 @@ const fetchMessagesCount = useCallback(async () => {
       <div key={view} className="page-view" style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
           <Calendar
-            isLoggedIn={isLoggedIn}
-            onEditEvent={ev => handleEditEvent(ev, "calendar")}
-            onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "calendar") : undefined}
-            onDuplicateEvent={handleDuplicateEvent}
             onAddEvent={handleAddEventFromCalendar}
+            onViewEvent={handleViewEvent}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
             onScrollToTodayReady={handleScrollToTodayReady}
-            initialEventId={initialEventId}
-            initialEventDate={initialEventDate}
-            onEventExpand={handleEventExpand}
           />
         )}
         {view === "list" && (
           <EventList
-            isLoggedIn={isLoggedIn}
-            onEditEvent={ev => handleEditEvent(ev, "list")}
-            onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "list") : undefined}
-            onDuplicateEvent={handleDuplicateEvent}
+            onViewEvent={handleViewEvent}
             searchOpen={listSearchOpen}
             onToggleSearch={handleListToggleSearch}
+          />
+        )}
+        {view === "event" && viewingEvent && (
+          <EventPage
+            event={viewingEvent}
+            isLoggedIn={isLoggedIn}
+            onBack={() => handleNavigate(postEventReturn)}
+            onEdit={ev => handleEditEvent(ev, "event")}
+            onDelete={isLoggedIn ? ev => handleDeleteEvent(ev, "event") : undefined}
+            onDuplicate={handleDuplicateEvent}
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
