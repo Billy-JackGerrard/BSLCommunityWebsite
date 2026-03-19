@@ -27,12 +27,19 @@ import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
-/** Public pages that get their own shareable URL path. */
+/** Every navigable view gets its own shareable URL path. */
 const PAGE_PATHS: Partial<Record<View, string>> = {
-  home: "/home",
-  map: "/map",
-  contact: "/contact",
-  privacy: "/privacy",
+  calendar:          "/",
+  list:              "/list",
+  login:             "/login",
+  home:              "/home",
+  map:               "/map",
+  contact:           "/contact",
+  privacy:           "/privacy",
+  "admin-queue":     "/admin-queue",
+  "admin-messages":  "/admin-messages",
+  "admin-home":      "/admin-home",
+  account:           "/account",
 };
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(PAGE_PATHS).map(([v, p]) => [p, v as View])
@@ -141,17 +148,25 @@ function App() {
 
   // ── Auth guard ─────────────────────────────────────────────────────────
   useEffect(() => {
-    if (view === "admin-queue" && !isLoggedIn) setView("login");
-    if (view === "admin-messages" && !isLoggedIn) setView("login");
-
-    if (view === "admin-home" && !isLoggedIn) setView("login");
-    if (view === "account" && !isLoggedIn) setView("login");
-    if (view === "edit-event" && !isLoggedIn) setView("calendar");
+    const adminViews = ["admin-queue", "admin-messages", "admin-home", "account"] as const;
+    if ((adminViews as readonly string[]).includes(view) && !isLoggedIn) {
+      window.history.replaceState({}, "", PAGE_PATHS.login);
+      setView("login");
+      return;
+    }
+    if (view === "edit-event" && !isLoggedIn) {
+      window.history.replaceState({}, "", "/");
+      setView("calendar");
+      return;
+    }
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
 
   // ── Navigation handlers ────────────────────────────────────────────────
-  const handleLogin = () => setView("calendar");
+  const handleLogin = () => {
+    window.history.replaceState({}, "", "/");
+    setView("calendar");
+  };
 
   const handleNavigate = (v: View) => {
     if (v !== "add-event") { setAddEventDate(undefined); setDuplicatingEvent(null); }
@@ -219,6 +234,7 @@ function App() {
 
   const handleAppLogout = async () => {
     await handleLogout();
+    window.history.replaceState({}, "", "/");
     setView("calendar");
   };
 

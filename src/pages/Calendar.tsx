@@ -9,6 +9,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
+import SearchBar from "../components/SearchBar";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -352,20 +353,14 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
 
         {/* Search bar — shown at top of column when open */}
         {searchOpen && (
-          <div className="calendar-search-wrap" ref={dropdownRef}>
-            <div className="calendar-search-bar">
-              <span className="calendar-search-icon">⌕</span>
-              <input
-                ref={searchInputRef}
-                className="calendar-search-input"
-                type="text"
-                placeholder="Search events…"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
-              />
-              <button className="calendar-search-close" onClick={handleSearchToggle} title="Close search">✕</button>
-            </div>
+          <SearchBar
+            wrapperClassName="calendar-search-wrap"
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onClose={handleSearchToggle}
+            inputRef={searchInputRef}
+            wrapRef={dropdownRef}
+          >
             {searchQuery.trim().length > 0 && (
               <div className="calendar-search-dropdown">
                 {isSearchPending ? (
@@ -390,7 +385,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
                 ))}
               </div>
             )}
-          </div>
+          </SearchBar>
         )}
 
         <div className="calendar-scroll-container" ref={scrollContainerRef}>

@@ -6,10 +6,10 @@ import { useFilters } from "../hooks/useFilters";
 import { useUpcomingEvents } from "../hooks/useUpcomingEvents";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
-
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
+import SearchBar from "../components/SearchBar";
 import "./EventList.css";
 
 type Props = {
@@ -109,21 +109,14 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
 
       {/* Search bar — shown at top when open */}
       {searchOpen && (
-        <div className="event-list-search-wrap" ref={searchWrapRef}>
-          <div className="event-list-search-bar">
-            <span className="event-list-search-icon">⌕</span>
-            <input
-              ref={searchInputRef}
-              className="event-list-search-input"
-              type="text"
-              placeholder="Search events…"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onKeyDown={e => e.key === "Escape" && onToggleSearch?.()}
-            />
-            <button className="event-list-search-close" onClick={() => { onToggleSearch?.(); }} title="Close search">✕</button>
-          </div>
-        </div>
+        <SearchBar
+          wrapperClassName="event-list-search-wrap"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onClose={() => onToggleSearch?.()}
+          inputRef={searchInputRef}
+          wrapRef={searchWrapRef}
+        />
       )}
 
       <div className="event-list-layout">

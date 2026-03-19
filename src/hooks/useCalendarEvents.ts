@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { toLocalDateKey } from "../utils/dates";
+import { approvedEventsQuery } from "../utils/queries";
 
-// Shared base query — approved events ordered by start time.
-const approvedEvents = () =>
-  supabase.from("events").select("*").eq("approved", true).order("starts_at", { ascending: true });
+// Approved events ordered by start time — used for calendar window + search.
+const approvedEvents = () => approvedEventsQuery().order("starts_at", { ascending: true });
 
 type MonthKey = { month: number; year: number };
 

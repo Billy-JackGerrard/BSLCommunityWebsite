@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
+import { approvedEventsQuery } from "../utils/queries";
 
 /**
  * Fetches approved events — either upcoming (next year) or past (last year).
@@ -16,7 +16,7 @@ export function useUpcomingEvents(showPast = false) {
     setLoading(true);
     const now = new Date();
 
-    let query = supabase.from("events").select("*").eq("approved", true);
+    let query = approvedEventsQuery();
 
     if (showPast) {
       const start = new Date(now);
