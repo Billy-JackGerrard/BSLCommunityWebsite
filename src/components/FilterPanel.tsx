@@ -41,15 +41,13 @@ export default function FilterPanel({
         </div>
       )}
       <div className="filter-panel-cats">
-        {!compact && (
-          <button
-            className={`filter-panel-cat${selectedCategories.size === 0 ? " filter-panel-cat--active" : ""}`}
-            onClick={onClearCategories}
-          >
-            <span className="filter-panel-cat-dot" style={{ background: "var(--color-text-muted)" }} />
-            <span className="filter-panel-cat-label">All</span>
-          </button>
-        )}
+        <button
+          className={`filter-panel-cat${selectedCategories.size === 0 ? " filter-panel-cat--active" : ""}`}
+          onClick={onClearCategories}
+        >
+          <span className="filter-panel-cat-dot" style={{ background: "var(--color-text-muted)" }} />
+          {!compact && <span className="filter-panel-cat-label">All</span>}
+        </button>
         {CATEGORIES.map(cat => (
           <button
             key={cat}
