@@ -1,4 +1,5 @@
 import './style.css'
+import './themes.css'
 
 import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
@@ -155,6 +156,7 @@ function App() {
     setViewingEvent(event);
     setPostEventReturn(view === "event" ? postEventReturn : view as View);
     window.history.pushState({}, "", `/event/${event.id}`);
+    window.scrollTo({ top: 0 });
     setView("event");
   }, [view, postEventReturn]);
 

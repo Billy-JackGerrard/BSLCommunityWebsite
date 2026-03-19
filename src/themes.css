@@ -1,0 +1,559 @@
+/* ==========================================================
+   COLOUR THEMES
+   Each theme defines light + dark variants via CSS custom
+   properties.  "classic" uses the bare :root / :root[data-dark]
+   selectors defined in style.css — only non-classic themes
+   live here.
+   ========================================================== */
+
+/* =====================================================
+   OCEAN LIGHT — cyan/turquoise + purple theme
+   ===================================================== */
+:root[data-theme="ocean"] {
+    --color-bg-page:    #E0F7F7;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #CCF0F0;
+    --color-bg-header:  #38D9D9;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #A8E4E4;
+    --color-border-subtle: #D4F1F1;
+
+    --color-accent: #7C3AED;
+
+    --color-text-link: #7C3AED;
+
+    --color-bg-accent-tint:        rgba(124, 58, 237, 0.07);
+    --color-border-accent:         rgba(124, 58, 237, 0.2);
+    --color-border-accent-strong:  rgba(124, 58, 237, 0.35);
+    --color-bg-today:              rgba(56, 217, 217, 0.18);
+
+    --color-accent-gradient: linear-gradient(135deg, #7C3AED 0%, #9F67FF 100%);
+
+    --color-shadow-accent: 124, 58, 237;
+
+    --color-navbar-glass:        rgba(45, 210, 210, 0.92);
+    --color-navbar-glass-mobile: rgba(38, 195, 195, 0.97);
+    --color-navbar-browse-bg:    rgba(124, 58, 237, 0.2);
+    --color-navbar-browse-border:rgba(124, 58, 237, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0A2E2E 0%, #1A6B6B 25%, #28AAAA 50%, #38D9D9 75%, #4DE8E8 100%);
+    --color-hero-orb-1:          #4DD8D8;
+    --color-hero-orb-2:          #9F67FF;
+    --color-hero-orb-3:          #34d399;
+    --color-hero-shimmer:        #80F0F0;
+    --color-cta-text:            #7C3AED;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0A2E2E 0%, #1A6B6B 40%, #28AAAA 70%, #38D9D9 100%);
+
+    --color-calendar-label-bg:   rgba(210, 240, 240, 0.88);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+}
+
+/* =====================================================
+   OCEAN DARK
+   ===================================================== */
+:root[data-theme="ocean"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #0A1A2A;
+    --color-bg-card:    #142233;
+    --color-bg-inset:   #0E1B2B;
+    --color-bg-header:  #1A8A8A;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #1E4A4A;
+    --color-border-subtle: #162E3E;
+
+    --color-accent: #A78BFA;
+
+    --color-text-primary: #e2e8f0;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #94a3b8;
+    --color-text-error:   #f87171;
+    --color-text-link:    #A78BFA;
+
+    --color-bg-accent-tint:        rgba(167, 139, 250, 0.12);
+    --color-border-accent:         rgba(167, 139, 250, 0.25);
+    --color-border-accent-strong:  rgba(167, 139, 250, 0.4);
+    --color-bg-today:              rgba(56, 217, 217, 0.22);
+    --color-bg-surface-raised:     rgba(148, 163, 184, 0.12);
+
+    --color-text-success: #6ed4a0;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #fb923c;
+
+    --color-shadow: rgba(0, 0, 0, 0.5);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.2), 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.25), 0 12px 32px rgba(0,0,0,0.35);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.3), 0 24px 48px rgba(0,0,0,0.4);
+
+    --color-accent-gradient: linear-gradient(135deg, #A78BFA 0%, #C4B5FD 100%);
+
+    --color-shadow-accent: 167, 139, 250;
+
+    --color-navbar-glass:        rgba(20, 100, 100, 0.92);
+    --color-navbar-glass-mobile: rgba(20, 100, 100, 0.96);
+    --color-navbar-browse-bg:    rgba(167, 139, 250, 0.2);
+    --color-navbar-browse-border:rgba(167, 139, 250, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #020A14 0%, #0A1E2E 25%, #1A5555 50%, #28AAAA 75%, #1A5555 100%);
+    --color-hero-shimmer:        #80F0F0;
+    --color-cta-text:            #A78BFA;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #020A14 0%, #0A1E2E 30%, #1A5555 60%, #28AAAA 100%);
+
+    --color-calendar-label-bg:   rgba(14, 27, 43, 0.88);
+}
+
+/* =====================================================
+   EMBER LIGHT — warm orange/amber with sharp editorial feel
+   ===================================================== */
+:root[data-theme="ember"] {
+    --color-bg-page:    #FEF7F0;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #FFF0E1;
+    --color-bg-header:  #E85D04;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #F5D0A9;
+    --color-border-subtle: #FAEBD7;
+
+    --color-accent: #C2410C;
+
+    --color-text-link: #C2410C;
+
+    --color-bg-accent-tint:        rgba(194, 65, 12, 0.06);
+    --color-border-accent:         rgba(194, 65, 12, 0.18);
+    --color-border-accent-strong:  rgba(194, 65, 12, 0.32);
+    --color-bg-today:              rgba(232, 93, 4, 0.14);
+
+    --color-accent-gradient: linear-gradient(135deg, #C2410C 0%, #E85D04 50%, #F59E0B 100%);
+
+    --color-shadow-accent: 194, 65, 12;
+
+    --color-navbar-glass:        rgba(60, 20, 0, 0.92);
+    --color-navbar-glass-mobile: rgba(55, 18, 0, 0.97);
+    --color-navbar-browse-bg:    rgba(245, 158, 11, 0.2);
+    --color-navbar-browse-border:rgba(245, 158, 11, 0.4);
+
+    --color-hero-gradient:       linear-gradient(135deg, #1C0A00 0%, #431407 20%, #7C2D12 40%, #C2410C 60%, #E85D04 80%, #F59E0B 100%);
+    --color-hero-orb-1:          #F59E0B;
+    --color-hero-orb-2:          #EF4444;
+    --color-hero-orb-3:          #F97316;
+    --color-hero-shimmer:        #FDBA74;
+    --color-cta-text:            #9A3412;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #1C0A00 0%, #431407 30%, #7C2D12 55%, #C2410C 75%, #E85D04 100%);
+
+    --color-calendar-label-bg:   rgba(254, 243, 230, 0.9);
+
+    /* Sharp, editorial corners */
+    --radius-sm: 3px;
+    --radius-md: 5px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+
+    /* Warm-tinted shadows */
+    --shadow-xs: 0 1px 2px rgba(60, 20, 0, 0.06);
+    --shadow-sm: 0 1px 4px rgba(60, 20, 0, 0.08), 0 2px 8px rgba(60, 20, 0, 0.06);
+    --shadow-md: 0 1px 3px rgba(60, 20, 0, 0.08), 0 4px 16px rgba(60, 20, 0, 0.1);
+    --shadow-lg: 0 4px 12px rgba(60, 20, 0, 0.1), 0 12px 32px rgba(60, 20, 0, 0.12);
+    --shadow-xl: 0 8px 24px rgba(60, 20, 0, 0.14), 0 24px 48px rgba(60, 20, 0, 0.16);
+}
+
+/* =====================================================
+   EMBER DARK
+   ===================================================== */
+:root[data-theme="ember"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #140A00;
+    --color-bg-card:    #1F1008;
+    --color-bg-inset:   #180C02;
+    --color-bg-header:  #9A3412;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #3D1C00;
+    --color-border-subtle: #2A1200;
+
+    --color-accent: #FB923C;
+
+    --color-text-primary: #FDE8D0;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #C4956C;
+    --color-text-error:   #f87171;
+    --color-text-link:    #FB923C;
+
+    --color-bg-accent-tint:        rgba(251, 146, 60, 0.1);
+    --color-border-accent:         rgba(251, 146, 60, 0.22);
+    --color-border-accent-strong:  rgba(251, 146, 60, 0.38);
+    --color-bg-today:              rgba(232, 93, 4, 0.22);
+    --color-bg-surface-raised:     rgba(200, 150, 100, 0.1);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #F59E0B;
+
+    --color-shadow: rgba(0, 0, 0, 0.6);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.25), 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.35), 0 24px 48px rgba(0,0,0,0.45);
+
+    --color-accent-gradient: linear-gradient(135deg, #FB923C 0%, #F59E0B 50%, #FBBF24 100%);
+
+    --color-shadow-accent: 251, 146, 60;
+
+    --color-navbar-glass:        rgba(40, 12, 0, 0.94);
+    --color-navbar-glass-mobile: rgba(35, 10, 0, 0.97);
+    --color-navbar-browse-bg:    rgba(251, 146, 60, 0.15);
+    --color-navbar-browse-border:rgba(251, 146, 60, 0.3);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0A0400 0%, #1C0A00 20%, #431407 45%, #7C2D12 70%, #431407 100%);
+    --color-hero-shimmer:        #FDBA74;
+    --color-cta-text:            #FB923C;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0A0400 0%, #1C0A00 25%, #431407 50%, #7C2D12 80%, #431407 100%);
+
+    --color-calendar-label-bg:   rgba(20, 10, 0, 0.9);
+}
+
+/* =====================================================
+   AMETHYST LIGHT — deep purple / violet
+   ===================================================== */
+:root[data-theme="amethyst"] {
+    --color-bg-page:    #F3EEFB;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #E8DEFA;
+    --color-bg-header:  #7C3AED;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #D4BFF2;
+    --color-border-subtle: #EDE5F8;
+
+    --color-accent: #7C3AED;
+
+    --color-text-link: #6D28D9;
+
+    --color-bg-accent-tint:        rgba(124, 58, 237, 0.07);
+    --color-border-accent:         rgba(124, 58, 237, 0.2);
+    --color-border-accent-strong:  rgba(124, 58, 237, 0.35);
+    --color-bg-today:              rgba(124, 58, 237, 0.12);
+
+    --color-accent-gradient: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #C084FC 100%);
+
+    --color-shadow-accent: 124, 58, 237;
+
+    --color-navbar-glass:        rgba(90, 30, 180, 0.92);
+    --color-navbar-glass-mobile: rgba(80, 25, 165, 0.97);
+    --color-navbar-browse-bg:    rgba(168, 85, 247, 0.2);
+    --color-navbar-browse-border:rgba(168, 85, 247, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #1E0836 0%, #3B0764 25%, #6D28D9 50%, #7C3AED 75%, #A855F7 100%);
+    --color-hero-orb-1:          #C084FC;
+    --color-hero-orb-2:          #F0ABFC;
+    --color-hero-orb-3:          #818CF8;
+    --color-hero-shimmer:        #D8B4FE;
+    --color-cta-text:            #6D28D9;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #1E0836 0%, #3B0764 35%, #6D28D9 65%, #7C3AED 100%);
+
+    --color-calendar-label-bg:   rgba(237, 229, 248, 0.9);
+
+    /* Soft rounded feel */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+
+    /* Purple-tinted shadows */
+    --shadow-xs: 0 1px 2px rgba(60, 20, 100, 0.05);
+    --shadow-sm: 0 1px 4px rgba(60, 20, 100, 0.07), 0 2px 8px rgba(60, 20, 100, 0.06);
+    --shadow-md: 0 1px 3px rgba(60, 20, 100, 0.07), 0 4px 16px rgba(60, 20, 100, 0.09);
+    --shadow-lg: 0 4px 12px rgba(60, 20, 100, 0.09), 0 12px 32px rgba(60, 20, 100, 0.11);
+    --shadow-xl: 0 8px 24px rgba(60, 20, 100, 0.12), 0 24px 48px rgba(60, 20, 100, 0.15);
+}
+
+/* =====================================================
+   AMETHYST DARK
+   ===================================================== */
+:root[data-theme="amethyst"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #0E0620;
+    --color-bg-card:    #1A0F30;
+    --color-bg-inset:   #120826;
+    --color-bg-header:  #581C87;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #2E1A52;
+    --color-border-subtle: #1F1040;
+
+    --color-accent: #A78BFA;
+
+    --color-text-primary: #E8E0F0;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #9F8EC0;
+    --color-text-error:   #f87171;
+    --color-text-link:    #C4B5FD;
+
+    --color-bg-accent-tint:        rgba(167, 139, 250, 0.12);
+    --color-border-accent:         rgba(167, 139, 250, 0.25);
+    --color-border-accent-strong:  rgba(167, 139, 250, 0.4);
+    --color-bg-today:              rgba(124, 58, 237, 0.22);
+    --color-bg-surface-raised:     rgba(160, 140, 200, 0.1);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #E879F9;
+
+    --color-shadow: rgba(0, 0, 0, 0.55);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.18);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.22), 0 4px 20px rgba(0,0,0,0.38);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.38);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.32), 0 24px 48px rgba(0,0,0,0.42);
+
+    --color-accent-gradient: linear-gradient(135deg, #A78BFA 0%, #C084FC 50%, #E879F9 100%);
+
+    --color-shadow-accent: 167, 139, 250;
+
+    --color-navbar-glass:        rgba(40, 15, 80, 0.94);
+    --color-navbar-glass-mobile: rgba(35, 12, 70, 0.97);
+    --color-navbar-browse-bg:    rgba(167, 139, 250, 0.18);
+    --color-navbar-browse-border:rgba(167, 139, 250, 0.32);
+
+    --color-hero-gradient:       linear-gradient(135deg, #050210 0%, #0E0620 20%, #2E1065 45%, #581C87 70%, #2E1065 100%);
+    --color-hero-shimmer:        #D8B4FE;
+    --color-cta-text:            #C4B5FD;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #050210 0%, #0E0620 25%, #2E1065 55%, #581C87 100%);
+
+    --color-calendar-label-bg:   rgba(14, 6, 32, 0.9);
+}
+
+/* =====================================================
+   FOREST LIGHT — emerald / green with earthy warmth
+   ===================================================== */
+:root[data-theme="forest"] {
+    --color-bg-page:    #ECFDF5;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #D1FAE5;
+    --color-bg-header:  #059669;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #A7F3D0;
+    --color-border-subtle: #D1FAE5;
+
+    --color-accent: #059669;
+
+    --color-text-link: #047857;
+
+    --color-bg-accent-tint:        rgba(5, 150, 105, 0.07);
+    --color-border-accent:         rgba(5, 150, 105, 0.2);
+    --color-border-accent-strong:  rgba(5, 150, 105, 0.35);
+    --color-bg-today:              rgba(5, 150, 105, 0.12);
+
+    --color-accent-gradient: linear-gradient(135deg, #047857 0%, #059669 50%, #10B981 100%);
+
+    --color-shadow-accent: 5, 150, 105;
+
+    --color-navbar-glass:        rgba(3, 80, 55, 0.92);
+    --color-navbar-glass-mobile: rgba(2, 70, 48, 0.97);
+    --color-navbar-browse-bg:    rgba(16, 185, 129, 0.2);
+    --color-navbar-browse-border:rgba(16, 185, 129, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #022C22 0%, #064E3B 25%, #047857 50%, #059669 75%, #10B981 100%);
+    --color-hero-orb-1:          #34D399;
+    --color-hero-orb-2:          #6EE7B7;
+    --color-hero-orb-3:          #FDE68A;
+    --color-hero-shimmer:        #A7F3D0;
+    --color-cta-text:            #047857;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #022C22 0%, #064E3B 35%, #047857 65%, #059669 100%);
+
+    --color-calendar-label-bg:   rgba(209, 250, 229, 0.9);
+
+    /* Natural, organic rounding */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+
+    /* Green-tinted shadows */
+    --shadow-xs: 0 1px 2px rgba(2, 44, 34, 0.05);
+    --shadow-sm: 0 1px 4px rgba(2, 44, 34, 0.07), 0 2px 8px rgba(2, 44, 34, 0.05);
+    --shadow-md: 0 1px 3px rgba(2, 44, 34, 0.06), 0 4px 16px rgba(2, 44, 34, 0.08);
+    --shadow-lg: 0 4px 12px rgba(2, 44, 34, 0.08), 0 12px 32px rgba(2, 44, 34, 0.1);
+    --shadow-xl: 0 8px 24px rgba(2, 44, 34, 0.11), 0 24px 48px rgba(2, 44, 34, 0.14);
+}
+
+/* =====================================================
+   FOREST DARK
+   ===================================================== */
+:root[data-theme="forest"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #021A12;
+    --color-bg-card:    #0A2E1F;
+    --color-bg-inset:   #062118;
+    --color-bg-header:  #065F46;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #14532D;
+    --color-border-subtle: #0A3520;
+
+    --color-accent: #34D399;
+
+    --color-text-primary: #D1FAE5;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #6EE7B7;
+    --color-text-error:   #f87171;
+    --color-text-link:    #6EE7B7;
+
+    --color-bg-accent-tint:        rgba(52, 211, 153, 0.1);
+    --color-border-accent:         rgba(52, 211, 153, 0.22);
+    --color-border-accent-strong:  rgba(52, 211, 153, 0.38);
+    --color-bg-today:              rgba(5, 150, 105, 0.22);
+    --color-bg-surface-raised:     rgba(110, 231, 183, 0.08);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #FBBF24;
+
+    --color-shadow: rgba(0, 0, 0, 0.55);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.18);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.22), 0 4px 20px rgba(0,0,0,0.38);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.38);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.32), 0 24px 48px rgba(0,0,0,0.42);
+
+    --color-accent-gradient: linear-gradient(135deg, #34D399 0%, #6EE7B7 50%, #A7F3D0 100%);
+
+    --color-shadow-accent: 52, 211, 153;
+
+    --color-navbar-glass:        rgba(4, 40, 28, 0.94);
+    --color-navbar-glass-mobile: rgba(3, 35, 24, 0.97);
+    --color-navbar-browse-bg:    rgba(52, 211, 153, 0.15);
+    --color-navbar-browse-border:rgba(52, 211, 153, 0.3);
+
+    --color-hero-gradient:       linear-gradient(135deg, #010D08 0%, #021A12 20%, #064E3B 45%, #065F46 70%, #064E3B 100%);
+    --color-hero-shimmer:        #A7F3D0;
+    --color-cta-text:            #6EE7B7;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #010D08 0%, #021A12 25%, #064E3B 55%, #065F46 100%);
+
+    --color-calendar-label-bg:   rgba(2, 26, 18, 0.9);
+}
+
+/* =====================================================
+   ROSE LIGHT — pink / rose gold with warm elegance
+   ===================================================== */
+:root[data-theme="rose"] {
+    --color-bg-page:    #FFF1F2;
+    --color-bg-card:    #ffffff;
+    --color-bg-inset:   #FFE4E6;
+    --color-bg-header:  #E11D48;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #FECDD3;
+    --color-border-subtle: #FFE4E6;
+
+    --color-accent: #E11D48;
+
+    --color-text-link: #BE123C;
+
+    --color-bg-accent-tint:        rgba(225, 29, 72, 0.06);
+    --color-border-accent:         rgba(225, 29, 72, 0.18);
+    --color-border-accent-strong:  rgba(225, 29, 72, 0.32);
+    --color-bg-today:              rgba(225, 29, 72, 0.1);
+
+    --color-accent-gradient: linear-gradient(135deg, #BE123C 0%, #E11D48 50%, #FB7185 100%);
+
+    --color-shadow-accent: 225, 29, 72;
+
+    --color-navbar-glass:        rgba(120, 10, 40, 0.92);
+    --color-navbar-glass-mobile: rgba(110, 8, 35, 0.97);
+    --color-navbar-browse-bg:    rgba(251, 113, 133, 0.2);
+    --color-navbar-browse-border:rgba(251, 113, 133, 0.35);
+
+    --color-hero-gradient:       linear-gradient(135deg, #1C0612 0%, #4C0519 25%, #9F1239 50%, #E11D48 75%, #FB7185 100%);
+    --color-hero-orb-1:          #FB7185;
+    --color-hero-orb-2:          #FDA4AF;
+    --color-hero-orb-3:          #FBBF24;
+    --color-hero-shimmer:        #FECDD3;
+    --color-cta-text:            #BE123C;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #1C0612 0%, #4C0519 35%, #9F1239 65%, #E11D48 100%);
+
+    --color-calendar-label-bg:   rgba(255, 228, 230, 0.9);
+
+    /* Elegant rounding */
+    --radius-sm: 7px;
+    --radius-md: 11px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+
+    /* Rose-tinted shadows */
+    --shadow-xs: 0 1px 2px rgba(100, 10, 30, 0.05);
+    --shadow-sm: 0 1px 4px rgba(100, 10, 30, 0.06), 0 2px 8px rgba(100, 10, 30, 0.05);
+    --shadow-md: 0 1px 3px rgba(100, 10, 30, 0.06), 0 4px 16px rgba(100, 10, 30, 0.08);
+    --shadow-lg: 0 4px 12px rgba(100, 10, 30, 0.08), 0 12px 32px rgba(100, 10, 30, 0.1);
+    --shadow-xl: 0 8px 24px rgba(100, 10, 30, 0.11), 0 24px 48px rgba(100, 10, 30, 0.14);
+}
+
+/* =====================================================
+   ROSE DARK
+   ===================================================== */
+:root[data-theme="rose"][data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #1A0A10;
+    --color-bg-card:    #2A101A;
+    --color-bg-inset:   #200C14;
+    --color-bg-header:  #9F1239;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #4C0519;
+    --color-border-subtle: #350312;
+
+    --color-accent: #FB7185;
+
+    --color-text-primary: #FFE4E6;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #FDA4AF;
+    --color-text-error:   #f87171;
+    --color-text-link:    #FDA4AF;
+
+    --color-bg-accent-tint:        rgba(251, 113, 133, 0.1);
+    --color-border-accent:         rgba(251, 113, 133, 0.22);
+    --color-border-accent-strong:  rgba(251, 113, 133, 0.38);
+    --color-bg-today:              rgba(225, 29, 72, 0.2);
+    --color-bg-surface-raised:     rgba(253, 164, 175, 0.08);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #FBBF24;
+
+    --color-shadow: rgba(0, 0, 0, 0.55);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.18);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.22), 0 4px 20px rgba(0,0,0,0.38);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.38);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.32), 0 24px 48px rgba(0,0,0,0.42);
+
+    --color-accent-gradient: linear-gradient(135deg, #FB7185 0%, #FDA4AF 50%, #FECDD3 100%);
+
+    --color-shadow-accent: 251, 113, 133;
+
+    --color-navbar-glass:        rgba(60, 8, 22, 0.94);
+    --color-navbar-glass-mobile: rgba(50, 6, 18, 0.97);
+    --color-navbar-browse-bg:    rgba(251, 113, 133, 0.15);
+    --color-navbar-browse-border:rgba(251, 113, 133, 0.3);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0A0206 0%, #1A0A10 20%, #4C0519 45%, #9F1239 70%, #4C0519 100%);
+    --color-hero-shimmer:        #FECDD3;
+    --color-cta-text:            #FDA4AF;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0A0206 0%, #1A0A10 25%, #4C0519 55%, #9F1239 100%);
+
+    --color-calendar-label-bg:   rgba(26, 10, 16, 0.9);
+}

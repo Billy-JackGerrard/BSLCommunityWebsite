@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { THEME_NAMES } from "../utils/themes";
+import type { ThemeName } from "../utils/themes";
 
-export type ThemeName = "classic" | "ocean" | "ember";
-
-const THEMES: ThemeName[] = ["classic", "ocean", "ember"];
+export type { ThemeName } from "../utils/themes";
 export type ColorMode = "auto" | "light" | "dark";
 
 const THEME_KEY = "bsl-theme";
@@ -60,8 +60,8 @@ export function useTheme() {
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => {
-      const idx = THEMES.indexOf(prev);
-      return THEMES[(idx + 1) % THEMES.length];
+      const idx = THEME_NAMES.indexOf(prev);
+      return THEME_NAMES[(idx + 1) % THEME_NAMES.length];
     });
   }, []);
 

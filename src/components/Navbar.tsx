@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { View } from "../utils/views";
 import type { ThemeName } from "../hooks/useTheme";
+import { nextThemeLabel } from "../utils/themes";
 import "./Navbar.css";
 
 type Props = {
@@ -151,7 +152,7 @@ export default function Navbar({
             aria-label={`Switch theme (currently ${theme})`}
             type="button"
           >
-            {theme === "classic" ? "Ocean" : theme === "ocean" ? "Ember" : "Classic"}
+            {theme ? nextThemeLabel(theme) : "Theme"}
           </button>
         )}
 
