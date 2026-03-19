@@ -78,45 +78,22 @@
     position: relative;
 }
 
-.navbar-link::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: #fff;
-    border-radius: 1px;
-    transition: width var(--duration-fast) var(--ease-out),
-                left var(--duration-fast) var(--ease-out);
-}
-
 .navbar-link:hover {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.08);
     border-color: transparent;
 }
 
-.navbar-link:hover::after {
-    width: 60%;
-    left: 20%;
-}
-
 .navbar-link--active {
     color: #ffffff;
     font-weight: 700;
-    background: rgba(255, 255, 255, 0.12);
-    border-color: transparent;
-}
-
-.navbar-link--active::after {
-    width: 80%;
-    left: 10%;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .navbar-link--active:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: transparent;
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .navbar-admin-name {

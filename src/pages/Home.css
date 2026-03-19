@@ -544,22 +544,22 @@
 /* ── Slide-from-left / right ── */
 .scroll-reveal-slide-left {
   opacity: 0;
-  transform: translateX(-50px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transform: translateX(-90px) scale(0.96);
+  transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
 }
 .scroll-reveal-slide-left.in-view {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) scale(1);
 }
 
 .scroll-reveal-slide-right {
   opacity: 0;
-  transform: translateX(50px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transform: translateX(90px) scale(0.96);
+  transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
 }
 .scroll-reveal-slide-right.in-view {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) scale(1);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
