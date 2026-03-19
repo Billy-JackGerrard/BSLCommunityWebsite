@@ -210,8 +210,10 @@ function App() {
   const handleDeleted = () => {
     setDeletingEvent(null);
     setViewingEvent(null);
-    if (window.location.pathname !== "/") window.history.pushState({}, "", "/");
-    setView(postDeleteReturn === "event" ? postEventReturn : postDeleteReturn);
+    const returnView = postDeleteReturn === "event" ? postEventReturn : postDeleteReturn;
+    const returnPath = PAGE_PATHS[returnView] ?? "/";
+    if (window.location.pathname !== returnPath) window.history.pushState({}, "", returnPath);
+    setView(returnView);
   };
 
   const handleDeleteCancel = () => {

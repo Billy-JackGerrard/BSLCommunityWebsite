@@ -72,6 +72,7 @@ export default function MapView({ onViewEvent }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
 
@@ -109,7 +110,7 @@ export default function MapView({ onViewEvent }: Props) {
 
     fetchEvents();
     return () => { isCurrent = false; };
-  }, [viewMonth, viewYear]);
+  }, [viewMonth, viewYear, retryCount]);
 
   // Filter events client-side
   const filteredEvents = useMemo(() => {
@@ -272,7 +273,7 @@ export default function MapView({ onViewEvent }: Props) {
       {error && (
         <div className="map-error-banner">
           Failed to load events.
-          <button className="map-error-retry" onClick={() => { setError(null); setViewMonth(m => m); }}>
+          <button className="map-error-retry" onClick={() => setRetryCount(c => c + 1)}>
             Retry
           </button>
         </div>
