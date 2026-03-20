@@ -18,6 +18,8 @@ const SEARCH_RESULT_LIMIT = 10;
 
 // Persists scroll position across unmount/remount (e.g. when viewing an event and returning)
 let persistedScrollTop: number | null = null;
+// When the user opens an event from the calendar, store its month so we scroll there on return
+let persistedTargetMonthKey: string | null = null;
 
 const MONTHS_BEFORE_INIT = 2;
 const MONTHS_BEFORE_MAX  = 11;
@@ -253,7 +255,11 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
   useEffect(() => {
     const el = scrollContainerRef.current;
     const frame = requestAnimationFrame(() => {
-      if (persistedScrollTop !== null && el) {
+      if (persistedTargetMonthKey !== null) {
+        const target = persistedTargetMonthKey;
+        persistedTargetMonthKey = null;
+        monthRefs.current.get(target)?.scrollIntoView({ block: "start" });
+      } else if (persistedScrollTop !== null && el) {
         el.scrollTop = persistedScrollTop;
         persistedScrollTop = null;
       } else {
@@ -271,6 +277,13 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
       }
     };
   }, []);
+
+  const handleViewEvent = useCallback((ev: Event) => {
+    const d = new Date(ev.starts_at);
+    persistedTargetMonthKey = `${d.getFullYear()}-${d.getMonth()}`;
+    persistedScrollTop = null;
+    onViewEvent(ev);
+  }, [onViewEvent]);
 
   const handleSearchToggle = useCallback(() => {
     if (searchOpen) { setSearchQuery(""); }
@@ -498,7 +511,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
                     <button
                       className="calendar-panel-event"
                       style={{ borderLeft: `3px solid ${CATEGORY_COLOURS[ev.category]}` }}
-                      onClick={() => onViewEvent(ev)}
+                      onClick={() => handleViewEvent(ev)}
                     >
                       <span className="calendar-panel-event-title">
                         {ev.title}
