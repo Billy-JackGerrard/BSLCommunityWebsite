@@ -1,20 +1,9 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import type { ContactType } from "../utils/types";
+import { CONTACT_TYPES, CONTACT_TYPE_LABELS, CONTACT_TYPE_PLACEHOLDERS, CONTACT_TYPE_ICONS } from "../utils/contactConfig";
 import { isValidEmail } from "../utils/validation";
 import "./Contact.css";
-
-const TYPE_LABELS: Record<ContactType, string> = {
-  general: "General Enquiry",
-  bug: "Bug Report",
-  suggestion: "Suggestion",
-};
-
-const TYPE_PLACEHOLDERS: Record<ContactType, string> = {
-  general: "How can we help you?",
-  bug: "What happened? What did you expect to happen? Any steps to reproduce…",
-  suggestion: "What would you like to see on the site?",
-};
 
 export default function Contact() {
   const [type, setType] = useState<ContactType>("general");
@@ -99,16 +88,13 @@ export default function Contact() {
         <div className="form-field">
           <label className="form-label">I'm sending a…</label>
           <div className="contact-type-tabs">
-            {(["general", "bug", "suggestion"] as ContactType[]).map(t => (
+            {CONTACT_TYPES.map(t => (
               <button
                 key={t}
                 className={`contact-type-tab ${type === t ? "contact-type-tab--active" : ""}`}
                 onClick={() => setType(t)}
               >
-                {t === "general" && "✉ "}
-                {t === "bug" && "🐛 "}
-                {t === "suggestion" && "💡 "}
-                {TYPE_LABELS[t]}
+                {CONTACT_TYPE_ICONS[t]} {CONTACT_TYPE_LABELS[t]}
               </button>
             ))}
           </div>
@@ -165,7 +151,7 @@ export default function Contact() {
           <textarea
             id="contact-message"
             className="form-input contact-textarea"
-            placeholder={TYPE_PLACEHOLDERS[type]}
+            placeholder={CONTACT_TYPE_PLACEHOLDERS[type]}
             maxLength={2000}
             value={message}
             onChange={e => setMessage(e.target.value)}

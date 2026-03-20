@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import type { ContactType, ContactMessage } from "../utils/types";
+import { CONTACT_TYPES, CONTACT_TYPE_LABELS } from "../utils/contactConfig";
 import "./AdminMessages.css";
-
-const TYPE_LABELS: Record<ContactType, string> = {
-  general: "General",
-  bug: "Bug",
-  suggestion: "Suggestion",
-};
 
 function formatTimestamp(iso: string): string {
   const d = new Date(iso);
@@ -176,7 +171,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
           )}
           {!isReply && (
             <span className={`msgs-badge msgs-badge--${msg.type}`}>
-              {TYPE_LABELS[msg.type]}
+              {CONTACT_TYPE_LABELS[msg.type]}
             </span>
           )}
           <span className="msgs-sender">
@@ -301,14 +296,14 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
         {/* Compose */}
         <div className="msgs-compose">
           <div className="contact-type-tabs">
-            {(["general", "bug", "suggestion"] as ContactType[]).map(t => (
+            {CONTACT_TYPES.map(t => (
               <button
                 key={t}
                 type="button"
                 className={`contact-type-tab ${composeType === t ? "contact-type-tab--active" : ""}`}
                 onClick={() => setComposeType(t)}
               >
-                {TYPE_LABELS[t]}
+                {CONTACT_TYPE_LABELS[t]}
               </button>
             ))}
           </div>
