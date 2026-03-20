@@ -20,6 +20,10 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, onSearch
       )}
       {onSearch && (
         <button className="calendar-view-btn calendar-view-btn--search" onClick={onSearch}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           Search
         </button>
       )}

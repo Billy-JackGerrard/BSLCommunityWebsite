@@ -3,10 +3,13 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { supabase } from "../supabaseClient";
 import { useFilters } from "../hooks/useFilters";
+import { useClickOutside } from "../hooks/useClickOutside";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import FilterPanel from "../components/FilterPanel";
+import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
 import { MONTHS, formatDate, formatTime } from "../utils/dates";
-import { passesDateFilter, passesDistanceFilter } from "../utils/eventFilters";
+import { passesDateFilter, passesDistanceFilter, matchesSearch } from "../utils/eventFilters";
 import type { Event, Category } from "../utils/types";
 import { CATEGORY_COLOURS, isLightColor } from "../utils/types";
 import "./MapView.css";
@@ -18,6 +21,8 @@ const CIRCLE_COLOR = "#8b5cf6";
 type Props = {
   onViewEvent: (event: Event) => void;
   onNavigate?: (view: "calendar" | "list" | "map") => void;
+  searchOpen?: boolean;
+  onToggleSearch?: () => void;
 };
 
 /** Approved events ordered by start time. */
@@ -67,7 +72,7 @@ function groupByLocation(events: Event[]): Map<string, Event[]> {
   return groups;
 }
 
-export default function MapView({ onViewEvent, onNavigate }: Props) {
+export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleSearch }: Props) {
   const now = new Date();
   const [viewMonth, setViewMonth] = useState(now.getMonth());
   const [viewYear, setViewYear] = useState(now.getFullYear());
@@ -76,8 +81,25 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchWrapRef = useRef<HTMLDivElement>(null);
 
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter } = useFilters();
+
+  // Focus input when search opens; clear query when it closes
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => searchInputRef.current?.focus(), 50);
+    else setSearchQuery("");
+  }, [searchOpen]);
+
+  // Close search on outside click
+  const closeSearch = useCallback(() => {
+    if (searchOpen) { onToggleSearch?.(); setSearchQuery(""); }
+  }, [searchOpen, onToggleSearch]);
+  useClickOutside(searchWrapRef, closeSearch, searchOpen);
+
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -124,9 +146,10 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
       if (selectedCategories.size > 0 && !selectedCategories.has(e.category)) return false;
       if (!passesDateFilter(e, dateFilter)) return false;
       if (distanceFilter !== null && !passesDistanceFilter(e, distanceFilter.center, distanceFilter.radiusMiles)) return false;
+      if (!matchesSearch(e, debouncedSearchQuery)) return false;
       return true;
     });
-  }, [events, selectedCategories, dateFilter, distanceFilter]);
+  }, [events, selectedCategories, dateFilter, distanceFilter, debouncedSearchQuery]);
 
   // Count online-only events (no coordinates)
   const onlineCount = useMemo(() => {
@@ -293,7 +316,7 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
         <div className="map-month-nav">
@@ -311,6 +334,7 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
             className="map-toolbar-view-switcher"
             activeView="map"
             onNavigate={v => onNavigate?.(v)}
+            onSearch={onToggleSearch}
           />
         </div>
         <button
@@ -321,6 +345,17 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
           Filters {selectedCategories.size > 0 && `(${selectedCategories.size})`}
         </button>
       </div>
+
+      {searchOpen && (
+        <SearchBar
+          wrapperClassName="map-search-wrap"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onClose={() => onToggleSearch?.()}
+          inputRef={searchInputRef}
+          wrapRef={searchWrapRef}
+        />
+      )}
 
       {error && (
         <div className="map-error-banner">

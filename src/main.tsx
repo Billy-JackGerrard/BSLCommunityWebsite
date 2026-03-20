@@ -124,9 +124,11 @@ function App() {
   // ── Search state ───────────────────────────────────────────────────────
   const [searchOpen, setSearchOpen] = useState(false);
   const [listSearchOpen, setListSearchOpen] = useState(false);
+  const [mapSearchOpen, setMapSearchOpen] = useState(false);
   const scrollToTodayRef = useRef<(() => void) | null>(null);
   const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
   const handleListToggleSearch = useCallback(() => setListSearchOpen(o => !o), []);
+  const handleMapToggleSearch = useCallback(() => setMapSearchOpen(o => !o), []);
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
   // ── Deep-link: resolve URL on first load ───────────────────────────────
@@ -310,7 +312,7 @@ function App() {
           />
         )}
         {view === "map" && (
-          <MapView onViewEvent={handleViewEvent} onNavigate={handleNavigate} />
+          <MapView onViewEvent={handleViewEvent} onNavigate={handleNavigate} searchOpen={mapSearchOpen} onToggleSearch={handleMapToggleSearch} />
         )}
         {view === "event" && viewingEvent && (
           <EventPage

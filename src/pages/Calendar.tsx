@@ -15,6 +15,10 @@ import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SEARCH_RESULT_LIMIT = 10;
+
+// Persists scroll position across unmount/remount (e.g. when viewing an event and returning)
+let persistedScrollTop: number | null = null;
+
 const MONTHS_BEFORE_INIT = 2;
 const MONTHS_BEFORE_MAX  = 11;
 const MONTHS_AFTER_INIT  = 11;
@@ -247,10 +251,25 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
   }, [today]);
 
   useEffect(() => {
+    const el = scrollContainerRef.current;
     const frame = requestAnimationFrame(() => {
-      todayMonthRef.current?.scrollIntoView({ block: "start" });
+      if (persistedScrollTop !== null && el) {
+        el.scrollTop = persistedScrollTop;
+        persistedScrollTop = null;
+      } else {
+        todayMonthRef.current?.scrollIntoView({ block: "start" });
+      }
     });
     return () => cancelAnimationFrame(frame);
+  }, []);
+
+  // Save scroll position when Calendar unmounts (e.g. navigating to event view)
+  useEffect(() => {
+    return () => {
+      if (scrollContainerRef.current) {
+        persistedScrollTop = scrollContainerRef.current.scrollTop;
+      }
+    };
   }, []);
 
   const handleSearchToggle = useCallback(() => {

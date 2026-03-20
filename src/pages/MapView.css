@@ -94,6 +94,15 @@
   margin-left: auto;
 }
 
+/* ── Search bar ── */
+.map-search-wrap {
+  background: var(--color-bg-inset);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
 /* ── Error banner ── */
 .map-error-banner {
   background: var(--color-bg-error);
