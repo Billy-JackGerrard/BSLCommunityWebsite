@@ -12,6 +12,7 @@ import "./MapView.css";
 
 const EDINBURGH_CENTER: L.LatLngTuple = [55.9533, -3.1883];
 const DEFAULT_ZOOM = 13;
+const CIRCLE_COLOR = "#8b5cf6";
 
 type Props = {
   onViewEvent: (event: Event) => void;
@@ -80,6 +81,8 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.LayerGroup>(L.layerGroup());
+  const circleLayerRef = useRef<L.LayerGroup>(L.layerGroup());
+  const prevCenterRef = useRef<{ lat: number; lng: number } | null>(null);
   // Store callback ref so popup click handlers always access the latest onViewEvent
   const onViewEventRef = useRef(onViewEvent);
   onViewEventRef.current = onViewEvent;
@@ -147,6 +150,7 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
     }).addTo(map);
 
     markersRef.current.addTo(map);
+    circleLayerRef.current.addTo(map);
     mapRef.current = map;
 
     // Leaflet calculates tile coverage from the container size at init.
@@ -221,6 +225,37 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
       layerGroup.addLayer(marker);
     });
   }, [filteredEvents]);
+
+  // Distance circle overlay + auto-center when filter changes
+  useEffect(() => {
+    const circleLayer = circleLayerRef.current;
+    const map = mapRef.current;
+    circleLayer.clearLayers();
+
+    if (!distanceFilter || !map) {
+      prevCenterRef.current = null;
+      return;
+    }
+
+    const { center, radiusMiles } = distanceFilter;
+    const circle = L.circle([center.lat, center.lng], {
+      radius: radiusMiles * 1609.344,
+      color: CIRCLE_COLOR,
+      fillColor: CIRCLE_COLOR,
+      fillOpacity: 0.08,
+      weight: 2,
+      opacity: 0.5,
+      dashArray: "8, 5",
+    });
+    circleLayer.addLayer(circle);
+
+    // Fly to fit the circle when center changes
+    const prev = prevCenterRef.current;
+    if (!prev || prev.lat !== center.lat || prev.lng !== center.lng) {
+      map.fitBounds(circle.getBounds(), { padding: [24, 24], maxZoom: 14 });
+    }
+    prevCenterRef.current = center;
+  }, [distanceFilter]);
 
   // Month navigation
   const goToPrevMonth = useCallback(() => {
@@ -305,19 +340,6 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
             Home
           </button>
         </div>
-        <div className="map-toolbar-filters map-toolbar-filters--desktop">
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-            distanceFilter={distanceFilter}
-            onSetDistanceFilter={setDistanceFilter}
-            onClearDistanceFilter={clearDistanceFilter}
-            compact
-          />
-        </div>
         <button
           className="map-filter-toggle"
           onClick={() => setFiltersOpen(o => !o)}
@@ -336,21 +358,38 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
         </div>
       )}
 
-      <div className="map-container" ref={mapContainerRef} />
+      <div className="map-body">
+        <aside className="map-sidebar">
+          <FilterPanel
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            onClearCategories={clearCategories}
+            dateFilter={dateFilter}
+            onSetDateFilter={setDateFilter}
+            distanceFilter={distanceFilter}
+            onSetDistanceFilter={setDistanceFilter}
+            onClearDistanceFilter={clearDistanceFilter}
+          />
+        </aside>
 
-      {loading && (
-        <div className="map-loading">Loading events&hellip;</div>
-      )}
+        <div className="map-area">
+          <div className="map-container" ref={mapContainerRef} />
 
-      {!loading && filteredEvents.length === 0 && !error && (
-        <div className="map-empty">No in-person events this month</div>
-      )}
+          {loading && (
+            <div className="map-loading">Loading events&hellip;</div>
+          )}
 
-      {onlineCount > 0 && !loading && (
-        <div className="map-online-badge">
-          {onlineCount} online event{onlineCount !== 1 ? "s" : ""} not shown
+          {!loading && filteredEvents.length === 0 && !error && (
+            <div className="map-empty">No in-person events this month</div>
+          )}
+
+          {onlineCount > 0 && !loading && (
+            <div className="map-online-badge">
+              {onlineCount} online event{onlineCount !== 1 ? "s" : ""} not shown
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {filtersOpen && (
         <div className="map-mobile-filters">

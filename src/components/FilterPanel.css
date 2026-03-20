@@ -51,10 +51,88 @@
   gap: 0.5rem;
 }
 
-.filter-panel-distance-radii {
+.filter-panel-distance-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.filter-panel-distance-title {
+  font-size: 0.65rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.filter-panel-distance-clear {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.68rem;
+  color: var(--color-accent);
+  padding: 0;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.filter-panel-distance-clear:hover {
+  text-decoration: underline;
+}
+
+.filter-panel-distance-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.filter-panel-distance-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-panel-distance-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.1s;
+}
+
+.filter-panel-distance-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.filter-panel-distance-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.filter-panel-distance-slider-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
 }
 
 .filter-panel-distance-center {

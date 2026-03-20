@@ -529,11 +529,15 @@
         width: 100%;
         background: transparent;
         border: none;
-        outline: none;
         cursor: pointer;
         padding: 0.25rem 0;
         color: var(--color-text-muted);
         font-family: inherit;
+    }
+
+    .calendar-panel-filter-toggle:focus,
+    .calendar-panel-filter-toggle:focus-visible {
+        outline: none;
     }
 
     .calendar-panel-filter-toggle-label {

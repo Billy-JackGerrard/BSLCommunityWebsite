@@ -79,12 +79,6 @@
   box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.3);
 }
 
-.map-toolbar-filters--desktop {
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-}
-
 /* Mobile filter toggle button — hidden on desktop */
 .map-filter-toggle {
   display: none;
@@ -97,6 +91,7 @@
   cursor: pointer;
   color: var(--color-text-primary);
   white-space: nowrap;
+  margin-left: auto;
 }
 
 /* ── Error banner ── */
@@ -128,10 +123,37 @@
   color: var(--color-text-dark);
 }
 
-/* ── Map container ── */
-.map-container {
+/* ── Body: sidebar + map area ── */
+.map-body {
   flex: 1;
   min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Desktop sidebar — hidden on mobile */
+.map-sidebar {
+  display: none;
+  width: 235px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  background: var(--color-bg-card);
+  border-right: 1px solid var(--color-border-subtle);
+  padding: 0.75rem;
+}
+
+/* Wrapper for map + overlays */
+.map-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ── Map container ── */
+.map-container {
+  position: absolute;
+  inset: 0;
   z-index: 1;
 }
 
@@ -282,6 +304,13 @@
   box-shadow: 0 2px 8px rgba(var(--color-shadow-accent), 0.3);
 }
 
+/* ── Desktop: show sidebar, hide mobile toggle ── */
+@media (min-width: 701px) {
+  .map-sidebar {
+    display: block;
+  }
+}
+
 /* ── Mobile responsive ── */
 @media (max-width: 700px) {
   .map-toolbar {
@@ -289,13 +318,8 @@
     gap: 0.4rem;
   }
 
-  .map-toolbar-filters--desktop {
-    display: none;
-  }
-
   .map-filter-toggle {
     display: block;
-    margin-left: auto;
   }
 
   .map-mobile-filters {
@@ -309,7 +333,7 @@
     padding: 0.75rem;
     z-index: 20;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-    max-height: 40vh;
+    max-height: 50vh;
     overflow-y: auto;
   }
 

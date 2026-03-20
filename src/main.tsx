@@ -81,7 +81,7 @@ async function fetchEventById(id: string): Promise<Event | null> {
 
 function App() {
   // ── Theme ─────────────────────────────────────────────────────────────
-  const { theme, toggleTheme } = useTheme();
+  const { theme, colorMode, setTheme, setColorMode } = useTheme();
 
   // ── Auth ────────────────────────────────────────────────────────────────
   const {
@@ -289,7 +289,9 @@ function App() {
         onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
         onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
         theme={theme}
-        onToggleTheme={toggleTheme}
+        colorMode={colorMode}
+        onSetTheme={setTheme}
+        onSetColorMode={setColorMode}
       />
       <div key={view} className="page-view" style={{ paddingTop: "var(--navbar-h)" }}>
         {view === "calendar" && (
