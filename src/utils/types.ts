@@ -34,6 +34,7 @@ export type Event = {
   contact_name?: string;
   contact_email?: string;
   url?: string;
+  video_url?: string;
   accessibility?: string[];
   age_rating?: AgeRating;
   /** Unified recurrence field. Present and non-null when this event is part

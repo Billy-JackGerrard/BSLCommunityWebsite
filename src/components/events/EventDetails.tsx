@@ -4,6 +4,7 @@ import { CATEGORY_COLOURS, formatAddress } from "../../utils/types";
 import { formatDateTimeRange, toLocalDateKey, formatTime } from "../../utils/dates";
 import { humaniseRule } from "../../utils/recurrence";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
+import { getVideoDisplayInfo } from "../../utils/videoUtils";
 import "./EventDetails.css";
 
 
@@ -102,6 +103,26 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
       ) : (
         <div className="event-detail-nodesc">No description provided.</div>
       )}
+
+      {/* BSL video */}
+      {event.video_url && (() => {
+        const info = getVideoDisplayInfo(event.video_url);
+        if (!info) return null;
+        return (
+          <div className="event-detail-video">
+            {info.type !== 'file' ? (
+              <iframe
+                src={info.embedUrl}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="BSL event description video"
+              />
+            ) : (
+              <video src={info.src} controls preload="metadata" />
+            )}
+          </div>
+        );
+      })()}
 
       {(event.event_type === 'in_person' || event.event_type === 'both') && (() => {
         const locationName = event.location;

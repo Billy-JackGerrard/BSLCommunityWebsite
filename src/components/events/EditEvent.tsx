@@ -84,6 +84,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
     booking_info:  row.booking_info,
     accessibility: row.accessibility,
     age_rating:    row.age_rating,
+    video_url:     row.video_url,
     admin_id:      await getAdminId(),
   });
 
@@ -231,6 +232,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       booking_info:   row.booking_info,
       accessibility:  row.accessibility,
       age_rating:     row.age_rating,
+      video_url:      row.video_url,
       approved:       true,
       admin_id:       adminId,
       recurrence:     newRecurrence,

@@ -402,6 +402,23 @@
     box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.25);
 }
 
+/* ── BSL video ── */
+.event-detail-video {
+  margin-bottom: 0.75rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-inset);
+}
+
+.event-detail-video iframe,
+.event-detail-video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+}
+
 /* ── Actions slot (e.g. admin approve/reject) ── */
 .event-detail-actions {
     border-top: 1px solid var(--color-border);

@@ -9,6 +9,7 @@ import { useClickOutside } from "../../hooks/useClickOutside";
 import RecurrencePicker from "./RecurrencePicker";
 import LocationField from "./LocationField";
 import AccessibilityField from "./AccessibilityField";
+import VideoField from "./VideoField";
 import "./EventForm.css";
 
 export type { RecurrenceRule };
@@ -32,6 +33,7 @@ export type EventFormRow = {
   accessibility: string[];
   age_rating: AgeRating | null;
   recurrence: RecurrenceRule | null;
+  video_url: string | null;
 };
 
 type Props = {
@@ -102,6 +104,9 @@ export default function EventForm({
     initialValues?.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? ""
   );
 
+  const [videoUrl, setVideoUrl] = useState(initialValues?.video_url ?? "");
+  const [videoUploading, setVideoUploading] = useState(false);
+
   const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
   const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
 
@@ -138,6 +143,7 @@ export default function EventForm({
       setAccessibility((initialValues.accessibility ?? []).filter(o => !o.startsWith("Other: ")));
       setAccessibilityOther(initialValues.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? "");
       setAgeRating(initialValues.age_rating ?? null);
+      setVideoUrl(initialValues.video_url ?? "");
       setRecurrenceEnabled(false);
       setRecurrenceRule(DEFAULT_RULE);
       setInternalError(null);
@@ -285,6 +291,7 @@ export default function EventForm({
         : accessibility,
       age_rating: ageRating,
       recurrence,
+      video_url: videoUrl || null,
     }));
 
     onSubmit(rows);
@@ -363,6 +370,12 @@ export default function EventForm({
           onChange={e => setDescription(e.target.value)}
         />
       </div>
+
+      <VideoField
+        videoUrl={videoUrl}
+        onChange={setVideoUrl}
+        onUploadingChange={setVideoUploading}
+      />
 
       <div className="form-field">
         <label htmlFor="ef-link" className="form-label">Link{bookingInfo === "via_link" ? " *" : ""}</label>
@@ -550,7 +563,7 @@ export default function EventForm({
         )}
         <button
           className="btn-primary"
-          disabled={submitting || submitDisabled || !!(finishesAt && startsAt && finishesAt <= startsAt)}
+          disabled={submitting || submitDisabled || videoUploading || !!(finishesAt && startsAt && finishesAt <= startsAt)}
           type="submit"
         >
           {submitting ? (
