@@ -10,6 +10,7 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
 import SearchBar from "../components/SearchBar";
+import ViewSwitcher from "../components/ViewSwitcher";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -321,40 +322,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
       <div className="calendar-col">
 
         {/* Mobile view switcher */}
-        <div className="calendar-view-switcher">
-          <button className="calendar-view-btn calendar-view-btn--today" onClick={scrollToToday}>
-            Today
-          </button>
-          <div className="calendar-view-switcher-spacer" />
-          <button className="calendar-view-btn calendar-view-btn--active" aria-current="page">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="3" y="4" width="18" height="18" rx="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            Calendar
-          </button>
-          <button className="calendar-view-btn" onClick={() => onNavigate("list")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="8" y1="6" x2="21" y2="6"/>
-              <line x1="8" y1="12" x2="21" y2="12"/>
-              <line x1="8" y1="18" x2="21" y2="18"/>
-              <line x1="3" y1="6" x2="3.01" y2="6"/>
-              <line x1="3" y1="12" x2="3.01" y2="12"/>
-              <line x1="3" y1="18" x2="3.01" y2="18"/>
-            </svg>
-            List
-          </button>
-          <button className="calendar-view-btn" onClick={() => onNavigate("map")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
-              <line x1="8" y1="2" x2="8" y2="18"/>
-              <line x1="16" y1="6" x2="16" y2="22"/>
-            </svg>
-            Map
-          </button>
-        </div>
+        <ViewSwitcher activeView="calendar" onNavigate={v => { if (v !== "calendar") onNavigate(v); }} onToday={scrollToToday} />
 
         {/* Search bar — shown at top of column when open */}
         {searchOpen && (

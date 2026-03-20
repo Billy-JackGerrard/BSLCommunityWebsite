@@ -229,6 +229,10 @@ export default function EventForm({
       setInternalError("Please enter a valid URL starting with http:// or https://");
       return;
     }
+    if (bookingInfo === "by_contacting" && !contactName) {
+      setInternalError("Please enter a contact name.");
+      return;
+    }
     if (bookingInfo === "by_contacting" && !contactEmail) {
       setInternalError("Please enter a contact email.");
       return;
@@ -475,7 +479,7 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label htmlFor="ef-contact-name" className="form-label">Contact Name</label>
+        <label htmlFor="ef-contact-name" className="form-label">Contact Name{bookingInfo === "by_contacting" ? " *" : ""}</label>
         <input
           id="ef-contact-name"
           className="form-input"
@@ -487,7 +491,7 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label htmlFor="ef-contact-email" className="form-label">Contact Email</label>
+        <label htmlFor="ef-contact-email" className="form-label">Contact Email{bookingInfo === "by_contacting" ? " *" : ""}</label>
         <input
           id="ef-contact-email"
           className="form-input"
