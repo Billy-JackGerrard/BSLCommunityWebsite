@@ -63,15 +63,23 @@ Event images — Even a simple category-based placeholder system would improve t
 
 
 
+Go through all the css etc, and think about how to improve the entire user experience as a whole.
+think visibility, consistency, interactions.
 
-once domain is sorted, i need to add the domain to these places:
-- cloudflare turnstile allowed urls
-- supabase redirected urls allowed
+add more awesome css stuff, have a look at this website for some stuff you could use:
+https://prismic.io/blog/css-animation-examples
 
+You could also use Tailwind CSS / Framer Motion / React Spring / GSAP / Lenis / CSS backdrop-filter / react-use-gesture / clsx / AOS (Animate On Scroll) / FullCalendar React !!
 
+Research into each of these and which we should use and where, what are the benefits of incorporating these into our websites and if we should.
 
+Animate BSL icon with a subtle wave 👋 (and other things if you want)
 
-
-
+But don't turn it into a fireworks show.
+Pick:
+2 animation styles
+1 signature interaction
+1 “wow” moment
+Repeat them consistently → that’s what makes it feel professional.
 
 

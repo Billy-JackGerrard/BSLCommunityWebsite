@@ -1,10 +1,155 @@
 /* ==========================================================
    COLOUR THEMES
    Each theme defines light + dark variants via CSS custom
-   properties.  "azure" uses the bare :root / :root[data-dark]
-   selectors defined in style.css — only non-azure themes
-   live here.
+   properties.  "azure" uses bare :root / :root[data-dark]
+   selectors because useTheme removes data-theme when azure
+   is active — all other themes use [data-theme="name"].
    ========================================================== */
+
+/* =====================================================
+   AZURE LIGHT (default) — no data-theme attribute set
+   ===================================================== */
+:root {
+  /* Page / surface backgrounds */
+  --color-bg-page:    #f1f5f9;   /* cool slate-white — outer page */
+  --color-bg-card:    #ffffff;   /* white — cards, panels */
+  --color-bg-inset:   #e2e8f0;   /* light slate — inputs, inset panels */
+  --color-bg-header:  #1d4ed8;   /* deep blue — navbar */
+  --color-bg-error:   #fef2f2;   /* light red — error banners */
+
+  /* Borders */
+  --color-border:        #cbd5e1;  /* grey — field borders */
+  --color-border-subtle: #e2e8f0;  /* lighter grey — secondary borders */
+
+  /* Accent */
+  --color-accent: #2563eb;  /* blue — primary highlight */
+
+  /* Text */
+  --color-text-primary: #1e293b;  /* dark slate — main text on light surfaces */
+  --color-text-dark:    #ffffff;  /* white — text on accent/header surfaces */
+  --color-text-muted:   #64748b;  /* muted grey — placeholders */
+  --color-text-error:   #dc2626;  /* red — error messages */
+  --color-text-link:    #2563eb;  /* blue — hyperlinks */
+
+  /* Accent tint — semi-transparent accent background for badges/hover states */
+  --color-bg-accent-tint: rgba(37, 99, 235, 0.07);
+  /* Accent border — semi-transparent accent for borders on tinted elements */
+  --color-border-accent:  rgba(37, 99, 235, 0.2);
+  --color-border-accent-strong: rgba(37, 99, 235, 0.35);
+  /* Today highlight — slightly stronger tint for the current-day calendar cell */
+  --color-bg-today:       rgba(37, 99, 235, 0.14);
+  /* Surface raised — subtle fill for badges/labels on any background */
+  --color-bg-surface-raised: rgba(100, 116, 139, 0.1);
+
+  /* Extra text colours */
+  --color-text-success: #16a34a;  /* green — success/suggestion badges */
+
+  /* Error border — for buttons/panels with a danger outline */
+  --color-border-error: rgba(220, 38, 38, 0.3);
+
+  /* Badge */
+  --color-bg-badge: #f59e0b;
+
+  /* Decorative */
+  --color-shadow: #94a3b8;  /* grey — legacy offset box shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.09);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.12);
+  --shadow-xl: 0 8px 24px rgba(0,0,0,0.12), 0 24px 48px rgba(0,0,0,0.16);
+
+  /* Accent gradient */
+  --color-accent-gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+
+  /* Accent shadow — raw RGB triplet for use in rgba() with varying opacities */
+  --color-shadow-accent: 37, 99, 235;
+
+  /* Navbar glass surfaces */
+  --color-navbar-glass:        linear-gradient(90deg, rgba(8, 18, 55, 0.97) 0%, rgba(22, 48, 118, 0.91) 45%, rgba(37, 99, 235, 0.85) 100%);
+  --color-navbar-glass-mobile: rgba(23, 49, 120, 0.96);
+  --color-navbar-browse-bg:    rgba(59, 130, 246, 0.2);
+  --color-navbar-browse-border:rgba(59, 130, 246, 0.35);
+
+  /* Hero / landing page */
+  --color-hero-gradient:       linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #1d4ed8 50%, #2563eb 75%, #3b82f6 100%);
+  --color-hero-orb-1:          #60a5fa;
+  --color-hero-orb-2:          #a78bfa;
+  --color-hero-orb-3:          #34d399;
+  --color-hero-shimmer:        #93c5fd;
+  --color-cta-text:            #1d4ed8;
+  --color-bottom-cta-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #2563eb 100%);
+
+  /* Calendar label */
+  --color-calendar-label-bg:   rgba(226, 232, 240, 0.85);
+
+  /* Page background gradient — subtle accent tint applied to body */
+  --color-bg-page-gradient: linear-gradient(160deg, #ddeaff 0%, #e4ecf8 40%, #b8ccff 100%);
+}
+
+/* =====================================================
+   AZURE DARK — activated via data-dark attribute on <html>
+   ===================================================== */
+:root[data-dark] {
+    color-scheme: dark;
+    --color-bg-page:    #0f172a;   /* deep slate — outer page */
+    --color-bg-card:    #1e293b;   /* dark slate — cards, panels */
+    --color-bg-inset:   #162032;   /* darker — inputs, inset panels */
+    --color-bg-header:  #1e3a8a;   /* dark blue — navbar */
+    --color-bg-error:   #450a0a;   /* dark red — error banners */
+
+    --color-border:        #334155;  /* mid slate — borders */
+    --color-border-subtle: #1e293b;  /* dark border */
+
+    --color-accent: #3b82f6;  /* lighter blue — readable on dark */
+
+    --color-text-primary: #e2e8f0;  /* light grey — text on dark surfaces */
+    --color-text-dark:    #ffffff;  /* white — text on accent surfaces */
+    --color-text-muted:   #94a3b8;  /* muted grey */
+    --color-text-error:   #f87171;  /* light red */
+    --color-text-link:    #60a5fa;  /* light blue */
+
+    --color-bg-accent-tint: rgba(59, 130, 246, 0.12);
+    --color-border-accent:  rgba(59, 130, 246, 0.25);
+    --color-border-accent-strong: rgba(59, 130, 246, 0.4);
+    --color-bg-today:       rgba(59, 130, 246, 0.20);
+    --color-bg-surface-raised: rgba(148, 163, 184, 0.12);
+
+    --color-text-success: #6ed4a0;  /* lighter green — readable on dark */
+
+    --color-border-error: rgba(248, 113, 113, 0.3);
+
+    --color-bg-badge: #fb923c;
+
+    --color-shadow: rgba(0, 0, 0, 0.5);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.2), 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.25), 0 12px 32px rgba(0,0,0,0.35);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.3), 0 24px 48px rgba(0,0,0,0.4);
+
+    --color-accent-gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+
+    --color-shadow-accent: 59, 130, 246;
+    --color-navbar-glass:        linear-gradient(90deg, rgba(7, 16, 50, 0.96) 0%, rgba(13, 30, 75, 0.92) 50%, rgba(20, 55, 130, 0.88) 100%);
+    --color-navbar-glass-mobile: rgba(13, 30, 75, 0.96);
+    --color-hero-gradient:       linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e3a8a 50%, #1d4ed8 75%, #1e3a8a 100%);
+    --color-bottom-cta-gradient: linear-gradient(135deg, #020617 0%, #0f172a 30%, #1e3a8a 60%, #1d4ed8 100%);
+    --color-calendar-label-bg:   rgba(22, 32, 50, 0.85);
+    --color-bg-page-gradient: linear-gradient(160deg, #151f32 0%, #0f172a 40%, #090f24 100%);
+}
+
+/* ── Azure dark badge overrides ── */
+[data-dark] {
+  --badge-enquiry-bg:        rgba(129, 140, 248, 0.15);
+  --badge-enquiry-color:     #818cf8;
+  --badge-enquiry-border:    rgba(129, 140, 248, 0.3);
+
+  --badge-bug-bg:            rgba(248, 113, 113, 0.15);
+  --badge-bug-border:        rgba(248, 113, 113, 0.3);
+
+  --badge-suggestion-bg:     rgba(110, 212, 160, 0.15);
+  --badge-suggestion-border: rgba(110, 212, 160, 0.3);
+}
 
 /* =====================================================
    OCEAN LIGHT — cyan/turquoise + purple theme
@@ -32,7 +177,7 @@
 
     --color-shadow-accent: 124, 58, 237;
 
-    --color-navbar-glass:        rgba(45, 210, 210, 0.92);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(8, 68, 68, 0.97) 0%, rgba(22, 150, 150, 0.94) 60%, rgba(32, 188, 188, 0.92) 100%);
     --color-navbar-glass-mobile: rgba(38, 195, 195, 0.97);
     --color-navbar-browse-bg:    rgba(124, 58, 237, 0.2);
     --color-navbar-browse-border:rgba(124, 58, 237, 0.35);
@@ -46,7 +191,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A2E2E 0%, #1A6B6B 40%, #28AAAA 70%, #38D9D9 100%);
 
     --color-calendar-label-bg:   rgba(210, 240, 240, 0.88);
-    --color-bg-page-gradient: linear-gradient(160deg, #f0fffe 0%, #E0F7F7 40%, #d8d0ff 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #c8eeee 0%, #d8f4f4 40%, #c0b8f8 100%);
 
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -98,7 +243,7 @@
 
     --color-shadow-accent: 167, 139, 250;
 
-    --color-navbar-glass:        rgba(20, 100, 100, 0.92);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(8, 55, 55, 0.97) 0%, rgba(20, 100, 100, 0.93) 100%);
     --color-navbar-glass-mobile: rgba(20, 100, 100, 0.96);
     --color-navbar-browse-bg:    rgba(167, 139, 250, 0.2);
     --color-navbar-browse-border:rgba(167, 139, 250, 0.35);
@@ -138,7 +283,7 @@
 
     --color-shadow-accent: 194, 65, 12;
 
-    --color-navbar-glass:        rgba(60, 20, 0, 0.92);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(18, 5, 0, 0.98) 0%, rgba(72, 22, 0, 0.93) 50%, rgba(140, 56, 0, 0.87) 100%);
     --color-navbar-glass-mobile: rgba(55, 18, 0, 0.97);
     --color-navbar-browse-bg:    rgba(245, 158, 11, 0.2);
     --color-navbar-browse-border:rgba(245, 158, 11, 0.4);
@@ -152,7 +297,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #1C0A00 0%, #431407 30%, #7C2D12 55%, #C2410C 75%, #E85D04 100%);
 
     --color-calendar-label-bg:   rgba(254, 243, 230, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #fffcf8 0%, #FEF7F0 40%, #fcddb8 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #feecd8 0%, #FEF7F0 40%, #f5c880 100%);
 
     /* Sharp, editorial corners */
     --radius-sm: 3px;
@@ -212,7 +357,7 @@
 
     --color-shadow-accent: 251, 146, 60;
 
-    --color-navbar-glass:        rgba(40, 12, 0, 0.94);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(18, 5, 0, 0.98) 0%, rgba(40, 12, 0, 0.94) 50%, rgba(65, 20, 0, 0.90) 100%);
     --color-navbar-glass-mobile: rgba(35, 10, 0, 0.97);
     --color-navbar-browse-bg:    rgba(251, 146, 60, 0.15);
     --color-navbar-browse-border:rgba(251, 146, 60, 0.3);
@@ -223,7 +368,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0400 0%, #1C0A00 25%, #431407 50%, #7C2D12 80%, #431407 100%);
 
     --color-calendar-label-bg:   rgba(20, 10, 0, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #201400 0%, #140A00 40%, #180600 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #301c00 0%, #140A00 40%, #0a0300 100%);
 }
 
 /* =====================================================
@@ -252,7 +397,7 @@
 
     --color-shadow-accent: 124, 58, 237;
 
-    --color-navbar-glass:        rgba(90, 30, 180, 0.92);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(28, 8, 80, 0.98) 0%, rgba(90, 30, 180, 0.92) 50%, rgba(150, 72, 238, 0.84) 100%);
     --color-navbar-glass-mobile: rgba(80, 25, 165, 0.97);
     --color-navbar-browse-bg:    rgba(168, 85, 247, 0.2);
     --color-navbar-browse-border:rgba(168, 85, 247, 0.35);
@@ -266,7 +411,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #1E0836 0%, #3B0764 35%, #6D28D9 65%, #7C3AED 100%);
 
     --color-calendar-label-bg:   rgba(237, 229, 248, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #f9f5ff 0%, #F3EEFB 40%, #d8c8ff 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #ece4ff 0%, #F3EEFB 40%, #c8b4ff 100%);
 
     /* Soft rounded feel */
     --radius-sm: 8px;
@@ -326,7 +471,7 @@
 
     --color-shadow-accent: 167, 139, 250;
 
-    --color-navbar-glass:        rgba(40, 15, 80, 0.94);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(18, 6, 45, 0.98) 0%, rgba(40, 15, 80, 0.94) 50%, rgba(65, 25, 120, 0.90) 100%);
     --color-navbar-glass-mobile: rgba(35, 12, 70, 0.97);
     --color-navbar-browse-bg:    rgba(167, 139, 250, 0.18);
     --color-navbar-browse-border:rgba(167, 139, 250, 0.32);
@@ -337,7 +482,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #050210 0%, #0E0620 25%, #2E1065 55%, #581C87 100%);
 
     --color-calendar-label-bg:   rgba(14, 6, 32, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #180b2e 0%, #0E0620 40%, #0e0420 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #1e0e38 0%, #0E0620 40%, #060214 100%);
 }
 
 /* =====================================================
@@ -366,7 +511,7 @@
 
     --color-shadow-accent: 5, 150, 105;
 
-    --color-navbar-glass:        rgba(3, 80, 55, 0.92);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(1, 28, 18, 0.98) 0%, rgba(3, 88, 60, 0.93) 50%, rgba(7, 140, 94, 0.86) 100%);
     --color-navbar-glass-mobile: rgba(2, 70, 48, 0.97);
     --color-navbar-browse-bg:    rgba(16, 185, 129, 0.2);
     --color-navbar-browse-border:rgba(16, 185, 129, 0.35);
@@ -380,7 +525,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #022C22 0%, #064E3B 35%, #047857 65%, #059669 100%);
 
     --color-calendar-label-bg:   rgba(209, 250, 229, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #f5fffd 0%, #ECFDF5 40%, #c0f5da 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #d0f5e8 0%, #ECFDF5 40%, #a0eec0 100%);
 
     /* Natural, organic rounding */
     --radius-sm: 6px;
@@ -440,7 +585,7 @@
 
     --color-shadow-accent: 52, 211, 153;
 
-    --color-navbar-glass:        rgba(4, 40, 28, 0.94);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(2, 20, 14, 0.98) 0%, rgba(4, 40, 28, 0.94) 50%, rgba(6, 65, 44, 0.90) 100%);
     --color-navbar-glass-mobile: rgba(3, 35, 24, 0.97);
     --color-navbar-browse-bg:    rgba(52, 211, 153, 0.15);
     --color-navbar-browse-border:rgba(52, 211, 153, 0.3);
@@ -451,7 +596,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #010D08 0%, #021A12 25%, #064E3B 55%, #065F46 100%);
 
     --color-calendar-label-bg:   rgba(2, 26, 18, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #05231a 0%, #021A12 40%, #021810 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #083020 0%, #021A12 40%, #010c08 100%);
 }
 
 /* =====================================================
@@ -480,7 +625,7 @@
 
     --color-shadow-accent: 225, 29, 72;
 
-    --color-navbar-glass:        rgba(120, 10, 40, 0.92);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(48, 3, 14, 0.98) 0%, rgba(120, 10, 40, 0.94) 50%, rgba(164, 16, 52, 0.91) 100%);
     --color-navbar-glass-mobile: rgba(110, 8, 35, 0.97);
     --color-navbar-browse-bg:    rgba(251, 113, 133, 0.2);
     --color-navbar-browse-border:rgba(251, 113, 133, 0.35);
@@ -494,7 +639,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #1C0612 0%, #4C0519 35%, #9F1239 65%, #E11D48 100%);
 
     --color-calendar-label-bg:   rgba(255, 228, 230, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #fff8f9 0%, #FFF1F2 40%, #ffc8d0 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #ffdde4 0%, #FFF1F2 40%, #ffaebe 100%);
 
     /* Elegant rounding */
     --radius-sm: 7px;
@@ -554,7 +699,7 @@
 
     --color-shadow-accent: 251, 113, 133;
 
-    --color-navbar-glass:        rgba(60, 8, 22, 0.94);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(28, 3, 10, 0.98) 0%, rgba(60, 8, 22, 0.94) 50%, rgba(95, 12, 35, 0.90) 100%);
     --color-navbar-glass-mobile: rgba(50, 6, 18, 0.97);
     --color-navbar-browse-bg:    rgba(251, 113, 133, 0.15);
     --color-navbar-browse-border:rgba(251, 113, 133, 0.3);
@@ -608,7 +753,7 @@
 
     --color-shadow-accent: 45, 106, 159;
 
-    --color-navbar-glass:        rgba(22, 50, 78, 0.93);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(14, 34, 54, 0.97) 0%, rgba(22, 50, 78, 0.96) 65%, rgba(26, 58, 88, 0.95) 100%);
     --color-navbar-glass-mobile: rgba(18, 44, 70, 0.97);
     --color-navbar-browse-bg:    rgba(74, 143, 192, 0.2);
     --color-navbar-browse-border:rgba(74, 143, 192, 0.38);
@@ -622,7 +767,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0E18 0%, #142233 35%, #1E3D5C 65%, #2D6A9F 100%);
 
     --color-calendar-label-bg:   rgba(237, 232, 210, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #fdfbf0 0%, #F8F4E3 40%, #e4dcb8 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #F2EDD8 0%, #F8F4E3 50%, #e4dcb8 100%);
 
     /* Generous, soft rounding — less visually jarring */
     --radius-sm: 8px;
@@ -682,7 +827,7 @@
 
     --color-shadow-accent: 127, 188, 224;
 
-    --color-navbar-glass:        rgba(14, 32, 50, 0.94);
+    --color-navbar-glass:        linear-gradient(90deg, rgba(6, 15, 25, 0.98) 0%, rgba(14, 32, 50, 0.94) 50%, rgba(24, 52, 80, 0.90) 100%);
     --color-navbar-glass-mobile: rgba(12, 28, 44, 0.97);
     --color-navbar-browse-bg:    rgba(127, 188, 224, 0.15);
     --color-navbar-browse-border:rgba(127, 188, 224, 0.3);
@@ -693,5 +838,5 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #060810 0%, #0E1620 25%, #142338 55%, #1A4D73 100%);
 
     --color-calendar-label-bg:   rgba(26, 22, 18, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #221e1a 0%, #1A1612 40%, #12100c 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #2e2820 0%, #1A1612 40%, #0e0c08 100%);
 }
