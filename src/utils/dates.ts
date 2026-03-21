@@ -88,3 +88,53 @@ export const getSoftMinDateTime = (): string => {
   d.setSeconds(0, 0);
   return formatLocalDateTime(d);
 };
+
+export const SHORT_MONTHS = [
+  "Jan","Feb","Mar","Apr","May","Jun",
+  "Jul","Aug","Sep","Oct","Nov","Dec"
+];
+
+export const SHORT_DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+/**
+ * Returns the Monday of the week containing `date` (local time, midnight).
+ */
+export function getWeekStart(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay(); // 0=Sun, 1=Mon, …
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+/**
+ * Returns the Sunday of the week containing `date` (local time, 23:59:59.999).
+ */
+export function getWeekEnd(date: Date): Date {
+  const start = getWeekStart(date);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
+
+/**
+ * Formats a Monday-start week as a compact label.
+ * Same month:        "16-22"
+ * Cross-month:       "28 Mar - 3 Apr"
+ */
+export function formatWeekLabel(weekStart: Date): string {
+  const weekEnd = getWeekEnd(weekStart);
+  if (weekStart.getMonth() === weekEnd.getMonth()) {
+    return `${weekStart.getDate()}-${weekEnd.getDate()}`;
+  }
+  return `${weekStart.getDate()} ${SHORT_MONTHS[weekStart.getMonth()]} - ${weekEnd.getDate()} ${SHORT_MONTHS[weekEnd.getMonth()]}`;
+}
+
+/**
+ * Formats a single day as "Sat 21".
+ */
+export function formatDayLabel(date: Date): string {
+  return `${SHORT_DAYS[date.getDay()]} ${date.getDate()}`;
+}
