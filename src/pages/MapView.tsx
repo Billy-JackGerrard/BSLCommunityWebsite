@@ -3,6 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { supabase } from "../supabaseClient";
 import { useFilters } from "../hooks/useFilters";
+import type { Granularity } from "../hooks/useFilters";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import FilterPanel from "../components/FilterPanel";
@@ -195,10 +196,26 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     });
   }, [events, selectedCategories, granularity, viewDate, viewMonth, viewYear, distanceFilter, debouncedSearchQuery]);
 
-  // Count online-only events (no coordinates)
+  // Count online-only events (no coordinates) in the active strip window
   const onlineCount = useMemo(() => {
-    return events.filter(e => e.latitude == null || e.longitude == null).length;
-  }, [events]);
+    let rangeStart: Date;
+    let rangeEnd: Date;
+    if (granularity === "day") {
+      rangeStart = new Date(viewDate); rangeStart.setHours(0, 0, 0, 0);
+      rangeEnd = new Date(viewDate); rangeEnd.setHours(23, 59, 59, 999);
+    } else if (granularity === "week") {
+      rangeStart = getWeekStart(viewDate);
+      rangeEnd = getWeekEnd(viewDate);
+    } else {
+      rangeStart = new Date(viewYear, viewMonth, 1);
+      rangeEnd = new Date(viewYear, viewMonth + 1, 0, 23, 59, 59, 999);
+    }
+    return events.filter(e =>
+      (e.latitude == null || e.longitude == null) &&
+      new Date(e.starts_at) >= rangeStart &&
+      new Date(e.starts_at) <= rangeEnd
+    ).length;
+  }, [events, granularity, viewDate, viewMonth, viewYear]);
 
   // Initialize Leaflet map
   useEffect(() => {
@@ -426,6 +443,16 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     }
   }, [granularity]);
 
+  const handleGranularityChange = useCallback((g: Granularity) => {
+    setGranularity(g);
+    const today = new Date();
+    setViewMonth(today.getMonth());
+    setViewYear(today.getFullYear());
+    const resetDate = new Date(today);
+    resetDate.setHours(0, 0, 0, 0);
+    setViewDate(g === "week" ? getWeekStart(today) : resetDate);
+  }, []);
+
   const stripItems = useMemo(() => {
     return STRIP_OFFSETS.map(offset => {
       if (granularity === "month") {
@@ -548,15 +575,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
             onClearDistanceFilter={clearDistanceFilter}
             mode="map"
             granularity={granularity}
-            onSetGranularity={(g) => {
-              setGranularity(g);
-              const today = new Date();
-              setViewMonth(today.getMonth());
-              setViewYear(today.getFullYear());
-              const resetDate = new Date(today);
-              resetDate.setHours(0, 0, 0, 0);
-              setViewDate(g === "week" ? getWeekStart(today) : resetDate);
-            }}
+            onSetGranularity={handleGranularityChange}
           />
         </aside>
 
@@ -595,15 +614,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           onClearDistanceFilter={clearDistanceFilter}
           mode="map"
           granularity={granularity}
-          onSetGranularity={(g) => {
-            setGranularity(g);
-            const today = new Date();
-            setViewMonth(today.getMonth());
-            setViewYear(today.getFullYear());
-            const resetDate = new Date(today);
-            resetDate.setHours(0, 0, 0, 0);
-            setViewDate(g === "week" ? getWeekStart(today) : resetDate);
-          }}
+          onSetGranularity={handleGranularityChange}
         />
       </MobileFilterBar>
     </div>
