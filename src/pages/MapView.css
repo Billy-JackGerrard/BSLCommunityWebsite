@@ -49,8 +49,9 @@
 
 .map-month-item {
   flex-shrink: 0;
-  width: 110px;
-  padding: 0.15rem 0;
+  min-width: 90px;
+  width: auto;
+  padding: 0.15rem 0.35rem;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -93,28 +94,6 @@
 
 .map-month-item:focus:not(:focus-visible) {
   outline: none;
-}
-
-.map-home-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  background: var(--color-accent-gradient);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-full);
-  font-size: 0.78rem;
-  font-weight: 700;
-  font-family: var(--font-heading);
-  padding: 0.3rem 0.75rem;
-  cursor: pointer;
-  margin-left: 0.25rem;
-  transition: all 0.2s var(--ease-out);
-}
-
-.map-home-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.3);
 }
 
 
@@ -365,10 +344,6 @@
     display: none;
   }
 
-  .map-home-btn {
-    display: none;
-  }
-
   .mobile-filter-bar {
     display: flex;
     position: fixed;
@@ -383,7 +358,8 @@
   }
 
   .map-month-item {
-    width: 90px;
+    min-width: 72px;
+    width: auto;
     font-size: 0.75rem;
   }
 
@@ -409,10 +385,6 @@
     display: none;
   }
 
-  .map-home-btn {
-    display: none;
-  }
-
   .mobile-filter-bar {
     display: flex;
     position: fixed;
@@ -432,7 +404,8 @@
   }
 
   .map-month-item {
-    width: 90px;
+    min-width: 72px;
+    width: auto;
     font-size: 0.75rem;
   }
 

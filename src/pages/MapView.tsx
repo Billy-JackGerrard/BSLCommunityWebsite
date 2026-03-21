@@ -9,8 +9,8 @@ import FilterPanel from "../components/FilterPanel";
 import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
-import { MONTHS, formatDate, formatTime } from "../utils/dates";
-import { passesDateFilter, passesDistanceFilter, matchesSearch } from "../utils/eventFilters";
+import { MONTHS, SHORT_MONTHS, SHORT_DAYS, formatWeekLabel, formatDayLabel, getWeekStart, getWeekEnd, formatDate, formatTime } from "../utils/dates";
+import { passesGranularityFilter, passesDistanceFilter, matchesSearch } from "../utils/eventFilters";
 import type { Event, Category } from "../utils/types";
 import { CATEGORY_COLOURS, isLightColor } from "../utils/types";
 import "./MapView.css";
@@ -77,6 +77,8 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
   const now = new Date();
   const [viewMonth, setViewMonth] = useState(now.getMonth());
   const [viewYear, setViewYear] = useState(now.getFullYear());
+  // For day/week granularity: the "anchor date" (day for day-mode, week-start for week-mode)
+  const [viewDate, setViewDate] = useState<Date>(() => getWeekStart(now));
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +92,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
 
-  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter } = useFilters();
+  const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter, granularity, setGranularity } = useFilters();
 
   // Focus input when search opens; clear query when it closes
   useEffect(() => {
@@ -115,46 +117,82 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
   const onViewEventRef = useRef(onViewEvent);
   onViewEventRef.current = onViewEvent;
 
-  // Fetch events for the selected month
+  // Fetch events for the current view month(s).
+  // For week-boundary weeks (e.g. 28 Mar - 3 Apr), fetches both months and merges.
   useEffect(() => {
     let isCurrent = true;
     setLoading(true);
     setError(null);
 
-    const fetchEvents = async () => {
-      const from = new Date(viewYear, viewMonth, 1);
-      const to = new Date(viewYear, viewMonth + 1, 0, 23, 59, 59, 999);
-
+    const fetchMonth = async (year: number, month: number) => {
+      const from = new Date(year, month, 1);
+      const to = new Date(year, month + 1, 0, 23, 59, 59, 999);
       const { data, error: fetchError } = await approvedEvents()
         .or(
           `and(starts_at.gte.${from.toISOString()},starts_at.lte.${to.toISOString()}),` +
           `and(starts_at.lt.${from.toISOString()},finishes_at.gte.${from.toISOString()})`
         );
+      if (fetchError) throw new Error(fetchError.message);
+      return data || [];
+    };
 
-      if (!isCurrent) return;
-      if (fetchError) {
-        setError(fetchError.message);
-      } else {
-        setEvents(data || []);
+    const fetchEvents = async () => {
+      let months: Array<{ year: number; month: number }> = [{ year: viewYear, month: viewMonth }];
+      if (granularity === "week") {
+        const weekEnd = getWeekEnd(viewDate);
+        if (weekEnd.getMonth() !== viewDate.getMonth() || weekEnd.getFullYear() !== viewDate.getFullYear()) {
+          months.push({ year: weekEnd.getFullYear(), month: weekEnd.getMonth() });
+        }
       }
-      setLoading(false);
+
+      try {
+        const results = await Promise.all(months.map(m => fetchMonth(m.year, m.month)));
+        if (!isCurrent) return;
+        const seen = new Set<number>();
+        const merged: Event[] = [];
+        for (const batch of results) {
+          for (const e of batch) {
+            if (!seen.has(e.id)) { seen.add(e.id); merged.push(e); }
+          }
+        }
+        setEvents(merged);
+      } catch (err) {
+        if (!isCurrent) return;
+        setError(err instanceof Error ? err.message : "Failed to load events");
+      }
+      if (isCurrent) setLoading(false);
     };
 
     fetchEvents();
     return () => { isCurrent = false; };
-  }, [viewMonth, viewYear, retryCount]);
+  }, [viewMonth, viewYear, viewDate, granularity, retryCount]);
 
   // Filter events client-side
   const filteredEvents = useMemo(() => {
+    let rangeStart: Date;
+    let rangeEnd: Date;
+    if (granularity === "day") {
+      rangeStart = new Date(viewDate);
+      rangeStart.setHours(0, 0, 0, 0);
+      rangeEnd = new Date(viewDate);
+      rangeEnd.setHours(23, 59, 59, 999);
+    } else if (granularity === "week") {
+      rangeStart = getWeekStart(viewDate);
+      rangeEnd = getWeekEnd(viewDate);
+    } else {
+      rangeStart = new Date(viewYear, viewMonth, 1);
+      rangeEnd = new Date(viewYear, viewMonth + 1, 0, 23, 59, 59, 999);
+    }
+
     return events.filter(e => {
       if (e.latitude == null || e.longitude == null) return false;
       if (selectedCategories.size > 0 && !selectedCategories.has(e.category)) return false;
-      if (!passesDateFilter(e, dateFilter)) return false;
+      if (!passesGranularityFilter(e, rangeStart, rangeEnd)) return false;
       if (distanceFilter !== null && !passesDistanceFilter(e, distanceFilter.center, distanceFilter.radiusMiles)) return false;
       if (!matchesSearch(e, debouncedSearchQuery)) return false;
       return true;
     });
-  }, [events, selectedCategories, dateFilter, distanceFilter, debouncedSearchQuery]);
+  }, [events, selectedCategories, granularity, viewDate, viewMonth, viewYear, distanceFilter, debouncedSearchQuery]);
 
   // Count online-only events (no coordinates)
   const onlineCount = useMemo(() => {
@@ -286,20 +324,56 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     prevCenterRef.current = center;
   }, [distanceFilter]);
 
-  // Month navigation
-  const goToPrevMonth = useCallback(() => {
-    setViewMonth(m => {
-      if (m === 0) { setViewYear(y => y - 1); return 11; }
-      return m - 1;
-    });
-  }, []);
+  // Granularity-aware navigation
+  const goToPrev = useCallback(() => {
+    if (granularity === "month") {
+      setViewMonth(m => {
+        if (m === 0) { setViewYear(y => y - 1); return 11; }
+        return m - 1;
+      });
+    } else if (granularity === "week") {
+      setViewDate(d => {
+        const prev = new Date(d);
+        prev.setDate(prev.getDate() - 7);
+        setViewMonth(prev.getMonth());
+        setViewYear(prev.getFullYear());
+        return prev;
+      });
+    } else {
+      setViewDate(d => {
+        const prev = new Date(d);
+        prev.setDate(prev.getDate() - 1);
+        setViewMonth(prev.getMonth());
+        setViewYear(prev.getFullYear());
+        return prev;
+      });
+    }
+  }, [granularity]);
 
-  const goToNextMonth = useCallback(() => {
-    setViewMonth(m => {
-      if (m === 11) { setViewYear(y => y + 1); return 0; }
-      return m + 1;
-    });
-  }, []);
+  const goToNext = useCallback(() => {
+    if (granularity === "month") {
+      setViewMonth(m => {
+        if (m === 11) { setViewYear(y => y + 1); return 0; }
+        return m + 1;
+      });
+    } else if (granularity === "week") {
+      setViewDate(d => {
+        const next = new Date(d);
+        next.setDate(next.getDate() + 7);
+        setViewMonth(next.getMonth());
+        setViewYear(next.getFullYear());
+        return next;
+      });
+    } else {
+      setViewDate(d => {
+        const next = new Date(d);
+        next.setDate(next.getDate() + 1);
+        setViewMonth(next.getMonth());
+        setViewYear(next.getFullYear());
+        return next;
+      });
+    }
+  }, [granularity]);
 
   const handleStripTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
@@ -319,18 +393,12 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     if (touchStartXRef.current === null) return;
     const offset = currentDragOffsetRef.current;
     setIsDragging(false);
-    if (offset < -60) goToNextMonth();
-    else if (offset > 60) goToPrevMonth();
+    if (offset < -60) goToNext();
+    else if (offset > 60) goToPrev();
     touchStartXRef.current = null;
     currentDragOffsetRef.current = 0;
     setDragOffset(0);
-  }, [goToNextMonth, goToPrevMonth]);
-
-  const STRIP_OFFSETS = [-3, -2, -1, 0, 1, 2, 3] as const;
-  const stripMonths = STRIP_OFFSETS.map(offset => {
-    const d = new Date(viewYear, viewMonth + offset, 1);
-    return { month: d.getMonth(), year: d.getFullYear(), offset };
-  });
+  }, [goToNext, goToPrev]);
 
   const goToHome = useCallback(() => {
     if (!navigator.geolocation) {
@@ -348,11 +416,72 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     );
   }, []);
 
+  const goToToday = useCallback(() => {
+    const today = new Date();
+    setViewMonth(today.getMonth());
+    setViewYear(today.getFullYear());
+    if (granularity === "week") {
+      setViewDate(getWeekStart(today));
+    } else {
+      const d = new Date(today);
+      d.setHours(0, 0, 0, 0);
+      setViewDate(d);
+    }
+  }, [granularity]);
+
+  const STRIP_OFFSETS = [-3, -2, -1, 0, 1, 2, 3] as const;
+
+  const stripItems = useMemo(() => {
+    return STRIP_OFFSETS.map(offset => {
+      if (granularity === "month") {
+        const d = new Date(viewYear, viewMonth + offset, 1);
+        return {
+          offset,
+          label: MONTHS[d.getMonth()],
+          sublabel: String(d.getFullYear()),
+          hideYear: d.getFullYear() === viewYear,
+          key: `${d.getFullYear()}-${d.getMonth()}`,
+          ariaLabel: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`,
+          onClick: () => { setViewMonth(d.getMonth()); setViewYear(d.getFullYear()); },
+        };
+      } else if (granularity === "week") {
+        const anchor = new Date(viewDate);
+        anchor.setDate(anchor.getDate() + offset * 7);
+        const wStart = getWeekStart(anchor);
+        const wEnd = getWeekEnd(wStart);
+        const refYear = viewDate.getFullYear();
+        return {
+          offset,
+          label: formatWeekLabel(wStart),
+          sublabel: String(wStart.getFullYear()),
+          hideYear: wStart.getFullYear() === refYear,
+          key: wStart.toISOString(),
+          ariaLabel: `Week of ${wStart.getDate()} to ${wEnd.getDate()} ${SHORT_MONTHS[wEnd.getMonth()]} ${wEnd.getFullYear()}`,
+          onClick: () => { setViewDate(new Date(wStart)); setViewMonth(wStart.getMonth()); setViewYear(wStart.getFullYear()); },
+        };
+      } else {
+        // day
+        const d = new Date(viewDate);
+        d.setDate(d.getDate() + offset);
+        d.setHours(0, 0, 0, 0);
+        return {
+          offset,
+          label: formatDayLabel(d),
+          sublabel: String(d.getFullYear()),
+          hideYear: d.getFullYear() === viewDate.getFullYear(),
+          key: d.toISOString(),
+          ariaLabel: `${SHORT_DAYS[d.getDay()]} ${d.getDate()} ${SHORT_MONTHS[d.getMonth()]} ${d.getFullYear()}`,
+          onClick: () => { setViewDate(new Date(d)); setViewMonth(d.getMonth()); setViewYear(d.getFullYear()); },
+        };
+      }
+    });
+  }, [granularity, viewMonth, viewYear, viewDate]);
+
   return (
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onHome={goToHome} onSearch={onToggleSearch} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onHome={goToHome} onToday={goToToday} iconToday onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
         <div
@@ -365,32 +494,28 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
             className="map-month-strip"
             style={{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.22s ease' }}
           >
-            {stripMonths.map(item => (
+            {stripItems.map(item => (
               <button
-                key={`${item.year}-${item.month}`}
+                key={item.key}
                 className={`map-month-item${item.offset === 0 ? ' map-month-item--active' : ''}${Math.abs(item.offset) === 1 ? ' map-month-item--near' : ''}`}
-                onClick={() => { if (Math.abs(currentDragOffsetRef.current) < 8) { setViewMonth(item.month); setViewYear(item.year); } }}
+                onClick={() => { if (Math.abs(currentDragOffsetRef.current) < 8) item.onClick(); }}
                 tabIndex={item.offset === 0 ? 0 : -1}
-                aria-label={`${MONTHS[item.month]} ${item.year}`}
+                aria-label={item.ariaLabel}
                 aria-current={item.offset === 0 ? 'date' : undefined}
               >
-                <span className="map-month-item-name">{MONTHS[item.month]}</span>
-                <span className={`map-month-item-year${item.year === viewYear ? ' map-month-item-year--hidden' : ''}`}>{item.year}</span>
+                <span className="map-month-item-name">{item.label}</span>
+                <span className={`map-month-item-year${item.hideYear ? ' map-month-item-year--hidden' : ''}`}>{item.sublabel}</span>
               </button>
             ))}
           </div>
         </div>
-        <button className="map-home-btn" onClick={goToHome} aria-label="Go to my location">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          Home
-        </button>
         <ViewSwitcher
           className="map-toolbar-view-switcher"
           activeView="map"
           onNavigate={v => onNavigate?.(v)}
+          onHome={goToHome}
+          onToday={goToToday}
+          iconToday
           onSearch={onToggleSearch}
         />
       </div>
@@ -426,6 +551,17 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
             distanceFilter={distanceFilter}
             onSetDistanceFilter={setDistanceFilter}
             onClearDistanceFilter={clearDistanceFilter}
+            mode="map"
+            granularity={granularity}
+            onSetGranularity={(g) => {
+              setGranularity(g);
+              const today = new Date();
+              setViewMonth(today.getMonth());
+              setViewYear(today.getFullYear());
+              const resetDate = new Date(today);
+              resetDate.setHours(0, 0, 0, 0);
+              setViewDate(g === "week" ? getWeekStart(today) : resetDate);
+            }}
           />
         </aside>
 
@@ -462,6 +598,17 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           distanceFilter={distanceFilter}
           onSetDistanceFilter={setDistanceFilter}
           onClearDistanceFilter={clearDistanceFilter}
+          mode="map"
+          granularity={granularity}
+          onSetGranularity={(g) => {
+            setGranularity(g);
+            const today = new Date();
+            setViewMonth(today.getMonth());
+            setViewYear(today.getFullYear());
+            const resetDate = new Date(today);
+            resetDate.setHours(0, 0, 0, 0);
+            setViewDate(g === "week" ? getWeekStart(today) : resetDate);
+          }}
         />
       </MobileFilterBar>
     </div>
