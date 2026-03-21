@@ -9,6 +9,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
+import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
 import "./Calendar.css";
@@ -69,6 +70,11 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
   const trailingNulls = (7 - (rawCells.length % 7)) % 7;
   const cells = [...rawCells, ...Array(trailingNulls).fill(null)];
 
+  const isCompact = window.innerWidth <= 700 ||
+    (window.innerWidth <= 900 && window.innerHeight <= 500);
+  const MAX_CHIPS = isCompact ? 2 : 3;
+  const MAX_DOTS  = isCompact ? 3 : 4;
+
   const isToday = (day: number) =>
     day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
 
@@ -108,9 +114,9 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
             isWeekend              ? "calendar-cell--weekend"  : "",
           ].filter(Boolean).join(" ");
 
-          const MAX_DOTS = 3;
-          const visibleEvents = dayEvents.slice(0, MAX_DOTS);
-          const overflow = dayEvents.length - MAX_DOTS;
+          const chipEvents    = dayEvents.slice(0, MAX_CHIPS);
+          const dotEvents     = dayEvents.slice(MAX_CHIPS, MAX_CHIPS + MAX_DOTS);
+          const overflowCount = Math.max(0, dayEvents.length - MAX_CHIPS - MAX_DOTS);
 
           return (
             <div
@@ -128,9 +134,9 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
                   <span className="calendar-day-number">{day}</span>
                   {dayEvents.length > 0 && (
                     <div className="calendar-event-chips">
-                      {visibleEvents.map((ev, j) => (
+                      {chipEvents.map(ev => (
                         <span
-                          key={j}
+                          key={ev.id}
                           className="calendar-event-chip"
                           style={{
                             background: CATEGORY_COLOURS[ev.category],
@@ -140,8 +146,21 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
                           {ev.title}
                         </span>
                       ))}
-                      {overflow > 0 && (
-                        <span className="calendar-event-chip-overflow">+{overflow} more</span>
+                      {(dotEvents.length > 0 || overflowCount > 0) && (
+                        <div className="calendar-event-dots">
+                          {dotEvents.map(ev => (
+                            <span
+                              key={ev.id}
+                              className="calendar-event-dot"
+                              role="img"
+                              aria-label={ev.title}
+                              style={{ background: CATEGORY_COLOURS[ev.category] }}
+                            />
+                          ))}
+                          {overflowCount > 0 && (
+                            <span className="calendar-event-chip-overflow">+{overflowCount}</span>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -533,28 +552,18 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
       </div>
 
       {/* ── Mobile-only filter bar — fixed bottom ── */}
-      <div className={`calendar-mobile-filters${filtersCollapsed ? " calendar-mobile-filters--collapsed" : ""}`}>
-        <button
-          className="calendar-filter-toggle"
-          onClick={() => setFiltersCollapsed(c => !c)}
-          aria-expanded={!filtersCollapsed}
-        >
-          <span className="calendar-filter-toggle-label">Filters</span>
-          <span className="calendar-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
-        </button>
-        {!filtersCollapsed && (
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-            distanceFilter={distanceFilter}
-            onSetDistanceFilter={setDistanceFilter}
-            onClearDistanceFilter={clearDistanceFilter}
-          />
-        )}
-      </div>
+      <MobileFilterBar collapsed={filtersCollapsed} onToggle={() => setFiltersCollapsed(c => !c)}>
+        <FilterPanel
+          selectedCategories={selectedCategories}
+          onToggleCategory={toggleCategory}
+          onClearCategories={clearCategories}
+          dateFilter={dateFilter}
+          onSetDateFilter={setDateFilter}
+          distanceFilter={distanceFilter}
+          onSetDistanceFilter={setDistanceFilter}
+          onClearDistanceFilter={clearDistanceFilter}
+        />
+      </MobileFilterBar>
 
     </div>
   );

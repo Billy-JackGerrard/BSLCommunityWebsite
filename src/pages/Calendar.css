@@ -279,11 +279,7 @@
 }
 
 /* ── Mobile filter bar — fixed bottom ── */
-.calendar-mobile-filters {
-    display: none;
-}
-
-.calendar-filter-toggle {
+.mobile-filter-bar {
     display: none;
 }
 
@@ -365,6 +361,7 @@
 /* ── Month block ── */
 .calendar-month-block {
     border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-panel-gradient);
     opacity: 0;
     transform: translateY(24px);
     transition: opacity var(--duration-slow) var(--ease-out),
@@ -433,7 +430,7 @@
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 1px;
     background: var(--color-border);
-    padding: 0.35rem 0.75rem 0.75rem;
+    padding: 0.65rem 0.65rem 0.65rem;
     width: 100%;
     box-sizing: border-box;
 }
@@ -476,7 +473,7 @@
 .calendar-cell--today::before {
     content: '';
     position: absolute;
-    inset: -1px;
+    inset: 0;
     border: 2px solid var(--color-accent);
     border-radius: var(--radius-sm);
     opacity: 0.3;
@@ -543,6 +540,25 @@
 }
 
 .calendar-cell--selected .calendar-event-chip-overflow { color: var(--color-text-dark); }
+
+.calendar-event-dots {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: nowrap;
+}
+
+.calendar-event-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.calendar-cell--selected .calendar-event-dot {
+    outline: 1.5px solid rgba(255, 255, 255, 0.6);
+}
 
 /* ── Event detail full page ── */
 .event-detail-page {
@@ -689,7 +705,6 @@
 
     .calendar-panel-empty { display: none; }
     .calendar-panel-filters { display: none; }
-    .calendar-panel-view-switcher { display: none; }
 
     /* View switcher — toolbar with Today on left, view buttons on right */
     .calendar-view-switcher {
@@ -702,6 +717,9 @@
         border-bottom: 1px solid var(--color-border);
     }
 
+    /* Must come after .calendar-view-switcher (same specificity — later wins) */
+    .calendar-panel-view-switcher { display: none; }
+
     .calendar-day-number  { font-size: 0.8rem; }
     .calendar-day-label   { font-size: 0.6rem; letter-spacing: 0.03em; }
     .calendar-month-label { padding: 0.6rem 0.75rem 0.25rem; }
@@ -709,7 +727,12 @@
     .calendar-day-labels  { padding: 0.35rem 0.4rem 0.25rem; }
 
     /* Smaller cells on mobile */
-    .calendar-cell { min-height: 3.5rem; }
+    .calendar-cell { min-height: 3.5rem; overflow: hidden; }
+
+    .calendar-cell:hover:not(.calendar-cell--empty):not(.calendar-cell--selected),
+    .calendar-cell:focus-visible:not(.calendar-cell--empty):not(.calendar-cell--selected) {
+        transform: none;
+    }
 
     /* Slightly larger chip text for readability on mobile */
     .calendar-event-chip { font-size: 0.68rem; }
@@ -719,49 +742,17 @@
     .calendar-panel-close    { width: 44px; height: 44px; }
 
     /* Mobile filter bar — fixed bottom */
-    .calendar-mobile-filters {
+    .mobile-filter-bar {
         display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         z-index: calc(var(--z-dropdown) + 1);
-        background: var(--color-bg-card);
+        background: var(--color-navbar-glass);
         border-top: 1px solid var(--color-border);
         padding: 0.75rem 1rem;
         padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-    }
-
-    .calendar-mobile-filters--collapsed {
-        padding-top: 0;
-        padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
-    }
-
-    .calendar-filter-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0.25rem 0;
-        color: var(--color-text-muted);
-        font-family: inherit;
-    }
-
-    .calendar-filter-toggle-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-    }
-
-    .calendar-filter-toggle-arrow {
-        font-size: 0.55rem;
-        line-height: 1;
     }
 }
 
@@ -794,7 +785,11 @@
 
 /* ── Landscape phone: compact sizing, keep two-column layout ── */
 @media (max-width: 900px) and (max-height: 500px) {
-    .calendar-cell        { min-height: 3.5rem; }
+    .calendar-cell        { min-height: 3.5rem; overflow: hidden; }
+    .calendar-cell:hover:not(.calendar-cell--empty):not(.calendar-cell--selected),
+    .calendar-cell:focus-visible:not(.calendar-cell--empty):not(.calendar-cell--selected) {
+        transform: none;
+    }
     .calendar-event-chip  { font-size: 0.68rem; }
     .calendar-day-number  { font-size: 0.8rem; }
     .calendar-day-label   { font-size: 0.6rem; letter-spacing: 0.03em; }
