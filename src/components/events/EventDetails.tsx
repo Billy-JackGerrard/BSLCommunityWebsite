@@ -25,9 +25,9 @@ function ShareButton({ eventId }: { eventId: number }) {
   const { copied, copy } = useCopyToClipboard();
   const shareUrl = `${window.location.origin}/event/${eventId}`;
   return (
-    <button className="event-detail-share-btn" onClick={() => copy(shareUrl)}>
+    <motion.button className="event-detail-share-btn" onClick={() => copy(shareUrl)} whileTap={scaleSpring.tap}>
       {copied ? "Copied ✓" : "Share event"}
-    </button>
+    </motion.button>
   );
 }
 
@@ -244,9 +244,9 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
       <div className="event-detail-cal-row">
         <ShareButton eventId={event.id} />
         {onDuplicate && (
-          <button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)}>
+          <motion.button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)} whileTap={scaleSpring.tap}>
             ⧉ Duplicate Event
-          </button>
+          </motion.button>
         )}
       </div>
 
