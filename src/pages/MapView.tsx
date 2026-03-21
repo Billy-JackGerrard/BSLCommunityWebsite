@@ -335,23 +335,19 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
         setViewMonth(m => m - 1);
       }
     } else if (granularity === "week") {
-      setViewDate(d => {
-        const prev = new Date(d);
-        prev.setDate(prev.getDate() - 7);
-        setViewMonth(prev.getMonth());
-        setViewYear(prev.getFullYear());
-        return prev;
-      });
+      const prev = new Date(viewDate);
+      prev.setDate(prev.getDate() - 7);
+      setViewDate(prev);
+      setViewMonth(prev.getMonth());
+      setViewYear(prev.getFullYear());
     } else {
-      setViewDate(d => {
-        const prev = new Date(d);
-        prev.setDate(prev.getDate() - 1);
-        setViewMonth(prev.getMonth());
-        setViewYear(prev.getFullYear());
-        return prev;
-      });
+      const prev = new Date(viewDate);
+      prev.setDate(prev.getDate() - 1);
+      setViewDate(prev);
+      setViewMonth(prev.getMonth());
+      setViewYear(prev.getFullYear());
     }
-  }, [granularity, viewMonth]);
+  }, [granularity, viewMonth, viewDate]);
 
   const goToNext = useCallback(() => {
     if (granularity === "month") {
@@ -362,23 +358,19 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
         setViewMonth(m => m + 1);
       }
     } else if (granularity === "week") {
-      setViewDate(d => {
-        const next = new Date(d);
-        next.setDate(next.getDate() + 7);
-        setViewMonth(next.getMonth());
-        setViewYear(next.getFullYear());
-        return next;
-      });
+      const next = new Date(viewDate);
+      next.setDate(next.getDate() + 7);
+      setViewDate(next);
+      setViewMonth(next.getMonth());
+      setViewYear(next.getFullYear());
     } else {
-      setViewDate(d => {
-        const next = new Date(d);
-        next.setDate(next.getDate() + 1);
-        setViewMonth(next.getMonth());
-        setViewYear(next.getFullYear());
-        return next;
-      });
+      const next = new Date(viewDate);
+      next.setDate(next.getDate() + 1);
+      setViewDate(next);
+      setViewMonth(next.getMonth());
+      setViewYear(next.getFullYear());
     }
-  }, [granularity, viewMonth]);
+  }, [granularity, viewMonth, viewDate]);
 
   const handleStripTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
