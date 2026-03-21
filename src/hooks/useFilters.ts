@@ -5,14 +5,19 @@ export type DistanceFilter = { center: DistanceCenter; radiusMiles: number } | n
 export const RADIUS_OPTIONS = [5, 10, 20, 30, 50] as const;
 export type RadiusMiles = typeof RADIUS_OPTIONS[number];
 
+export type Granularity = "day" | "week" | "month";
+
 /**
  * Shared filter state for category and date filters.
- * Used by both Calendar and EventList to keep logic consistent.
+ * Used by Calendar, EventList, and MapView.
+ * - dateFilter: used by Calendar and EventList (date pills)
+ * - granularity: used by MapView strip (day/week/month)
  */
 export function useFilters() {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [distanceFilter, setDistanceFilter] = useState<DistanceFilter>(null);
+  const [granularity, setGranularity] = useState<Granularity>("week");
 
   function clearDistanceFilter() { setDistanceFilter(null); }
 
@@ -29,5 +34,11 @@ export function useFilters() {
     setSelectedCategories(new Set());
   }
 
-  return { selectedCategories, setSelectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter };
+  return {
+    selectedCategories, setSelectedCategories,
+    dateFilter, setDateFilter,
+    toggleCategory, clearCategories,
+    distanceFilter, setDistanceFilter, clearDistanceFilter,
+    granularity, setGranularity,
+  };
 }
