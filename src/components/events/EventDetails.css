@@ -327,8 +327,8 @@
 .event-detail-share-btn {
     width: 100%;
     background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
     font-size: 0.8rem;
     font-family: var(--font-heading);
     font-weight: 600;
@@ -340,18 +340,18 @@
 }
 
 .event-detail-share-btn:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    background: var(--color-bg-accent-tint);
+    background: var(--color-accent);
+    color: var(--color-bg-card);
     transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.25);
 }
 
 /* ── Duplicate button ── */
 .event-detail-duplicate-btn {
     width: 100%;
     background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
     font-size: 0.8rem;
     font-family: var(--font-heading);
     font-weight: 600;
@@ -364,9 +364,10 @@
 }
 
 .event-detail-duplicate-btn:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    background: var(--color-bg-accent-tint);
+    background: var(--color-accent);
+    color: var(--color-bg-card);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.25);
 }
 
 /* ── Add to Calendar button ── */
