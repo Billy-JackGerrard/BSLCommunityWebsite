@@ -310,6 +310,12 @@
     color: var(--color-accent);
 }
 
+.calendar-view-btn--icon {
+    padding: 0 0.5rem;
+    min-width: 32px;
+    justify-content: center;
+}
+
 .calendar-view-btn {
     display: inline-flex;
     align-items: center;
