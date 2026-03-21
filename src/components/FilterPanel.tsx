@@ -1,7 +1,7 @@
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { DATE_FILTER_LABELS } from "../utils/eventFilters";
 import type { DateFilter } from "../utils/eventFilters";
-import type { DistanceFilter } from "../hooks/useFilters";
+import type { DistanceFilter, Granularity } from "../hooks/useFilters";
 import DistanceFilterSection from "./DistanceFilterSection";
 import "./FilterPanel.css";
 
@@ -20,6 +20,10 @@ type Props = {
   onClearDistanceFilter: () => void;
   /** Show only category dots — hides date filters and clear button */
   compact?: boolean;
+  /** "map" renders granularity segmented control; "default" renders date pills */
+  mode?: "map" | "default";
+  granularity?: Granularity;
+  onSetGranularity?: (g: Granularity) => void;
 };
 
 export default function FilterPanel({
@@ -32,10 +36,28 @@ export default function FilterPanel({
   onSetDistanceFilter,
   onClearDistanceFilter,
   compact,
+  mode,
+  granularity,
+  onSetGranularity,
 }: Props) {
   return (
     <div className="filter-panel">
-      {!compact && (
+      {!compact && mode === "map" && (
+        <div className="filter-panel-granularity" role="radiogroup" aria-label="Date range">
+          {(["day", "week", "month"] as const).map(g => (
+            <button
+              key={g}
+              role="radio"
+              aria-checked={granularity === g}
+              className={`filter-panel-gran-btn${granularity === g ? " filter-panel-gran-btn--active" : ""}`}
+              onClick={() => onSetGranularity?.(g)}
+            >
+              {g.charAt(0).toUpperCase() + g.slice(1)}
+            </button>
+          ))}
+        </div>
+      )}
+      {!compact && mode !== "map" && (
         <div className="filter-panel-dates">
           {(["all", "week", "weekend", "month"] as const).map(f => (
             <button
