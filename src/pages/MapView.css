@@ -87,6 +87,14 @@
   opacity: 0.75;
 }
 
+.map-month-item-year--hidden {
+  visibility: hidden;
+}
+
+.map-month-item:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .map-home-btn {
   display: inline-flex;
   align-items: center;

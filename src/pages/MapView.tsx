@@ -375,7 +375,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
                 aria-current={item.offset === 0 ? 'date' : undefined}
               >
                 <span className="map-month-item-name">{MONTHS[item.month]}</span>
-                {item.year !== viewYear && <span className="map-month-item-year">{item.year}</span>}
+                <span className={`map-month-item-year${item.year === viewYear ? ' map-month-item-year--hidden' : ''}`}>{item.year}</span>
               </button>
             ))}
           </div>
