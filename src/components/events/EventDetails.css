@@ -1,5 +1,5 @@
 .event-detail-card {
-    background: var(--color-bg-card);
+    background: var(--color-bg-card-gradient);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-md);
     padding: 1.5rem;
