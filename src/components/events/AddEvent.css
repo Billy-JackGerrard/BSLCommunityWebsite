@@ -109,6 +109,43 @@
   line-height: 1.6;
 }
 
+.addevent-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.addevent-success-actions .btn-primary {
+  width: auto;
+  flex: 1;
+  min-width: 140px;
+}
+
+.addevent-success-actions .btn-secondary {
+  flex: 1;
+  min-width: 140px;
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.addevent-success-actions .btn-secondary:hover {
+  background: var(--color-accent);
+  color: var(--color-bg-card);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--color-shadow-accent), 0.25);
+}
+
 /* ── Event type toggle ── */
 .event-type-toggle {
   display: flex;

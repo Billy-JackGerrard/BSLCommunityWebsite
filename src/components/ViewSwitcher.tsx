@@ -3,12 +3,14 @@ interface ViewSwitcherProps {
   onNavigate: (view: "calendar" | "list" | "map") => void;
   /** If provided, renders the Today button with this handler. Omit on views where Today has no meaning. */
   onToday?: () => void;
+  /** If provided, renders a Home (go to location) button with this handler. */
+  onHome?: () => void;
   /** If provided, renders a Search button with this handler. */
   onSearch?: () => void;
   className?: string;
 }
 
-export default function ViewSwitcher({ activeView, onNavigate, onToday, onSearch, className }: ViewSwitcherProps) {
+export default function ViewSwitcher({ activeView, onNavigate, onToday, onHome, onSearch, className }: ViewSwitcherProps) {
   const cls = ["calendar-view-switcher", className].filter(Boolean).join(" ");
 
   return (
@@ -16,6 +18,15 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, onSearch
       {onToday && (
         <button className="calendar-view-btn calendar-view-btn--today" onClick={onToday}>
           Today
+        </button>
+      )}
+      {onHome && (
+        <button className="calendar-view-btn calendar-view-btn--today" onClick={onHome}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Home
         </button>
       )}
       {onSearch && (

@@ -41,6 +41,13 @@ export default function Navbar({
 
   return (
     <nav className="navbar">
+      {menuOpen && (
+        <div
+          className="navbar-overlay"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       <motion.button
         className="navbar-brand"
         onClick={() => navigate("home")}
@@ -55,6 +62,7 @@ export default function Navbar({
           height="32"
           animate={bslWave.animate}
           whileHover={bslWave.hover}
+          whileTap={bslWave.hover}
         />
         <span className="navbar-brand-text">
           Edinburgh BSL <span className="navbar-brand-sub">Community</span>
@@ -153,28 +161,30 @@ export default function Navbar({
             </button>
           )}
 
-          <ThemePicker
-            theme={theme}
-            colorMode={colorMode}
-            onSetTheme={onSetTheme}
-            onSetColorMode={onSetColorMode}
-          />
-
-          {isLoggedIn ? (
-            <button
-              className={`navbar-link navbar-link--account ${currentView === "account" ? "navbar-link--active" : ""}`}
-              onClick={() => navigate("account")}
-            >
-              {adminName ?? "Account"}
-            </button>
-          ) : (
-            <button
-              className={`navbar-link navbar-link--subtle ${currentView === "login" ? "navbar-link--active" : ""}`}
-              onClick={() => navigate("login")}
-            >
-              Admin Login
-            </button>
-          )}
+          {/* Bottom row: Account/Login left, ThemePicker right */}
+          <div className="navbar-bottom-row">
+            {isLoggedIn ? (
+              <button
+                className={`navbar-link navbar-link--account ${currentView === "account" ? "navbar-link--active" : ""}`}
+                onClick={() => navigate("account")}
+              >
+                {adminName ?? "Account"}
+              </button>
+            ) : (
+              <button
+                className={`navbar-link navbar-link--subtle ${currentView === "login" ? "navbar-link--active" : ""}`}
+                onClick={() => navigate("login")}
+              >
+                Admin Login
+              </button>
+            )}
+            <ThemePicker
+              theme={theme}
+              colorMode={colorMode}
+              onSetTheme={onSetTheme}
+              onSetColorMode={onSetColorMode}
+            />
+          </div>
         </div>
       </div>
     </nav>

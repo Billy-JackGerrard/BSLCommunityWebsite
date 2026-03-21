@@ -39,6 +39,7 @@
     padding: 0;
     font: inherit;
     outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .navbar-brand:focus-visible {
@@ -120,7 +121,7 @@
 
 .navbar-link--account {
     color: rgba(255, 255, 255, 0.9);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: transparent;
 }
 
 /* ── Browse Events CTA ── */
@@ -155,6 +156,12 @@
 /* ── Admin section divider — mobile-only ── */
 .navbar-admin-divider {
     display: none;
+}
+
+/* ── Bottom row: Account/Login + ThemePicker ── */
+/* Desktop: transparent wrapper — children flow as normal flex items */
+.navbar-bottom-row {
+    display: contents;
 }
 
 /* ── Queue/Messages buttons — relative so the badge can anchor to them ── */
@@ -266,6 +273,13 @@
     transform: translateY(-7px) rotate(-45deg);
 }
 
+/* ── Click-outside overlay (mobile menu backdrop) ── */
+.navbar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-mobile-menu) - 1);
+}
+
 /* ── Mobile menu ── */
 @media (max-width: 700px) {
     .navbar {
@@ -283,10 +297,8 @@
         left: 0;
         right: 0;
         background: var(--color-navbar-glass-mobile);
-        backdrop-filter: blur(20px) saturate(1.8);
-        -webkit-backdrop-filter: blur(20px) saturate(1.8);
         flex-direction: column;
-        padding: 0.5rem 1rem 1rem;
+        padding: 1rem 1rem 1rem;
         gap: 0.3rem;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
         z-index: var(--z-mobile-menu);
@@ -353,19 +365,20 @@
         margin-bottom: 0.25rem;
     }
 
-    /* Browse Events CTA — visible on mobile, replaces Calendar/List/Map */
+    /* Browse Events — looks like a regular link on mobile */
     .navbar-link--browse {
         display: flex;
-        justify-content: center;
-        background: var(--color-navbar-browse-bg);
-        border: 1px solid var(--color-navbar-browse-border);
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 0.9rem;
+        justify-content: flex-start;
+        background: transparent;
+        border: 1px solid transparent;
+        color: rgba(255, 255, 255, 0.65);
+        font-weight: 600;
+        font-size: 0.85rem;
     }
 
     .navbar-link--browse:hover {
-        background: var(--color-navbar-browse-bg);
+        background: rgba(255, 255, 255, 0.08);
+        opacity: 1;
     }
 
     /* Hide Home/Calendar/List/Map on mobile — Browse Events covers them */
@@ -381,7 +394,7 @@
         margin: 0;
     }
 
-    /* ThemePicker inside dropdown — full width button */
+    /* ThemePicker inside dropdown — full width button (not in bottom row) */
     .navbar-links .theme-picker {
         width: 100%;
     }
@@ -401,23 +414,41 @@
         width: auto;
     }
 
-    /* Stagger slide-in for nav items when mobile menu opens */
-    @keyframes nav-link-in {
-        from { transform: translateX(-10px); opacity: 0.4; }
-        to   { transform: translateX(0); opacity: 1; }
+    /* Bottom row: side-by-side on mobile */
+    .navbar-bottom-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 0.1rem;
     }
 
-    .navbar-links--open > * {
-        animation: nav-link-in 0.22s var(--ease-out) both;
+    .navbar-bottom-row .navbar-link {
+        flex: 1;
+        width: auto;
+        text-align: left;
     }
-    .navbar-links--open > *:nth-child(1) { animation-delay: 0.06s; }
-    .navbar-links--open > *:nth-child(2) { animation-delay: 0.10s; }
-    .navbar-links--open > *:nth-child(3) { animation-delay: 0.14s; }
-    .navbar-links--open > *:nth-child(4) { animation-delay: 0.18s; }
-    .navbar-links--open > *:nth-child(5) { animation-delay: 0.22s; }
-    .navbar-links--open > *:nth-child(6) { animation-delay: 0.26s; }
-    .navbar-links--open > *:nth-child(7) { animation-delay: 0.30s; }
-    .navbar-links--open > *:nth-child(8) { animation-delay: 0.34s; }
+
+    /* ThemePicker in bottom row — compact, not full-width */
+    .navbar-bottom-row .theme-picker {
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .navbar-bottom-row .theme-picker-btn {
+        width: auto;
+        min-height: 44px;
+        border-radius: var(--radius-md);
+        justify-content: center;
+        padding: 0.6rem 1rem;
+    }
+
+    .navbar-bottom-row .theme-picker-dropdown {
+        right: 0;
+        left: auto;
+        width: 210px;
+    }
 }
 
 /* ── Landscape phone: restore hamburger menu (screen too small for desktop nav) ── */
@@ -437,10 +468,8 @@
         left: 0;
         right: 0;
         background: var(--color-navbar-glass-mobile);
-        backdrop-filter: blur(20px) saturate(1.8);
-        -webkit-backdrop-filter: blur(20px) saturate(1.8);
         flex-direction: column;
-        padding: 0.5rem 1rem 1rem;
+        padding: 1rem 1rem 1rem;
         gap: 0.3rem;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
         z-index: var(--z-mobile-menu);
@@ -508,16 +537,17 @@
 
     .navbar-link--browse {
         display: flex;
-        justify-content: center;
-        background: var(--color-navbar-browse-bg);
-        border: 1px solid var(--color-navbar-browse-border);
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 0.9rem;
+        justify-content: flex-start;
+        background: transparent;
+        border: 1px solid transparent;
+        color: rgba(255, 255, 255, 0.65);
+        font-weight: 600;
+        font-size: 0.85rem;
     }
 
     .navbar-link--browse:hover {
-        background: var(--color-navbar-browse-bg);
+        background: rgba(255, 255, 255, 0.08);
+        opacity: 1;
     }
 
     .navbar-link--desktop-nav {
@@ -548,5 +578,39 @@
         right: 0;
         left: 0;
         width: auto;
+    }
+
+    .navbar-bottom-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 0.1rem;
+    }
+
+    .navbar-bottom-row .navbar-link {
+        flex: 1;
+        width: auto;
+        text-align: left;
+    }
+
+    .navbar-bottom-row .theme-picker {
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .navbar-bottom-row .theme-picker-btn {
+        width: auto;
+        min-height: 44px;
+        border-radius: var(--radius-md);
+        justify-content: center;
+        padding: 0.6rem 1rem;
+    }
+
+    .navbar-bottom-row .theme-picker-dropdown {
+        right: 0;
+        left: auto;
+        width: 210px;
     }
 }

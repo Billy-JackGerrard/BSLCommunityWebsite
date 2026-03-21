@@ -5,7 +5,7 @@ import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { SmoothScroll } from "./components/SmoothScroll.tsx";
+import { SmoothScroll, scrollToTopInstant } from "./components/SmoothScroll.tsx";
 import { pageVariants } from "./utils/motion.ts";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./hooks/useAuth";
@@ -161,7 +161,7 @@ function App() {
     setViewingEvent(event);
     setPostEventReturn(view === "event" ? postEventReturn : view as View);
     window.history.pushState({}, "", `/event/${event.id}`);
-    window.scrollTo({ top: 0 });
+    scrollToTopInstant();
     setView("event");
   }, [view, postEventReturn]);
 
@@ -231,7 +231,7 @@ function App() {
     setEditingEvent(updated);
     if (postEditReturn === "event") setViewingEvent(updated);
     setView(postEditReturn);
-    window.scrollTo({ top: 0 });
+    scrollToTopInstant();
   };
 
   const handleEditCancel = () => {
@@ -334,7 +334,7 @@ function App() {
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
-        {view === "add-event"  && <AddEvent prefillDate={addEventDate} prefillEvent={duplicatingEvent ?? undefined} isAdmin={isLoggedIn} />}
+        {view === "add-event"  && <AddEvent prefillDate={addEventDate} prefillEvent={duplicatingEvent ?? undefined} isAdmin={isLoggedIn} onBrowse={() => handleNavigate("calendar")} />}
         {view === "delete-event" && isLoggedIn && deletingEvent && (
           <DeleteEventConfirm
             event={deletingEvent}

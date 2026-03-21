@@ -61,33 +61,6 @@ Event submission feedback loop — A confirmation email to event submitters (via
 
 Event images — Even a simple category-based placeholder system would improve the visual experience significantly before committing to full image uploads.
 
-3.
+
 MCP:
 https://github.com/modelcontextprotocol/servers/tree/HEAD/src/sequentialthinking
-
-https://github.com/obra/superpowers 
-
-
-5.
-Go through all the css etc, and think about how to improve the entire user experience as a whole.
-think visibility, consistency, interactions.
-
-add more awesome css stuff, have a look at this website for some stuff you could use:
-https://prismic.io/blog/css-animation-examples
-
-You could also use Tailwind CSS / Framer Motion / React Spring / GSAP / Lenis / CSS backdrop-filter / react-use-gesture / clsx / AOS (Animate On Scroll) / FullCalendar React !!
-
-Research into each of these and which we should use and where, what are the benefits of incorporating these into our websites and if we should.
-
-Animate BSL icon with a subtle wave 👋 (and other things if you want)
-
-But don't turn it into a fireworks show.
-Pick:
-2 animation styles
-1 signature interaction
-1 “wow” moment
-Repeat them consistently → that’s what makes it feel professional.
-
-
-At the end, put into CLAUDE.md whatever you think you should know in the future to show your learnings, alternatively create some kind of a ./claude/skills thing.
-I don't want you to have to go through all css files again if something needs to be understood/changed in the future.

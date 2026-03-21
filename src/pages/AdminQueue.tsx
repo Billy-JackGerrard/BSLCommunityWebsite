@@ -5,6 +5,7 @@ import { deduplicateByRecurrence } from "../utils/recurrence";
 import type { AdminEvent } from "../utils/types";
 import type { Event } from "../utils/types";
 import EventDetails from "../components/events/EventDetails";
+import { scrollToTopInstant } from "../components/SmoothScroll";
 import "./AdminQueue.css";
 
 type Props = {
@@ -107,6 +108,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
     } else {
       setDetailEvent(ev);
       setConfirmReject(null);
+      scrollToTopInstant();
     }
   };
 

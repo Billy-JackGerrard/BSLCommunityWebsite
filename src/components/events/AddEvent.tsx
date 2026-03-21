@@ -13,9 +13,10 @@ type Props = {
   prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
   prefillEvent?: Event;  // pre-populates all fields when duplicating an event
   isAdmin?: boolean;
+  onBrowse?: () => void;
 };
 
-export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false }: Props) {
+export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, onBrowse }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [error, setError] = useState<string | null>(null);
@@ -129,9 +130,16 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false }:
                   : "Thank you! Your event has been submitted and is awaiting approval from an admin."
               )}
             </p>
-            <motion.button className="btn-primary" onClick={resetForm} whileTap={scaleSpring.tap}>
-              Add Another Event
-            </motion.button>
+            <div className="addevent-success-actions">
+              <motion.button className="btn-primary" onClick={resetForm} whileTap={scaleSpring.tap}>
+                Add Another Event
+              </motion.button>
+              {onBrowse && (
+                <motion.button className="btn-secondary" onClick={onBrowse} whileTap={scaleSpring.tap}>
+                  Browse Events
+                </motion.button>
+              )}
+            </div>
           </div>
         </div>
       </div>

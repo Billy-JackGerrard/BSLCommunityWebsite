@@ -5,6 +5,18 @@ interface SmoothScrollProps {
   children: React.ReactNode
 }
 
+// Module-level ref so navigation handlers can reach the Lenis instance
+let _lenis: Lenis | null = null
+
+/** Instantly scroll to the top of the page, bypassing Lenis's lerp animation. */
+export function scrollToTopInstant() {
+  if (_lenis) {
+    _lenis.scrollTo(0, { immediate: true })
+  } else {
+    window.scrollTo(0, 0)
+  }
+}
+
 export function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null)
 
@@ -22,6 +34,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
       },
     })
     lenisRef.current = lenis
+    _lenis = lenis
 
     let rafId: number
     function raf(time: number) {
@@ -33,6 +46,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     return () => {
       cancelAnimationFrame(rafId)
       lenis.destroy()
+      _lenis = null
     }
   }, [])
 

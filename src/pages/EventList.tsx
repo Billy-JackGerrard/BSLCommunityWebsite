@@ -10,6 +10,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
+import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
 import { fadeSlideUp, staggerContainer, scaleSpring } from "../utils/motion";
@@ -153,28 +154,18 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
       <div className="event-list-layout">
 
         {/* Mobile-only filter panel — hidden at 860px+ where sidebar takes over */}
-        <div className={`event-list-mobile-filters${filtersCollapsed ? " event-list-mobile-filters--collapsed" : ""}`}>
-          <button
-            className="event-list-filter-toggle"
-            onClick={() => setFiltersCollapsed(c => !c)}
-            aria-expanded={!filtersCollapsed}
-          >
-            <span className="event-list-filter-toggle-label">Filters</span>
-            <span className="event-list-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
-          </button>
-          {!filtersCollapsed && (
-            <FilterPanel
-              selectedCategories={selectedCategories}
-              onToggleCategory={toggleCategory}
-              onClearCategories={clearCategories}
-              dateFilter={dateFilter}
-              onSetDateFilter={setDateFilter}
-              distanceFilter={distanceFilter}
-              onSetDistanceFilter={setDistanceFilter}
-              onClearDistanceFilter={clearDistanceFilter}
-            />
-          )}
-        </div>
+        <MobileFilterBar collapsed={filtersCollapsed} onToggle={() => setFiltersCollapsed(c => !c)}>
+          <FilterPanel
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            onClearCategories={clearCategories}
+            dateFilter={dateFilter}
+            onSetDateFilter={setDateFilter}
+            distanceFilter={distanceFilter}
+            onSetDistanceFilter={setDistanceFilter}
+            onClearDistanceFilter={clearDistanceFilter}
+          />
+        </MobileFilterBar>
 
         {/* Events column — LEFT on desktop */}
         <div className="event-list-container">

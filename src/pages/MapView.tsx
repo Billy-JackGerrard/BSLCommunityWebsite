@@ -6,6 +6,7 @@ import { useFilters } from "../hooks/useFilters";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import FilterPanel from "../components/FilterPanel";
+import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
 import { MONTHS, formatDate, formatTime } from "../utils/dates";
@@ -79,7 +80,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -316,7 +317,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onSearch={onToggleSearch} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onHome={goToHome} onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
         <div className="map-month-nav">
@@ -337,13 +338,6 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
             onSearch={onToggleSearch}
           />
         </div>
-        <button
-          className="map-filter-toggle"
-          onClick={() => setFiltersOpen(o => !o)}
-          aria-expanded={filtersOpen}
-        >
-          Filters {selectedCategories.size > 0 && `(${selectedCategories.size})`}
-        </button>
       </div>
 
       {searchOpen && (
@@ -399,20 +393,22 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
         </div>
       </div>
 
-      {filtersOpen && (
-        <div className="map-mobile-filters">
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-            distanceFilter={distanceFilter}
-            onSetDistanceFilter={setDistanceFilter}
-            onClearDistanceFilter={clearDistanceFilter}
-          />
-        </div>
-      )}
+      <MobileFilterBar
+        collapsed={filtersCollapsed}
+        onToggle={() => setFiltersCollapsed(c => !c)}
+        activeCount={selectedCategories.size || undefined}
+      >
+        <FilterPanel
+          selectedCategories={selectedCategories}
+          onToggleCategory={toggleCategory}
+          onClearCategories={clearCategories}
+          dateFilter={dateFilter}
+          onSetDateFilter={setDateFilter}
+          distanceFilter={distanceFilter}
+          onSetDistanceFilter={setDistanceFilter}
+          onClearDistanceFilter={clearDistanceFilter}
+        />
+      </MobileFilterBar>
     </div>
   );
 }

@@ -17,11 +17,13 @@
 .datetime-row .form-input[type="date"] {
   flex: 3;
   min-width: 0;
+  width: auto;
 }
 
 .datetime-row .form-input[type="time"] {
   flex: 2;
   min-width: 0;
+  width: auto;
 }
 
 .eventform-root {

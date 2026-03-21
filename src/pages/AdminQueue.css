@@ -192,5 +192,6 @@
   .queue-detail-panel {
     position: static;
     width: 100%;
+    order: -1;
   }
 }

@@ -205,6 +205,7 @@
     --color-bg-card-gradient:  linear-gradient(160deg, #d8f5f5 0%, #ffffff 50%);
 
     --radius-sm: 8px;
+    --radius-btn: 10px;
     --radius-md: 12px;
     --radius-lg: 18px;
     --radius-xl: 24px;
@@ -318,6 +319,7 @@
 
     /* Sharp, editorial corners */
     --radius-sm: 3px;
+    --radius-btn: 4px;
     --radius-md: 5px;
     --radius-lg: 8px;
     --radius-xl: 12px;
@@ -438,6 +440,7 @@
 
     /* Soft rounded feel */
     --radius-sm: 8px;
+    --radius-btn: 10px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 22px;
@@ -558,6 +561,7 @@
 
     /* Natural, organic rounding */
     --radius-sm: 6px;
+    --radius-btn: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
     --radius-xl: 20px;
@@ -577,7 +581,7 @@
     color-scheme: dark;
 
     --color-bg-page:    #021A12;
-    --color-bg-card:    #0A2E1F;
+    --color-bg-card:    #103D28;
     --color-bg-inset:   #062118;
     --color-bg-header:  #065F46;
     --color-bg-error:   #450a0a;
@@ -589,15 +593,15 @@
 
     --color-text-primary: #D1FAE5;
     --color-text-dark:    #ffffff;
-    --color-text-muted:   #6EE7B7;
+    --color-text-muted:   #5EEAD4;
     --color-text-error:   #f87171;
-    --color-text-link:    #6EE7B7;
+    --color-text-link:    #5EEAD4;
 
     --color-bg-accent-tint:        rgba(52, 211, 153, 0.1);
     --color-border-accent:         rgba(52, 211, 153, 0.22);
     --color-border-accent-strong:  rgba(52, 211, 153, 0.38);
     --color-bg-today:              rgba(5, 150, 105, 0.22);
-    --color-bg-surface-raised:     rgba(110, 231, 183, 0.08);
+    --color-bg-surface-raised:     rgba(94, 234, 212, 0.08);
 
     --color-text-success: #86EFAC;
     --color-border-error: rgba(248, 113, 113, 0.3);
@@ -610,7 +614,7 @@
     --shadow-lg: 0 4px 12px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.38);
     --shadow-xl: 0 8px 24px rgba(0,0,0,0.32), 0 24px 48px rgba(0,0,0,0.42);
 
-    --color-accent-gradient: linear-gradient(135deg, #34D399 0%, #6EE7B7 50%, #A7F3D0 100%);
+    --color-accent-gradient: linear-gradient(135deg, #34D399 0%, #2DD4BF 50%, #A7F3D0 100%);
 
     --color-shadow-accent: 52, 211, 153;
 
@@ -620,15 +624,16 @@
     --color-navbar-browse-border:rgba(52, 211, 153, 0.3);
 
     --color-hero-gradient:       linear-gradient(135deg, #010D08 0%, #021A12 20%, #064E3B 45%, #065F46 70%, #064E3B 100%);
+    --color-hero-orb-2:          #2DD4BF;
     --color-hero-shimmer:        #A7F3D0;
-    --color-cta-text:            #6EE7B7;
+    --color-cta-text:            #5EEAD4;
     --color-bottom-cta-gradient: linear-gradient(135deg, #010D08 0%, #021A12 25%, #064E3B 55%, #065F46 100%);
 
     --color-calendar-label-bg:   rgba(2, 26, 18, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #083020 0%, #021A12 40%, #071e12 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #062e28 0%, #021A12 40%, #071e12 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #083020 0%, #0a2e1f 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #0a3828 0%, #0a2e1f 55%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #083c30 0%, #021a12 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #0e4832 0%, #103d28 55%);
 }
 
 /* =====================================================
@@ -678,6 +683,7 @@
 
     /* Elegant rounding */
     --radius-sm: 7px;
+    --radius-btn: 8px;
     --radius-md: 11px;
     --radius-lg: 16px;
     --radius-xl: 22px;
@@ -697,12 +703,12 @@
     color-scheme: dark;
 
     --color-bg-page:    #1A0A10;
-    --color-bg-card:    #3D2232;
+    --color-bg-card:    #4B2A3C;
     --color-bg-inset:   #2E1422;
     --color-bg-header:  #9F1239;
     --color-bg-error:   #450a0a;
 
-    --color-border:        #4C0519;
+    --color-border:        #5C1A35;
     --color-border-subtle: #350312;
 
     --color-accent: #FB7185;
@@ -745,10 +751,10 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0206 0%, #1A0A10 25%, #4C0519 55%, #9F1239 100%);
 
     --color-calendar-label-bg:   rgba(26, 10, 16, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #26101a 0%, #1A0A10 40%, #220e18 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #1e0d15 0%, #1A0A10 40%, #1a0b14 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #26101a 0%, #3d2232 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #301a28 0%, #3d2232 55%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #3d1830 0%, #1a0a10 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #4e2438 0%, #4b2a3c 55%);
 }
 
 /* =====================================================
@@ -761,12 +767,12 @@
    ===================================================== */
 :root[data-theme="parchment"] {
     --color-bg-page:    #F8F4E3;
-    --color-bg-card:    #FDFBF2;
+    --color-bg-card:    #FAF4E2;
     --color-bg-inset:   #EDE8D2;
     --color-bg-header:  #2D6A9F;
     --color-bg-error:   #FFF0EE;
 
-    --color-border:        #CFC5A5;
+    --color-border:        #B8AA80;
     --color-border-subtle: #E5E0CC;
 
     --color-accent: #2D6A9F;
@@ -805,13 +811,14 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0E18 0%, #142233 35%, #1E3D5C 65%, #2D6A9F 100%);
 
     --color-calendar-label-bg:   rgba(237, 232, 210, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #F2EDD8 0%, #F8F4E3 50%, #e4dcb8 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #EDE7D0 0%, #F2EDD8 50%, #D9D0A8 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #f2edd8 0%, #fdfbf2 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #f5f0e0 0%, #fdfbf2 50%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #eae4cc 0%, #faf4e2 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #f2ece0 0%, #faf4e2 50%);
 
     /* Generous, soft rounding — less visually jarring */
     --radius-sm: 8px;
+    --radius-btn: 10px;
     --radius-md: 14px;
     --radius-lg: 20px;
     --radius-xl: 28px;
@@ -831,7 +838,7 @@
     color-scheme: dark;
 
     --color-bg-page:    #1A1612;
-    --color-bg-card:    #24201A;
+    --color-bg-card:    #302820;
     --color-bg-inset:   #1E1A14;
     --color-bg-header:  #1A4D73;
     --color-bg-error:   #3A1818;
@@ -881,6 +888,6 @@
     --color-calendar-label-bg:   rgba(26, 22, 18, 0.9);
     --color-bg-page-gradient: linear-gradient(160deg, #2e2820 0%, #1A1612 40%, #161208 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #2e2820 0%, #24201a 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #2c2418 0%, #24201a 55%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #463C28 0%, #1a1612 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #3C3020 0%, #302820 55%);
 }
