@@ -51,6 +51,15 @@ export function passesDateFilter(event: Event, filter: DateFilter): boolean {
   return true;
 }
 
+/**
+ * Returns true if the event's starts_at falls within [start, end] (inclusive).
+ * Used by MapView to filter to the active day/week/month strip item.
+ */
+export function passesGranularityFilter(event: Event, start: Date, end: Date): boolean {
+  const d = new Date(event.starts_at);
+  return d >= start && d <= end;
+}
+
 export type DistanceCenter = { lat: number; lng: number };
 
 function haversineDistanceMiles(lat1: number, lng1: number, lat2: number, lng2: number): number {
