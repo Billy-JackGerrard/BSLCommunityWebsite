@@ -18,6 +18,7 @@ import "./MapView.css";
 const EDINBURGH_CENTER: L.LatLngTuple = [55.9533, -3.1883];
 const DEFAULT_ZOOM = 13;
 const CIRCLE_COLOR = "#8b5cf6";
+const STRIP_OFFSETS = [-3, -2, -1, 0, 1, 2, 3] as const;
 
 type Props = {
   onViewEvent: (event: Event) => void;
@@ -327,10 +328,12 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
   // Granularity-aware navigation
   const goToPrev = useCallback(() => {
     if (granularity === "month") {
-      setViewMonth(m => {
-        if (m === 0) { setViewYear(y => y - 1); return 11; }
-        return m - 1;
-      });
+      if (viewMonth === 0) {
+        setViewYear(y => y - 1);
+        setViewMonth(11);
+      } else {
+        setViewMonth(m => m - 1);
+      }
     } else if (granularity === "week") {
       setViewDate(d => {
         const prev = new Date(d);
@@ -348,14 +351,16 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
         return prev;
       });
     }
-  }, [granularity]);
+  }, [granularity, viewMonth]);
 
   const goToNext = useCallback(() => {
     if (granularity === "month") {
-      setViewMonth(m => {
-        if (m === 11) { setViewYear(y => y + 1); return 0; }
-        return m + 1;
-      });
+      if (viewMonth === 11) {
+        setViewYear(y => y + 1);
+        setViewMonth(0);
+      } else {
+        setViewMonth(m => m + 1);
+      }
     } else if (granularity === "week") {
       setViewDate(d => {
         const next = new Date(d);
@@ -373,7 +378,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
         return next;
       });
     }
-  }, [granularity]);
+  }, [granularity, viewMonth]);
 
   const handleStripTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
@@ -428,8 +433,6 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
       setViewDate(d);
     }
   }, [granularity]);
-
-  const STRIP_OFFSETS = [-3, -2, -1, 0, 1, 2, 3] as const;
 
   const stripItems = useMemo(() => {
     return STRIP_OFFSETS.map(offset => {
@@ -573,7 +576,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           )}
 
           {!loading && filteredEvents.length === 0 && !error && (
-            <div className="map-empty">No in-person events this month</div>
+            <div className="map-empty">No in-person events {granularity === "day" ? "today" : granularity === "week" ? "this week" : "this month"}</div>
           )}
 
           {onlineCount > 0 && !loading && (
