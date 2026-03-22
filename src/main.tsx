@@ -143,6 +143,7 @@ function App() {
         if (event) {
           setViewingEvent(event);
           setView("event");
+          scrollToTopInstant();
         }
       });
       return;
@@ -151,10 +152,14 @@ function App() {
     if (path === "/about") {
       window.history.replaceState({}, "", "/home");
       setView("home");
+      scrollToTopInstant();
       return;
     }
     const pageView = PATH_TO_VIEW[path];
-    if (pageView) setView(pageView);
+    if (pageView) {
+      setView(pageView);
+      scrollToTopInstant();
+    }
   }, []);
 
   const handleViewEvent = useCallback((event: Event) => {
@@ -175,12 +180,14 @@ function App() {
           if (event) {
             setViewingEvent(event);
             setView("event");
+            scrollToTopInstant();
           }
         });
       } else {
         setViewingEvent(null);
         const pageView = PATH_TO_VIEW[path];
         setView(pageView ?? postEventReturn);
+        scrollToTopInstant();
       }
     };
     window.addEventListener("popstate", handler);
