@@ -139,7 +139,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     };
 
     const fetchEvents = async () => {
-      let months: Array<{ year: number; month: number }> = [{ year: viewYear, month: viewMonth }];
+      const months: Array<{ year: number; month: number }> = [{ year: viewYear, month: viewMonth }];
       if (granularity === "week") {
         const weekEnd = getWeekEnd(viewDate);
         if (weekEnd.getMonth() !== viewDate.getMonth() || weekEnd.getFullYear() !== viewDate.getFullYear()) {
@@ -503,7 +503,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} onSearch={onToggleSearch} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} onHome={goToHome} onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
         <div
