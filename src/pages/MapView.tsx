@@ -102,10 +102,12 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     else setSearchQuery("");
   }, [searchOpen]);
 
+  const onToggleSearchFn = onToggleSearch ?? (() => {});
+
   // Close search on outside click
   const closeSearch = useCallback(() => {
-    if (searchOpen) { onToggleSearch?.(); setSearchQuery(""); }
-  }, [searchOpen, onToggleSearch]);
+    if (searchOpen) { onToggleSearchFn(); setSearchQuery(""); }
+  }, [searchOpen, onToggleSearchFn]);
   useClickOutside(searchWrapRef, closeSearch, searchOpen);
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
@@ -503,7 +505,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} onHome={goToHome} onSearch={onToggleSearch} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} onHome={goToHome} onSearch={onToggleSearch ?? (() => {})} />
 
       <div className="map-toolbar">
         <div
@@ -537,7 +539,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           onNavigate={v => onNavigate?.(v)}
           onHome={goToHome}
           onToday={goToToday}
-          onSearch={onToggleSearch}
+          onSearch={onToggleSearch ?? (() => {})}
         />
       </div>
 
@@ -546,7 +548,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           wrapperClassName="map-search-wrap"
           value={searchQuery}
           onChange={setSearchQuery}
-          onClose={() => onToggleSearch?.()}
+          onClose={() => onToggleSearchFn()}
           inputRef={searchInputRef}
           wrapRef={searchWrapRef}
         />

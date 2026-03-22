@@ -104,10 +104,12 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
     else setSearchQuery("");
   }, [searchOpen]);
 
+  const onToggleSearchFn = onToggleSearch ?? (() => {});
+
   // Close search on outside click
   const closeSearch = useCallback(() => {
-    if (searchOpen) { onToggleSearch?.(); setSearchQuery(""); }
-  }, [searchOpen, onToggleSearch]);
+    if (searchOpen) { onToggleSearchFn(); setSearchQuery(""); }
+  }, [searchOpen, onToggleSearchFn]);
   useClickOutside(searchWrapRef, closeSearch, searchOpen);
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
@@ -135,20 +137,20 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
         activeView="list"
         onNavigate={v => onNavigate?.(v)}
         onToday={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        onSearch={onToggleSearch}
+        onSearch={onToggleSearch ?? (() => {})}
         className="event-list-view-switcher"
       />
 
       {/* Search bar — shown at top when open */}
       {searchOpen && (
         <SearchBar
-          wrapperClassName="event-list-search-wrap"
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onClose={() => onToggleSearch?.()}
-          inputRef={searchInputRef}
-          wrapRef={searchWrapRef}
-        />
+            wrapperClassName="event-list-search-wrap"
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onClose={() => onToggleSearchFn()}
+            inputRef={searchInputRef}
+            wrapRef={searchWrapRef}
+          />
       )}
 
       <div className="event-list-layout">
@@ -220,7 +222,7 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
             activeView="list"
             onNavigate={v => onNavigate?.(v)}
             onToday={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            onSearch={onToggleSearch}
+            onSearch={onToggleSearch ?? (() => {})}
           />
           <FilterPanel
             selectedCategories={selectedCategories}

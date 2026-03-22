@@ -1,12 +1,12 @@
 interface ViewSwitcherProps {
   activeView: "calendar" | "list" | "map";
   onNavigate: (view: "calendar" | "list" | "map") => void;
-  /** If provided, renders the Today button with this handler. Omit on views where Today has no meaning. */
-  onToday?: () => void;
+  /** Renders the Today button with this handler. */
+  onToday: () => void;
   /** If provided, renders a Home (go to location) button with this handler. */
   onHome?: () => void;
-  /** If provided, renders a Search button with this handler. */
-  onSearch?: () => void;
+  /** Renders the Search button with this handler. */
+  onSearch: () => void;
   className?: string;
 }
 
@@ -15,14 +15,13 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, onHome, 
 
   return (
     <div className={cls}>
-      {onToday && (
-        <button
-          className="calendar-view-btn calendar-view-btn--today"
-          onClick={onToday}
-        >
-          Today
-        </button>
-      )}
+      <button
+        className="calendar-view-btn calendar-view-btn--today"
+        onClick={onToday}
+        aria-label="Go to today"
+      >
+        Today
+      </button>
       {onHome && (
         <button className="calendar-view-btn calendar-view-btn--today" onClick={onHome} aria-label="Go to my location">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -31,20 +30,19 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, onHome, 
           </svg>
         </button>
       )}
-      {onSearch && (
-        <button className="calendar-view-btn calendar-view-btn--search" onClick={onSearch}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          Search
-        </button>
-      )}
+      <button className="calendar-view-btn calendar-view-btn--search" onClick={onSearch} aria-label="Search events">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Search
+      </button>
       <div className="calendar-view-switcher-spacer" />
       <button
         className={`calendar-view-btn${activeView === "calendar" ? " calendar-view-btn--active" : ""}`}
         onClick={activeView !== "calendar" ? () => onNavigate("calendar") : undefined}
         aria-current={activeView === "calendar" ? "page" : undefined}
+        aria-label="Calendar view"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -58,6 +56,7 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, onHome, 
         className={`calendar-view-btn${activeView === "list" ? " calendar-view-btn--active" : ""}`}
         onClick={activeView !== "list" ? () => onNavigate("list") : undefined}
         aria-current={activeView === "list" ? "page" : undefined}
+        aria-label="List view"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <line x1="8" y1="6" x2="21" y2="6"/>
@@ -73,6 +72,7 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, onHome, 
         className={`calendar-view-btn${activeView === "map" ? " calendar-view-btn--active" : ""}`}
         onClick={activeView !== "map" ? () => onNavigate("map") : undefined}
         aria-current={activeView === "map" ? "page" : undefined}
+        aria-label="Map view"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>

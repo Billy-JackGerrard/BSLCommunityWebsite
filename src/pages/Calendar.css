@@ -803,9 +803,7 @@
     .calendar-panel-close   { width: 36px; height: 36px; }
 }
 
-/* ── Compact view tabs on very narrow screens ── */
-@media (max-width: 380px) {
-  .calendar-view-btn-label {
-    display: none;
-  }
+/* Always hide view switcher labels to show icons only */
+.calendar-view-btn-label {
+  display: none;
 }
