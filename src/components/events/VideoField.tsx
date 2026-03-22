@@ -132,13 +132,14 @@ export default function VideoField({ videoUrl, onChange, onUploadingChange }: Pr
         >
           Paste Link
         </button>
-        <button
+        {/* TODO: Re-enable upload file button when Cloudflare worker is sorted out */}
+        {/* <button
           type="button"
           className={`event-type-btn${mode === 'file' ? ' event-type-btn--active' : ''}`}
           onClick={() => switchMode('file')}
         >
           Upload File
-        </button>
+        </button> */}
       </div>
 
       {mode === 'url' && (
