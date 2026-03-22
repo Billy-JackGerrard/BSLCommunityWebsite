@@ -42,12 +42,6 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-.navbar-brand:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 4px;
-    border-radius: var(--radius-sm);
-}
-
 .navbar-logo-icon {
     width: 26px;
     height: 26px;
@@ -108,6 +102,33 @@
 .navbar-link--active:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Consolidated focus styles for navbar buttons */
+.navbar-link:focus,
+.navbar-calendar-btn:focus,
+.navbar-hamburger:focus,
+.navbar-brand:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+.navbar-brand:focus {
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+
+.navbar-link:focus-visible,
+.navbar-calendar-btn:focus-visible,
+.navbar-hamburger:focus-visible,
+.navbar-brand:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+.navbar-brand:focus-visible {
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
 }
 
 .navbar-admin-name {
