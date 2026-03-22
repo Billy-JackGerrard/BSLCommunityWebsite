@@ -7,11 +7,10 @@
   letter-spacing: 0.01em;
 }
 
-/* ── Date + time split row ── */
+/* Date + time split row */
 .datetime-row {
-  display: flex;
+  display: inline-flex;
   gap: 0.5rem;
-  width: 100%;
 }
 
 .datetime-row .form-input[type="date"] {
@@ -209,7 +208,7 @@
 }
 
 /* Stack date + time vertically on very narrow screens */
-@media (max-width: 400px) {
+@media (max-width: 320px) {
   .datetime-row {
     flex-direction: column;
   }
