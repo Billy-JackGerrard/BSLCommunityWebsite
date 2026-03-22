@@ -503,7 +503,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onHome={goToHome} onToday={goToToday} iconToday onSearch={onToggleSearch} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} iconToday onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
         <div
@@ -581,6 +581,12 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
 
         <div className="map-area">
           <div className="map-container" ref={mapContainerRef} />
+          <button className="map-home-fab" onClick={goToHome} aria-label="Go to my location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </button>
 
           {loading && (
             <div className="map-loading">Loading events&hellip;</div>

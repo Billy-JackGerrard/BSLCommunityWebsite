@@ -217,6 +217,32 @@
   pointer-events: none;
 }
 
+/* ── Home FAB (floating action button on map) ── */
+.map-home-fab {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.map-home-fab:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
+}
+
 /* ── Mobile filter panel (bottom drawer) ── */
 .mobile-filter-bar {
   display: none;
