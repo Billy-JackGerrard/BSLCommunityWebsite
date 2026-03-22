@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import type { View } from "../utils/views";
 import type { ThemeName } from "../hooks/useTheme";
@@ -41,12 +42,13 @@ export default function Navbar({
 
   return (
     <nav className="navbar">
-      {menuOpen && (
+      {menuOpen && createPortal(
         <div
           className="navbar-overlay"
           onClick={() => setMenuOpen(false)}
           aria-hidden="true"
-        />
+        />,
+        document.body
       )}
       <motion.button
         className="navbar-brand"

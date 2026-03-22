@@ -503,7 +503,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     <div className="map-page">
 
       {/* Mobile view switcher */}
-      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} iconToday onSearch={onToggleSearch} />
+      <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onToday={goToToday} onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
         <div
@@ -537,7 +537,6 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           onNavigate={v => onNavigate?.(v)}
           onHome={goToHome}
           onToday={goToToday}
-          iconToday
           onSearch={onToggleSearch}
         />
       </div>

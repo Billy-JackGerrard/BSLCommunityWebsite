@@ -3,8 +3,6 @@ interface ViewSwitcherProps {
   onNavigate: (view: "calendar" | "list" | "map") => void;
   /** If provided, renders the Today button with this handler. Omit on views where Today has no meaning. */
   onToday?: () => void;
-  /** If true, Today renders as an icon instead of text (for space-constrained layouts like MapView). */
-  iconToday?: boolean;
   /** If provided, renders a Home (go to location) button with this handler. */
   onHome?: () => void;
   /** If provided, renders a Search button with this handler. */
@@ -12,29 +10,17 @@ interface ViewSwitcherProps {
   className?: string;
 }
 
-export default function ViewSwitcher({ activeView, onNavigate, onToday, iconToday, onHome, onSearch, className }: ViewSwitcherProps) {
+export default function ViewSwitcher({ activeView, onNavigate, onToday, onHome, onSearch, className }: ViewSwitcherProps) {
   const cls = ["calendar-view-switcher", className].filter(Boolean).join(" ");
 
   return (
     <div className={cls}>
       {onToday && (
         <button
-          className={`calendar-view-btn calendar-view-btn--today${iconToday ? " calendar-view-btn--icon" : ""}`}
+          className="calendar-view-btn calendar-view-btn--today"
           onClick={onToday}
-          aria-label={iconToday ? "Go to today" : undefined}
         >
-          {iconToday ? (
-            /* Calendar-with-dot icon */
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="3" y="4" width="18" height="18" rx="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-              <circle cx="12" cy="16" r="1.5" fill="currentColor" stroke="none"/>
-            </svg>
-          ) : (
-            "Today"
-          )}
+          Today
         </button>
       )}
       {onHome && (
@@ -66,7 +52,7 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, iconToda
           <line x1="8" y1="2" x2="8" y2="6"/>
           <line x1="3" y1="10" x2="21" y2="10"/>
         </svg>
-        Calendar
+        <span className="calendar-view-btn-label">Calendar</span>
       </button>
       <button
         className={`calendar-view-btn${activeView === "list" ? " calendar-view-btn--active" : ""}`}
@@ -81,7 +67,7 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, iconToda
           <line x1="3" y1="12" x2="3.01" y2="12"/>
           <line x1="3" y1="18" x2="3.01" y2="18"/>
         </svg>
-        List
+        <span className="calendar-view-btn-label">List</span>
       </button>
       <button
         className={`calendar-view-btn${activeView === "map" ? " calendar-view-btn--active" : ""}`}
@@ -93,7 +79,7 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, iconToda
           <line x1="8" y1="2" x2="8" y2="18"/>
           <line x1="16" y1="6" x2="16" y2="22"/>
         </svg>
-        Map
+        <span className="calendar-view-btn-label">Map</span>
       </button>
     </div>
   );

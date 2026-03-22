@@ -274,10 +274,11 @@
 }
 
 /* ── Click-outside overlay (mobile menu backdrop) ── */
+/* Rendered via portal at document.body to escape navbar's backdrop-filter stacking context */
 .navbar-overlay {
     position: fixed;
     inset: 0;
-    z-index: calc(var(--z-mobile-menu) - 1);
+    z-index: calc(var(--z-navbar) - 1);
 }
 
 /* ── Mobile menu ── */

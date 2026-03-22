@@ -310,12 +310,6 @@
     color: var(--color-accent);
 }
 
-.calendar-view-btn--icon {
-    padding: 0 0.5rem;
-    min-width: 32px;
-    justify-content: center;
-}
-
 .calendar-view-btn {
     display: inline-flex;
     align-items: center;
@@ -807,4 +801,11 @@
     .calendar-panel-filters { padding: 0.5rem 0.75rem; gap: 0.5rem; }
     .calendar-panel-add-btn { height: 36px; }
     .calendar-panel-close   { width: 36px; height: 36px; }
+}
+
+/* ── Compact view tabs on very narrow screens ── */
+@media (max-width: 380px) {
+  .calendar-view-btn-label {
+    display: none;
+  }
 }
