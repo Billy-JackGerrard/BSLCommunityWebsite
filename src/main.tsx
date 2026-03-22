@@ -218,6 +218,7 @@ function App() {
     const targetPath = PAGE_PATHS[v] ?? "/";
     if (window.location.pathname !== targetPath) window.history.pushState({}, "", targetPath);
 
+    scrollToTopInstant();
     setView(v);
   };
 
