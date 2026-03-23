@@ -11,13 +11,13 @@
       (function(){
         var t=localStorage.getItem('bsl-theme');
         var m=localStorage.getItem('bsl-color-mode');
-        if(t&&t!=='azure')document.documentElement.setAttribute('data-theme',t);
+        if(t&&t!=='deafaction')document.documentElement.setAttribute('data-theme',t);
         var dark=m==='dark'||(m!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);
         if(dark)document.documentElement.setAttribute('data-dark','');
         // Compute theme-color from CSS variables
         var temp = document.createElement('div');
         temp.style.display = 'none';
-        if(t&&t!=='azure') temp.setAttribute('data-theme', t);
+        if(t&&t!=='deafaction') temp.setAttribute('data-theme', t);
         if(dark) temp.setAttribute('data-dark', '');
         document.documentElement.appendChild(temp);
         var style = getComputedStyle(temp);

@@ -1,15 +1,15 @@
 /* ==========================================================
    COLOUR THEMES
    Each theme defines light + dark variants via CSS custom
-   properties.  "azure" uses bare :root / :root[data-dark]
-   selectors because useTheme removes data-theme when azure
+   properties.  "deafaction" uses bare :root / :root[data-dark]
+   selectors because useTheme removes data-theme when deafaction
    is active — all other themes use [data-theme="name"].
    ========================================================== */
 
 /* =====================================================
-   AZURE LIGHT (default) — no data-theme attribute set
+   AZURE LIGHT
    ===================================================== */
-:root {
+:root[data-theme="azure"] {
   /* Page / surface backgrounds */
   --color-bg-page:    #f1f5f9;   /* cool slate-white — outer page */
   --color-bg-card:    #ffffff;   /* white — cards, panels */
@@ -94,7 +94,7 @@
 /* =====================================================
    AZURE DARK — activated via data-dark attribute on <html>
    ===================================================== */
-:root[data-dark] {
+:root[data-theme="azure"][data-dark] {
     color-scheme: dark;
     --color-bg-page:    #0f172a;   /* deep slate — outer page */
     --color-bg-card:    #1e293b;   /* dark slate — cards, panels */
@@ -147,7 +147,7 @@
 }
 
 /* ── Azure dark badge overrides ── */
-[data-dark] {
+:root[data-theme="azure"][data-dark] {
   --badge-enquiry-bg:        rgba(129, 140, 248, 0.15);
   --badge-enquiry-color:     #818cf8;
   --badge-enquiry-border:    rgba(129, 140, 248, 0.3);
@@ -893,4 +893,134 @@
 
     --color-bg-panel-gradient: linear-gradient(180deg, #463C28 0%, #1a1612 100%);
     --color-bg-card-gradient:  linear-gradient(160deg, #3C3020 0%, #302820 55%);
+}
+
+/* =====================================================
+   DEACTION LIGHT (default) — no data-theme attribute set
+   ===================================================== */
+:root {
+    --color-bg-page:    #E7F8FC;
+    --color-bg-card:    #E3F6FB;
+    --color-bg-inset:   #D8F0F6;
+    --color-bg-header:  #7F4277;
+    --color-bg-error:   #fef2f2;
+
+    --color-border:        #9FD4DE;
+    --color-border-subtle: #BFE6EE;
+
+    --color-accent: #7F4277;
+
+    --color-text-primary: #2F2230;
+    --color-text-dark:    #FFFFFF;
+    --color-text-muted:   #685C69;
+    --color-text-error:   #B83232;
+    --color-text-link:    #7F4277;
+
+    --color-bg-accent-tint:        rgba(82, 191, 210, 0.12);
+    --color-border-accent:         rgba(82, 191, 210, 0.28);
+    --color-border-accent-strong:  rgba(82, 191, 210, 0.42);
+    --color-bg-today:              rgba(82, 191, 210, 0.18);
+    --color-bg-surface-raised:     rgba(127, 66, 119, 0.08);
+
+    --color-text-success: #2C6B54;
+    --color-border-error: rgba(184, 50, 50, 0.28);
+    --color-bg-badge: #FFB71D;
+
+    --color-accent-gradient: linear-gradient(135deg, #693562 0%, #7F4277 100%);
+
+    --color-shadow-accent: 127, 66, 119;
+
+    --color-navbar-glass:        linear-gradient(90deg, rgba(40, 20, 40, 0.98) 0%, rgba(80, 35, 80, 0.93) 50%, rgba(127, 66, 119, 0.87) 100%);
+    --color-navbar-glass-mobile: rgba(70, 30, 70, 0.97);
+    --color-navbar-browse-bg:    linear-gradient(135deg, rgba(82, 191, 210, 0.26) 0%, rgba(255, 183, 29, 0.18) 100%);
+    --color-navbar-browse-border:rgba(255, 183, 29, 0.45);
+
+    --color-hero-gradient:       linear-gradient(135deg, #2A1A2A 0%, #4A2A4A 25%, #6B3D6B 50%, #7F4277 75%, #8B4A8B 100%);
+    --color-hero-orb-1:          #52BFD2;
+    --color-hero-orb-2:          #7F4277;
+    --color-hero-orb-3:          #FFB71D;
+    --color-hero-shimmer:        #D4BFD4;
+    --color-cta-text:            #7F4277;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #2A1A2A 0%, #4A2A4A 40%, #6B3D6B 70%, #7F4277 100%);
+
+    --color-calendar-label-bg:   rgba(232, 248, 252, 0.94);
+    --color-bg-page-gradient: linear-gradient(160deg, #DFF6FB 0%, #E8F8FC 36%, #FFF0C7 100%);
+
+    --color-bg-panel-gradient: linear-gradient(180deg, #ECFAFD 0%, #DDF4F9 82%, #FFF2D3 100%);
+    --color-bg-card-gradient:  linear-gradient(145deg, rgba(255, 183, 29, 0.12) 0%, #E9F8FB 14%, #DDF3F8 100%);
+
+    /* Rounded corners */
+    --radius-sm: 8px;
+    --radius-btn: 10px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+
+    /* Warm shadows */
+    --shadow-xs: 0 1px 2px rgba(80, 40, 0, 0.05);
+    --shadow-sm: 0 1px 4px rgba(80, 40, 0, 0.07), 0 2px 8px rgba(80, 40, 0, 0.06);
+    --shadow-md: 0 1px 3px rgba(80, 40, 0, 0.07), 0 4px 16px rgba(80, 40, 0, 0.09);
+    --shadow-lg: 0 4px 12px rgba(80, 40, 0, 0.09), 0 12px 32px rgba(80, 40, 0, 0.11);
+    --shadow-xl: 0 8px 24px rgba(80, 40, 0, 0.12), 0 24px 48px rgba(80, 40, 0, 0.15);
+}
+
+/* =====================================================
+   DEACTION DARK — activated via data-dark attribute on <html>
+   ===================================================== */
+:root[data-dark] {
+    color-scheme: dark;
+
+    --color-bg-page:    #1A0F1A;
+    --color-bg-card:    #2A1A2A;
+    --color-bg-inset:   #1F141F;
+    --color-bg-header:  #5A2A5A;
+    --color-bg-error:   #450a0a;
+
+    --color-border:        #3D2A3D;
+    --color-border-subtle: #2A1A2A;
+
+    --color-accent: #52BFD2;
+
+    --color-text-primary: #E8D8E8;
+    --color-text-dark:    #ffffff;
+    --color-text-muted:   #B4A0B4;
+    --color-text-error:   #f87171;
+    --color-text-link:    #FFB71D;
+
+    --color-bg-accent-tint:        rgba(82, 191, 210, 0.12);
+    --color-border-accent:         rgba(82, 191, 210, 0.25);
+    --color-border-accent-strong:  rgba(82, 191, 210, 0.4);
+    --color-bg-today:              rgba(82, 191, 210, 0.22);
+    --color-bg-surface-raised:     rgba(120, 92, 140, 0.1);
+
+    --color-text-success: #86EFAC;
+    --color-border-error: rgba(248, 113, 113, 0.3);
+    --color-bg-badge: #7F4277;
+
+    --color-shadow: rgba(0, 0, 0, 0.6);
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.25), 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.35), 0 24px 48px rgba(0,0,0,0.45);
+
+    --color-accent-gradient: linear-gradient(135deg, #7F4277 0%, #A855A8 50%, #52BFD2 100%);
+
+    --color-shadow-accent: 168, 85, 168;
+
+    --color-navbar-glass:        linear-gradient(90deg, rgba(20, 10, 20, 0.98) 0%, rgba(40, 20, 40, 0.94) 50%, rgba(65, 30, 65, 0.90) 100%);
+    --color-navbar-glass-mobile: rgba(35, 15, 35, 0.97);
+    --color-navbar-browse-bg:    rgba(168, 85, 168, 0.18);
+    --color-navbar-browse-border:rgba(168, 85, 168, 0.32);
+
+    --color-hero-gradient:       linear-gradient(135deg, #0F060F 0%, #1A0F1A 20%, #2A1A2A 45%, #5A2A5A 70%, #2A1A2A 100%);
+    --color-hero-shimmer:        #D4BFD4;
+    --color-cta-text:            #A855A8;
+    --color-bottom-cta-gradient: linear-gradient(135deg, #0F060F 0%, #1A0F1A 25%, #2A1A2A 50%, #5A2A5A 80%, #2A1A2A 100%);
+
+    --color-calendar-label-bg:   rgba(26, 15, 26, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #2a1a2a 0%, #1A0F1A 40%, #1f141f 100%);
+
+    --color-bg-panel-gradient: linear-gradient(180deg, #2a1a2a 0%, #2a1a2a 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #2f1f2f 0%, #2a1a2a 55%);
 }

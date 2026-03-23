@@ -43,7 +43,7 @@ function groupByMonth(events: Event[]): MonthGroup[] {
 }
 
 function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: (event: Event) => void }) {
-  const { ref, isInView } = useInView({ threshold: 0.05 });
+  const { ref, isInView } = useInView({ threshold: 0.05, once: false });
   return (
     <section ref={ref as React.Ref<HTMLElement>} className={`event-list-month${isInView ? " in-view" : ""}`}>
       <h2 className="event-list-month-heading">{group.label}</h2>
@@ -51,8 +51,7 @@ function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: 
         className="event-list-items"
         variants={staggerContainer}
         initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
+        animate="show"
       >
         {group.events.map(ev => (
           <motion.div key={ev.id} className="event-list-item-wrap" variants={fadeSlideUp}>

@@ -225,10 +225,9 @@
 /* ── Month heading ── */
 .event-list-month {
   margin-bottom: 2rem;
-  opacity: 0;
-  transform: translateX(-16px);
-  transition: opacity var(--duration-slow) var(--ease-out),
-              transform var(--duration-slow) var(--ease-out);
+  opacity: 1;
+  transform: translateX(0);
+  transition: none;
 }
 
 .event-list-month.in-view {
@@ -256,6 +255,10 @@
   margin: 0 0 0.6rem 0;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--color-border-subtle);
+}
+
+:root:not([data-theme]) .event-list-month-heading {
+  border-bottom-color: rgba(255, 183, 29, 0.42);
 }
 
 /* ── Event rows ── */
@@ -287,11 +290,20 @@
   font-family: inherit;
 }
 
+:root:not([data-theme]) .event-list-item {
+  background: linear-gradient(135deg, rgba(255, 183, 29, 0.08) 0%, var(--color-bg-card) 14%, rgba(82, 191, 210, 0.12) 100%);
+}
+
 .event-list-item:hover {
   background: var(--color-bg-card);
   border-color: var(--color-border-accent);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+:root:not([data-theme]) .event-list-item:hover {
+  background: linear-gradient(135deg, rgba(255, 183, 29, 0.12) 0%, var(--color-bg-card) 18%, rgba(82, 191, 210, 0.16) 100%);
+  border-color: rgba(255, 183, 29, 0.42);
 }
 
 .event-list-dot {
