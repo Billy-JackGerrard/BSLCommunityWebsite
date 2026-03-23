@@ -18,6 +18,7 @@ type Props = {
   onEdit: (event: Event) => void;
   onDelete?: (event: Event) => void;
   onDuplicate?: (event: Event) => void;
+  onReport?: (event: Event) => void;
   actions?: React.ReactNode;
   showAddToCalendar?: boolean;
 };
@@ -46,7 +47,7 @@ function LinkButtons({ url }: { url: string }) {
   );
 }
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, onDuplicate, actions, showAddToCalendar = true }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, onDuplicate, onReport, actions, showAddToCalendar = true }: Props) {
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
@@ -99,9 +100,26 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
                 ✕ Delete
               </motion.button>
             )}
+            {onDuplicate && (
+              <motion.button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)} aria-label="Duplicate event" whileTap={scaleSpring.tap}>
+                ⧉ Duplicate
+              </motion.button>
+            )}
           </div>
         )}
       </div>
+
+      {onReport && (
+        <div className="event-detail-report-row">
+          <button
+            className="event-detail-report-btn"
+            onClick={() => onReport(event)}
+            aria-label={`Report incorrect information about ${event.title}`}
+          >
+            ⚠ Report incorrect info
+          </button>
+        </div>
+      )}
 
       <div className="event-detail-header">
         <h3 className="event-detail-title">{event.title}</h3>
@@ -266,11 +284,6 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
 
       <div className="event-detail-cal-row">
         <ShareButton eventId={event.id} />
-        {onDuplicate && (
-          <motion.button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)} whileTap={scaleSpring.tap}>
-            ⧉ Duplicate Event
-          </motion.button>
-        )}
       </div>
 
       {showAddToCalendar && (

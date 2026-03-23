@@ -346,28 +346,48 @@
     box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.25);
 }
 
-/* ── Duplicate button ── */
+/* ── Duplicate button (in admin actions row) ── */
 .event-detail-duplicate-btn {
-    width: 100%;
     background: transparent;
-    border: 1px solid var(--color-accent);
+    border: 1px solid var(--color-border-subtle);
     color: var(--color-accent);
-    font-size: 0.8rem;
-    font-family: var(--font-heading);
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-btn);
     cursor: pointer;
-    margin-top: 0.4rem;
-    transition: all 0.2s var(--ease-out);
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .event-detail-duplicate-btn:hover {
-    background: var(--color-accent);
-    color: var(--color-bg-card);
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(var(--color-shadow-accent), 0.25);
+    background: var(--color-bg-accent-tint);
+    border-color: var(--color-accent);
+}
+
+/* ── Report row ── */
+.event-detail-report-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+}
+
+.event-detail-report-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.03em;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s, color 0.15s;
+}
+
+.event-detail-report-btn:hover {
+    opacity: 1;
+    color: var(--color-text-error);
 }
 
 /* ── Add to Calendar button ── */
