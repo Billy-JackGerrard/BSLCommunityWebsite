@@ -7,12 +7,12 @@ import { isValidEmail } from "../utils/validation";
 import { scaleSpring } from "../utils/motion";
 import "./Contact.css";
 
-export default function Contact() {
-  const [type, setType] = useState<ContactType>("general");
+export default function Contact({ prefill }: { prefill?: { type: ContactType; message: string } | null }) {
+  const [type, setType] = useState<ContactType>(() => prefill?.type ?? "general");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(() => prefill?.message ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
