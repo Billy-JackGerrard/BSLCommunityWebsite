@@ -9,9 +9,10 @@ type Props = {
   onEdit: (event: Event) => void;
   onDelete?: (event: Event) => void;
   onDuplicate?: (event: Event) => void;
+  onReport?: (event: Event) => void;
 };
 
-export default function EventPage({ event, isLoggedIn, onBack, onEdit, onDelete, onDuplicate }: Props) {
+export default function EventPage({ event, isLoggedIn, onBack, onEdit, onDelete, onDuplicate, onReport }: Props) {
   return (
     <div className="eventpage-page">
       <div className="eventpage-card">
@@ -22,6 +23,7 @@ export default function EventPage({ event, isLoggedIn, onBack, onEdit, onDelete,
           onEdit={onEdit}
           onDelete={onDelete}
           onDuplicate={onDuplicate}
+          onReport={onReport}
         />
       </div>
     </div>
