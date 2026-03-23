@@ -390,6 +390,10 @@ button:focus-visible {
   --badge-suggestion-bg:     rgba(80, 180, 120, 0.1);
   --badge-suggestion-color:  var(--color-text-success);
   --badge-suggestion-border: rgba(80, 180, 120, 0.25);
+
+  --badge-misinformation-bg:     rgba(234, 179, 8, 0.1);
+  --badge-misinformation-color:  #b45309;
+  --badge-misinformation-border: rgba(234, 179, 8, 0.3);
 }
 
 

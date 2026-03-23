@@ -157,6 +157,9 @@
 
   --badge-suggestion-bg:     rgba(110, 212, 160, 0.15);
   --badge-suggestion-border: rgba(110, 212, 160, 0.3);
+
+  --badge-misinformation-bg:     rgba(251, 191, 36, 0.15);
+  --badge-misinformation-border: rgba(251, 191, 36, 0.3);
 }
 
 /* =====================================================
