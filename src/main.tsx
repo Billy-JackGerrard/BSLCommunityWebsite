@@ -29,7 +29,7 @@ import PrivacyBanner from "./components/PrivacyBanner.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
 import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
-import type { Event } from "./utils/types.ts";
+import type { Event, ContactType } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
 /** Page titles for each view. */
@@ -124,6 +124,9 @@ function App() {
   const addEventDate     = addEventCtx?.kind === "date"      ? addEventCtx.date  : undefined;
   const duplicatingEvent = addEventCtx?.kind === "duplicate" ? addEventCtx.event : null;
 
+  // ── Contact prefill ────────────────────────────────────────────────────
+  const [contactPrefill, setContactPrefill] = useState<{ type: ContactType; message: string } | null>(null);
+
   // ── Search state ───────────────────────────────────────────────────────
   const [searchOpen, setSearchOpen] = useState(false);
   const [listSearchOpen, setListSearchOpen] = useState(false);
@@ -210,6 +213,10 @@ function App() {
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
 
+  useEffect(() => {
+    if (view !== "contact") setContactPrefill(null);
+  }, [view]);
+
   // ── Navigation handlers ────────────────────────────────────────────────
   const handleLogin = () => {
     window.history.replaceState({}, "", "/");
@@ -277,6 +284,14 @@ function App() {
     setView("add-event");
   };
 
+  const handleReportEvent = (event: Event) => {
+    setContactPrefill({
+      type: "misinformation",
+      message: `I'd like to report incorrect information about this event:\n${window.location.origin}/event/${event.id}`,
+    });
+    handleNavigate("contact");
+  };
+
   const handleAppLogout = async () => {
     await handleLogout();
     window.history.replaceState({}, "", "/");
@@ -339,6 +354,7 @@ function App() {
             onEdit={ev => handleEditEvent(ev, "event")}
             onDelete={isLoggedIn ? ev => handleDeleteEvent(ev, "event") : undefined}
             onDuplicate={handleDuplicateEvent}
+            onReport={handleReportEvent}
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
@@ -365,7 +381,7 @@ function App() {
           />
         )}
         {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}
-        {view === "contact" && <Contact />}
+        {view === "contact" && <Contact prefill={contactPrefill} />}
 
         {view === "home" && (
           <Home
