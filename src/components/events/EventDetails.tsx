@@ -90,23 +90,25 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
     <motion.div className="event-detail-card" variants={fadeSlideUp} initial="hidden" animate="show" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}>
       <div className="event-detail-close-row">
         <motion.button className="event-detail-close" onClick={onClose} aria-label="Back" whileTap={scaleSpring.tap}><span className="event-detail-close-arrow">←</span> Back</motion.button>
-        {isLoggedIn && (
-          <div className="event-detail-admin-actions">
-            <motion.button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event" whileTap={scaleSpring.tap}>
-              ✎ Edit
+        <div className="event-detail-header-actions">
+          {onDuplicate && (
+            <motion.button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)} aria-label="Duplicate event" whileTap={scaleSpring.tap}>
+              ⧉ Duplicate
             </motion.button>
-            {onDelete && (
-              <motion.button className="event-detail-delete-btn" onClick={() => onDelete(event)} aria-label="Delete event" whileTap={scaleSpring.tap}>
-                ✕ Delete
+          )}
+          {isLoggedIn && (
+            <div className="event-detail-admin-actions">
+              <motion.button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event" whileTap={scaleSpring.tap}>
+                ✎ Edit
               </motion.button>
-            )}
-            {onDuplicate && (
-              <motion.button className="event-detail-duplicate-btn" onClick={() => onDuplicate(event)} aria-label="Duplicate event" whileTap={scaleSpring.tap}>
-                ⧉ Duplicate
-              </motion.button>
-            )}
-          </div>
-        )}
+              {onDelete && (
+                <motion.button className="event-detail-delete-btn" onClick={() => onDelete(event)} aria-label="Delete event" whileTap={scaleSpring.tap}>
+                  ✕ Delete
+                </motion.button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {onReport && (
