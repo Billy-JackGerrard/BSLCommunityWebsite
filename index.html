@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Theme: apply saved theme/mode before first paint to prevent flash -->
+    <link rel="stylesheet" href="/src/themes.css" />
     <meta name="theme-color" content="#1d4ed8" />
     <script>
       (function(){
         var t=localStorage.getItem('bsl-theme');
         var m=localStorage.getItem('bsl-color-mode');
-        if(t&&t!=='classic')document.documentElement.setAttribute('data-theme',t);
+        if(t&&t!=='azure')document.documentElement.setAttribute('data-theme',t);
         var dark=m==='dark'||(m!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);
         if(dark)document.documentElement.setAttribute('data-dark','');
-        // Update theme-color meta to match theme
-        var colors={classic:['#1d4ed8','#1e3a8a'],ocean:['#38D9D9','#1A8A8A'],ember:['#E85D04','#9A3412']};
-        var c=colors[t]||colors.classic;
-        document.querySelector('meta[name="theme-color"]').setAttribute('content',c[dark?1:0]);
+        // Compute theme-color from CSS variables
+        var temp = document.createElement('div');
+        temp.style.display = 'none';
+        if(t&&t!=='azure') temp.setAttribute('data-theme', t);
+        if(dark) temp.setAttribute('data-dark', '');
+        document.documentElement.appendChild(temp);
+        var style = getComputedStyle(temp);
+        var color = style.getPropertyValue('--color-bg-header').trim();
+        document.documentElement.removeChild(temp);
+        if(color) document.querySelector('meta[name="theme-color"]').setAttribute('content', color);
       })();
     </script>
 
