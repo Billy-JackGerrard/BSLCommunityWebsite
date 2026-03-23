@@ -94,7 +94,7 @@ export const CATEGORIES = [
 
 export type Category = typeof CATEGORIES[number];
 
-export type ContactType = "general" | "enquiry" | "bug" | "suggestion";
+export type ContactType = "general" | "enquiry" | "bug" | "suggestion" | "misinformation";
 
 /** Shape of rows in the contact_messages table. */
 export type ContactMessage = {
