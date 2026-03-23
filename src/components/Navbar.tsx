@@ -67,7 +67,7 @@ export default function Navbar({
           whileTap={bslWave.hover}
         />
         <span className="navbar-brand-text">
-          Edinburgh BSL <span className="navbar-brand-sub">Community</span>
+          BSL <span className="navbar-brand-sub">Calendar</span>
         </span>
       </motion.button>
 
