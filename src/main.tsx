@@ -34,17 +34,17 @@ import type { View } from "./utils/views.ts";
 
 /** Page titles for each view. */
 const VIEW_TITLES: Partial<Record<View, string>> = {
-  calendar:         "Calendar | BSL Edinburgh",
-  list:             "Events | BSL Edinburgh",
-  map:              "Map | BSL Edinburgh",
-  home:             "Home | BSL Edinburgh",
-  contact:          "Contact | BSL Edinburgh",
-  privacy:          "Privacy Policy | BSL Edinburgh",
-  login:            "Login | BSL Edinburgh",
-  account:          "Account | BSL Edinburgh",
-  "admin-queue":    "Event Queue | BSL Edinburgh",
-  "admin-messages": "Messages | BSL Edinburgh",
-  "admin-home":     "Edit Home | BSL Edinburgh",
+  calendar:         "Calendar | BSL Calendar",
+  list:             "Events | BSL Calendar",
+  map:              "Map | BSL Calendar",
+  home:             "Home | BSL Calendar",
+  contact:          "Contact | BSL Calendar",
+  privacy:          "Privacy Policy | BSL Calendar",
+  login:            "Login | BSL Calendar",
+  account:          "Account | BSL Calendar",
+  "admin-queue":    "Event Queue | BSL Calendar",
+  "admin-messages": "Messages | BSL Calendar",
+  "admin-home":     "Edit Home | BSL Calendar",
 };
 
 /** Every navigable view gets its own shareable URL path. */
@@ -101,9 +101,9 @@ function App() {
 
   useEffect(() => {
     if (view === "event" && viewingEvent) {
-      document.title = `${viewingEvent.title} | BSL Edinburgh`;
+      document.title = `${viewingEvent.title} | BSL Calendar`;
     } else {
-      document.title = VIEW_TITLES[view] ?? "BSL Edinburgh";
+      document.title = VIEW_TITLES[view] ?? "BSL Calendar";
     }
   }, [view, viewingEvent]);
 
