@@ -10,8 +10,12 @@
    AZURE LIGHT
    ===================================================== */
 :root[data-theme="azure"] {
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
   /* Page / surface backgrounds */
-  --color-bg-page:    #f1f5f9;   /* cool slate-white — outer page */
+  --color-bg-page:    #f1f5f9;   /* cool slate-white - outer page */
   --color-bg-card:    #ffffff;   /* white — cards, panels */
   --color-bg-inset:   #e2e8f0;   /* light slate — inputs, inset panels */
   --color-bg-header:  #1d4ed8;   /* deep blue — navbar */
@@ -166,6 +170,10 @@
    OCEAN LIGHT — cyan/turquoise + purple theme
    ===================================================== */
 :root[data-theme="ocean"] {
+    --font-display: 'Manrope', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Manrope', 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #E0F7F7;
     --color-bg-card:    #ffffff;
     --color-bg-inset:   #CCF0F0;
@@ -279,6 +287,10 @@
    EMBER LIGHT — warm orange/amber with sharp editorial feel
    ===================================================== */
 :root[data-theme="ember"] {
+    --font-display: 'Source Sans 3', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Source Sans 3', 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #FEF7F0;
     --color-bg-card:    #ffffff;
     --color-bg-inset:   #FFF0E1;
@@ -400,6 +412,10 @@
    AMETHYST LIGHT — deep purple / violet
    ===================================================== */
 :root[data-theme="amethyst"] {
+    --font-display: 'Sora', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Sora', 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #F3EEFB;
     --color-bg-card:    #ffffff;
     --color-bg-inset:   #E8DEFA;
@@ -521,6 +537,10 @@
    FOREST LIGHT — emerald / green with earthy warmth
    ===================================================== */
 :root[data-theme="forest"] {
+    --font-display: 'Alegreya Sans', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Alegreya Sans', 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #ECFDF5;
     --color-bg-card:    #ffffff;
     --color-bg-inset:   #D1FAE5;
@@ -643,6 +663,10 @@
    ROSE LIGHT — pink / rose gold with warm elegance
    ===================================================== */
 :root[data-theme="rose"] {
+    --font-display: 'Red Hat Display', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Red Hat Display', 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #FFF1F2;
     --color-bg-card:    #ffffff;
     --color-bg-inset:   #FFE4E6;
@@ -769,6 +793,10 @@
    - Contrast ratio ~10:1 (WCAG AAA, not extreme 21:1)
    ===================================================== */
 :root[data-theme="parchment"] {
+    --font-display: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+    --font-heading: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #F8F4E3;
     --color-bg-card:    #FAF4E2;
     --color-bg-inset:   #EDE8D2;
@@ -899,6 +927,10 @@
    DEACTION LIGHT (default) — no data-theme attribute set
    ===================================================== */
 :root {
+    --font-display: 'Archivo', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Archivo', 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+
     --color-bg-page:    #E7F8FC;
     --color-bg-card:    #E3F6FB;
     --color-bg-inset:   #D8F0F6;
