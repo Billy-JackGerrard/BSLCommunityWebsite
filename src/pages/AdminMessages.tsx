@@ -30,6 +30,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [editTitle, setEditTitle] = useState("");
+  const [editType, setEditType] = useState<ContactType>("general");
   const [savingId, setSavingId] = useState<string | null>(null);
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -110,6 +111,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
     setEditingId(msg.id);
     setEditText(msg.message);
     setEditTitle(msg.title || "");
+    setEditType(msg.type);
     setConfirmDelete(null);
     setReplyingToId(null);
   };
@@ -121,7 +123,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
 
     const { error: dbError } = await supabase
       .from("contact_messages")
-      .update({ message: editText.trim(), title: editTitle.trim() || null })
+      .update({ message: editText.trim(), title: editTitle.trim() || null, type: editType })
       .eq("id", id);
 
     setSavingId(null);
@@ -131,7 +133,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
       return;
     }
 
-    setMessages(prev => prev.map(m => m.id === id ? { ...m, message: editText.trim(), title: editTitle.trim() || null } : m));
+    setMessages(prev => prev.map(m => m.id === id ? { ...m, message: editText.trim(), title: editTitle.trim() || null, type: editType } : m));
     setEditingId(null);
     setEditText("");
     setEditTitle("");
@@ -184,14 +186,28 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
       {editingId === msg.id ? (
         <div className="msgs-edit">
           {!isReply && (
-            <input
-              className="form-input"
-              type="text"
-              placeholder="Title"
-              value={editTitle}
-              onChange={e => setEditTitle(e.target.value)}
-              autoFocus
-            />
+            <>
+              <div className="contact-type-tabs">
+                {CONTACT_TYPES.map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`contact-type-tab ${editType === t ? "contact-type-tab--active" : ""}`}
+                    onClick={() => setEditType(t)}
+                  >
+                    {CONTACT_TYPE_LABELS[t]}
+                  </button>
+                ))}
+              </div>
+              <input
+                className="form-input"
+                type="text"
+                placeholder="Title"
+                value={editTitle}
+                onChange={e => setEditTitle(e.target.value)}
+                autoFocus
+              />
+            </>
           )}
           <textarea
             className="form-input msgs-compose-textarea"
@@ -214,7 +230,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
             </button>
             <button
               className="msgs-action-btn"
-              onClick={() => { setEditingId(null); setEditText(""); }}
+              onClick={() => { setEditingId(null); setEditText(""); setEditTitle(""); setEditType("general"); }}
               disabled={savingId === msg.id}
             >
               Cancel
