@@ -442,7 +442,7 @@
   font-size: 0.75rem;
   letter-spacing: var(--ls-widest);
   text-transform: uppercase;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-weight: 700;
   margin-bottom: 0.5rem;
   padding: 0.3rem 0.8rem;
@@ -596,7 +596,7 @@
   font-size: 0.75rem;
   letter-spacing: var(--ls-widest);
   text-transform: uppercase;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-weight: 700;
   margin-bottom: 0.5rem;
   padding: 0.3rem 0.8rem;

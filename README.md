@@ -27,6 +27,11 @@ maybe have this a kind of special event / non real event as it doesnt require a 
 
 when you filter you can filter by event by range, region, etc
 
+add regional control? ofc everything edin now, but in the future?
+
+forum?
+
+
 
 need better filtering/search options
 
