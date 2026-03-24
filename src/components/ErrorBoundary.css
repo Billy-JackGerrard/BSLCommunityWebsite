@@ -9,7 +9,7 @@
   gap: 1.25rem;
   background: var(--color-bg-page);
   color: var(--color-text-primary);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-display);
 }
 
 .error-boundary-body {
