@@ -6,6 +6,7 @@ import type { ThemeName } from "../hooks/useTheme";
 import type { ColorMode } from "../hooks/useTheme";
 import ThemePicker from "./ThemePicker";
 import { bslWave } from "../utils/motion";
+import { LOGO_URL, LOGO_ALT } from "../utils/logo";
 import "./Navbar.css";
 
 type Props = {
@@ -58,8 +59,8 @@ export default function Navbar({
       >
         <motion.img
           className="navbar-logo-icon"
-          src="https://img.icons8.com/emoji/48/love-you-gesture-emoji.png"
-          alt="love-you-gesture-emoji"
+          src={LOGO_URL}
+          alt={LOGO_ALT}
           width="32"
           height="32"
           animate={bslWave.animate}

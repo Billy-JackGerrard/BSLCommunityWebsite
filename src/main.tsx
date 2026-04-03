@@ -1,5 +1,13 @@
 import './style.css'
 import './themes.css'
+import { LOGO_URL } from './utils/logo';
+
+// Favicon — change the logo in src/utils/logo.ts to update everywhere
+(function () {
+  const link = document.createElement('link');
+  link.rel = 'icon'; link.type = 'image/png'; link.href = LOGO_URL;
+  document.head.appendChild(link);
+})();
 
 import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
