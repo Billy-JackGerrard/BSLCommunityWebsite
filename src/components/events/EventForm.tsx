@@ -30,6 +30,7 @@ export type EventFormRow = {
   contact_name: string | null;
   contact_email: string | null;
   url: string | null;
+  social_urls: string[];
   price: string | null;
   booking_info: string | null;
   accessibility: string[];
@@ -90,6 +91,7 @@ export default function EventForm({
   const [contactName, setContactName] = useState(initialValues?.contact_name ?? "");
   const [contactEmail, setContactEmail] = useState(initialValues?.contact_email ?? "");
   const [url, setUrl] = useState(initialValues?.url ?? "");
+  const [socialUrls, setSocialUrls] = useState<string[]>(initialValues?.social_urls ?? [""]);
   const [price, setPrice] = useState(initialValues?.price ?? "");
   const [bookingInfo, setBookingInfo] = useState(initialValues?.booking_info ?? "");
   const [ageRating, setAgeRating] = useState<AgeRating | null>(initialValues?.age_rating ?? null);
@@ -139,6 +141,7 @@ export default function EventForm({
       setContactName(initialValues.contact_name ?? "");
       setContactEmail(initialValues.contact_email ?? "");
       setUrl(initialValues.url ?? "");
+      setSocialUrls(initialValues.social_urls?.length ? initialValues.social_urls : [""]);
       setPrice(initialValues.price ?? "");
       setBookingInfo(initialValues.booking_info ?? "");
       setCategory(initialValues.category ?? "");
@@ -237,6 +240,11 @@ export default function EventForm({
       setInternalError("Please enter a valid URL starting with http:// or https://");
       return;
     }
+    const invalidSocial = socialUrls.find(u => u && !/^https?:\/\//.test(u));
+    if (invalidSocial) {
+      setInternalError("Please enter valid social media URLs starting with http:// or https://");
+      return;
+    }
     if (bookingInfo === "by_contacting" && !contactName) {
       setInternalError("Please enter a contact name.");
       return;
@@ -286,6 +294,7 @@ export default function EventForm({
       contact_name: contactName || null,
       contact_email: contactEmail || null,
       url: url || null,
+      social_urls: socialUrls.filter(u => u.trim()),
       price: price || null,
       booking_info: bookingInfo || null,
       accessibility: accessibilityOther.trim()
@@ -389,6 +398,38 @@ export default function EventForm({
           value={url}
           onChange={e => setUrl(e.target.value)}
         />
+      </div>
+
+      <div className="form-field">
+        <label className="form-label">Social Media Posts</label>
+        {socialUrls.map((su, i) => (
+          <div key={i} className="social-url-row">
+            <input
+              className="form-input"
+              type="url"
+              placeholder="e.g. https://www.instagram.com/p/..."
+              value={su}
+              onChange={e => {
+                const next = [...socialUrls];
+                next[i] = e.target.value;
+                setSocialUrls(next);
+              }}
+            />
+            {socialUrls.length > 1 && (
+              <button
+                type="button"
+                className="social-url-remove-btn"
+                aria-label="Remove"
+                onClick={() => setSocialUrls(socialUrls.filter((_, j) => j !== i))}
+              >✕</button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          className="social-url-add-btn"
+          onClick={() => setSocialUrls([...socialUrls, ""])}
+        >+ Add another</button>
       </div>
 
       <div className="form-field">

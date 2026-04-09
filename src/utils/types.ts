@@ -34,6 +34,7 @@ export type Event = {
   contact_name?: string;
   contact_email?: string;
   url?: string;
+  social_urls?: string[];
   video_url?: string;
   accessibility?: string[];
   age_rating?: AgeRating;

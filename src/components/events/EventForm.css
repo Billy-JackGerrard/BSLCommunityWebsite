@@ -220,3 +220,51 @@
     font-size: 16px; /* prevent iOS zoom */
   }
 }
+
+/* ── Social URL dynamic list ── */
+.social-url-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.social-url-row .form-input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.social-url-remove-btn {
+  background: transparent;
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.social-url-remove-btn:hover {
+  border-color: var(--color-text-error);
+  color: var(--color-text-error);
+}
+
+.social-url-add-btn {
+  background: transparent;
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-family: var(--font-display);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  margin-top: 0.1rem;
+}
+
+.social-url-add-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}

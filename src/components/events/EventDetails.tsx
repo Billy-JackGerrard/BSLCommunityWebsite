@@ -46,6 +46,25 @@ function ShareButton({ eventId, title }: { eventId: number; title: string }) {
   );
 }
 
+const SOCIAL_PLATFORMS: { match: RegExp; label: string }[] = [
+  { match: /instagram\.com/i,           label: "Instagram" },
+  { match: /tiktok\.com/i,              label: "TikTok" },
+  { match: /(twitter\.com|x\.com)/i,    label: "X / Twitter" },
+  { match: /(facebook\.com|fb\.com)/i,  label: "Facebook" },
+  { match: /bsky\.app/i,                label: "Bluesky" },
+  { match: /(youtube\.com|youtu\.be)/i, label: "YouTube" },
+  { match: /linkedin\.com/i,            label: "LinkedIn" },
+];
+
+function getSocialPlatform(url: string): string {
+  try {
+    const { hostname } = new URL(url);
+    return SOCIAL_PLATFORMS.find(p => p.match.test(hostname))?.label ?? "Social";
+  } catch {
+    return "Social";
+  }
+}
+
 function LinkButtons({ url }: { url: string }) {
   const { copied, copy } = useCopyToClipboard();
   return (
@@ -271,6 +290,30 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         <div className="event-detail-row">
           <span className="event-detail-icon">🔗</span>
           <LinkButtons url={normUrl} />
+        </div>
+      )}
+
+      {/* Social media post links */}
+      {event.social_urls && event.social_urls.length > 0 && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">📣</span>
+          <div className="event-detail-social-chips">
+            {event.social_urls.map((su, i) => {
+              const normSocial = su.startsWith("http") ? su : `https://${su}`;
+              const platform = getSocialPlatform(normSocial);
+              return (
+                <a
+                  key={i}
+                  className="event-detail-social-chip"
+                  href={normSocial}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {platform} ↗
+                </a>
+              );
+            })}
+          </div>
         </div>
       )}
 
