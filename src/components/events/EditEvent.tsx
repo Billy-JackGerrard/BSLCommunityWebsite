@@ -14,6 +14,8 @@ import "./EditEvent.css";
 
 type Props = {
   event: Event;
+  isAdmin?: boolean;
+  userId?: string | null;
   onSaved: (updated: Event) => void;
   onCancel: () => void;
   /** When set, skips the scope prompt and applies this scope automatically.
@@ -21,7 +23,7 @@ type Props = {
   defaultRecurringScope?: RecurringScope;
 };
 
-export default function EditEvent({ event, onSaved, onCancel, defaultRecurringScope }: Props) {
+export default function EditEvent({ event, isAdmin, userId, onSaved, onCancel, defaultRecurringScope }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,7 +87,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
     accessibility: row.accessibility,
     age_rating:    row.age_rating,
     video_url:     row.video_url,
-    admin_id:      await getAdminId(),
+    admin_id:      isAdmin ? await getAdminId() : undefined,
   });
 
   const applyFieldEdit = async (row: EventFormRow, scope: RecurringScope) => {
@@ -175,7 +177,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
     setSaving(true);
     setError(null);
 
-    const adminId = await getAdminId();
+    const adminId = isAdmin ? await getAdminId() : undefined;
 
     // Fetch old occurrences before deleting so we can rollback on insert failure.
     let oldRows: Record<string, unknown>[] = [];
@@ -235,6 +237,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       video_url:      row.video_url,
       approved:       true,
       admin_id:       adminId,
+      submitted_by:   userId ?? event.submitted_by ?? undefined,
       recurrence:     newRecurrence,
     }));
 

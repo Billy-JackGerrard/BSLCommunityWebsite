@@ -13,10 +13,11 @@ type Props = {
   prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
   prefillEvent?: Event;  // pre-populates all fields when duplicating an event
   isAdmin?: boolean;
+  userId?: string | null;
   onBrowse?: () => void;
 };
 
-export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, onBrowse }: Props) {
+export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, userId, onBrowse }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [error, setError] = useState<string | null>(null);
@@ -30,46 +31,43 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, o
     setLoading(true);
     setError(null);
 
-    // Admins bypass captcha — they're already authenticated
-    if (!isAdmin) {
-      if (!turnstileToken) {
-        setError("Please complete the captcha check.");
-        setLoading(false);
-        return;
-      }
+    if (!turnstileToken) {
+      setError("Please complete the captcha check.");
+      setLoading(false);
+      return;
+    }
 
-      let verifyRes: Response;
-      try {
-        verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
-          },
-          body: JSON.stringify({ turnstileToken }),
-        });
-      } catch {
-        setError("Network error — please check your connection and try again.");
-        resetTurnstile();
-        setLoading(false);
-        return;
-      }
+    let verifyRes: Response;
+    try {
+      verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL as string, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_KEY as string}`,
+        },
+        body: JSON.stringify({ turnstileToken }),
+      });
+    } catch {
+      setError("Network error — please check your connection and try again.");
+      resetTurnstile();
+      setLoading(false);
+      return;
+    }
 
-      if (!verifyRes.ok) {
-        setError("Captcha verification failed. Please try again.");
-        resetTurnstile();
-        setLoading(false);
-        return;
-      }
+    if (!verifyRes.ok) {
+      setError("Captcha verification failed. Please try again.");
+      resetTurnstile();
+      setLoading(false);
+      return;
+    }
 
-      const verifyData = await verifyRes.json();
+    const verifyData = await verifyRes.json();
 
-      if (!verifyData.success) {
-        setError("Captcha verification failed. Please try again.");
-        resetTurnstile();
-        setLoading(false);
-        return;
-      }
+    if (!verifyData.success) {
+      setError("Captcha verification failed. Please try again.");
+      resetTurnstile();
+      setLoading(false);
+      return;
     }
 
     // Fetch session only to get the user ID for admin_id
@@ -83,6 +81,7 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, o
       ...row,
       approved: isAdmin,
       admin_id: isAdmin ? (session?.user?.id ?? null) : null,
+      submitted_by: userId ?? session?.user?.id ?? null,
     }));
 
     const { error: insertError } = await supabase.from("events").insert(rowsWithMeta);
@@ -166,10 +165,10 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, o
           submittingLabel="Submitting…"
           externalError={error}
           submitting={loading}
-          submitDisabled={!isAdmin && !turnstileToken}
+          submitDisabled={!turnstileToken}
           onSubmit={handleSubmit}
         >
-          {!isAdmin && <div ref={turnstileRef} style={{ margin: "1rem 0" }} />}
+          <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
         </EventForm>
       </div>
     </div>

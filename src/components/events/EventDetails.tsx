@@ -14,6 +14,8 @@ import "./EventDetails.css";
 type Props = {
   event: Event;
   isLoggedIn: boolean;
+  isAdmin?: boolean;
+  userId?: string | null;
   onClose: () => void;
   onEdit: (event: Event) => void;
   onDelete?: (event: Event) => void;
@@ -79,7 +81,7 @@ function LinkButtons({ url }: { url: string }) {
   );
 }
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, onDuplicate, onReport, actions, showAddToCalendar = true }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, isAdmin, userId, onClose, onEdit, onDelete, onDuplicate, onReport, actions, showAddToCalendar = true }: Props) {
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
@@ -128,7 +130,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
               ⧉ Duplicate
             </motion.button>
           )}
-          {isLoggedIn && (
+          {isLoggedIn && (isAdmin || event.submitted_by === userId) && (
             <div className="event-detail-admin-actions">
               <motion.button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event" whileTap={scaleSpring.tap}>
                 ✎ Edit

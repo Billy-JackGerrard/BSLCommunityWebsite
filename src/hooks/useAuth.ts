@@ -3,13 +3,13 @@ import { supabase } from "../supabaseClient";
 import { deduplicateByRecurrence } from "../utils/recurrence";
 
 /**
- * Manages authentication state, admin identity, and badge counts.
- *
- * Consolidates what was previously 6 separate useState + 2 useCallback + 1 useEffect
- * in main.tsx into a single reusable hook.
+ * Manages authentication state, user identity, role, and badge counts.
  */
 export function useAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
@@ -33,25 +33,56 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
-    const applySession = (session: { user: { email?: string; user_metadata?: Record<string, unknown> } } | null) => {
-      setIsLoggedIn(!!session);
-      setUserEmail(session?.user?.email ?? null);
-      setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
-      if (session) {
+    const applySession = async (session: { user: { id: string; email?: string; user_metadata?: Record<string, unknown> } } | null) => {
+      if (!session) {
+        setIsLoggedIn(false);
+        setIsAdmin(false);
+        setUserId(null);
+        setUserEmail(null);
+        setAdminName(null);
+        setPendingCount(0);
+        setMessagesCount(0);
+        setIsAuthLoading(false);
+        return;
+      }
+
+      setIsLoggedIn(true);
+      setUserId(session.user.id);
+      setUserEmail(session.user.email ?? null);
+      setAdminName((session.user.user_metadata?.display_name as string) ?? null);
+
+      // Fetch role from profiles table
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin, display_name")
+        .eq("user_id", session.user.id)
+        .single();
+
+      const adminFlag = profile?.is_admin ?? false;
+      setIsAdmin(adminFlag);
+
+      // Override display_name from profile if available (covers OAuth users)
+      if (profile?.display_name) {
+        setAdminName(profile.display_name);
+      }
+
+      if (adminFlag) {
         fetchPendingCount().catch(console.error);
         fetchMessagesCount().catch(console.error);
       } else {
         setPendingCount(0);
         setMessagesCount(0);
       }
+
+      setIsAuthLoading(false);
     };
 
     supabase.auth.getSession()
       .then(({ data: { session } }) => applySession(session))
-      .catch(console.error);
+      .catch(err => { console.error(err); setIsAuthLoading(false); });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      applySession(session);
+      applySession(session).catch(console.error);
     });
 
     return () => subscription.unsubscribe();
@@ -59,11 +90,14 @@ export function useAuth() {
 
   const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();
-    setIsLoggedIn(false);
+    // onAuthStateChange fires with null session and clears all state automatically
   }, []);
 
   return {
     isLoggedIn,
+    isAdmin,
+    isAuthLoading,
+    userId,
     adminName,
     userEmail,
     pendingCount,

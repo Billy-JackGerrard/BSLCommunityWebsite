@@ -12,6 +12,7 @@ import "./Navbar.css";
 type Props = {
   currentView: View;
   isLoggedIn: boolean;
+  isAdmin?: boolean;
   pendingCount: number;
   messagesCount: number;
   adminName?: string | null;
@@ -25,6 +26,7 @@ type Props = {
 export default function Navbar({
   currentView,
   isLoggedIn,
+  isAdmin,
   pendingCount,
   messagesCount,
   adminName,
@@ -121,12 +123,14 @@ export default function Navbar({
             Map
           </button>
 
-          <button
-            className={`navbar-link navbar-link--submit ${currentView === "add-event" ? "navbar-link--active" : ""}`}
-            onClick={() => navigate("add-event")}
-          >
-            Submit Event
-          </button>
+          {isLoggedIn && (
+            <button
+              className={`navbar-link navbar-link--submit ${currentView === "add-event" ? "navbar-link--active" : ""}`}
+              onClick={() => navigate("add-event")}
+            >
+              Submit Event
+            </button>
+          )}
 
           {!isLoggedIn && (
             <button
@@ -137,10 +141,10 @@ export default function Navbar({
             </button>
           )}
 
-          {/* Admin section — separated on mobile */}
-          {isLoggedIn && <div className="navbar-admin-divider" />}
+          {/* Admin section — separated on mobile, only shown to admins */}
+          {isLoggedIn && isAdmin && <div className="navbar-admin-divider" />}
 
-          {isLoggedIn && (
+          {isLoggedIn && isAdmin && (
             <button
               className={`navbar-link navbar-link--messages ${currentView === "admin-messages" ? "navbar-link--active" : ""}`}
               onClick={() => navigate("admin-messages")}
@@ -152,7 +156,7 @@ export default function Navbar({
             </button>
           )}
 
-          {isLoggedIn && (
+          {isLoggedIn && isAdmin && (
             <button
               className={`navbar-link navbar-link--queue ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
               onClick={() => navigate("admin-queue")}
@@ -174,12 +178,20 @@ export default function Navbar({
                 {adminName ?? "Account"}
               </button>
             ) : (
-              <button
-                className={`navbar-link navbar-link--subtle ${currentView === "login" ? "navbar-link--active" : ""}`}
-                onClick={() => navigate("login")}
-              >
-                Admin Login
-              </button>
+              <>
+                <button
+                  className={`navbar-link navbar-link--subtle ${currentView === "login" ? "navbar-link--active" : ""}`}
+                  onClick={() => navigate("login")}
+                >
+                  Sign In
+                </button>
+                <button
+                  className={`navbar-link navbar-link--subtle ${currentView === "signup" ? "navbar-link--active" : ""}`}
+                  onClick={() => navigate("signup")}
+                >
+                  Sign Up
+                </button>
+              </>
             )}
             <ThemePicker
               theme={theme}

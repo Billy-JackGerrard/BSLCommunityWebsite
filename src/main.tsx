@@ -22,12 +22,10 @@ import Calendar from "./pages/Calendar.tsx";
 import Login from "./pages/Login.tsx";
 import AdminQueue from "./pages/AdminQueue.tsx";
 import AdminMessages from "./pages/AdminMessages.tsx";
-
 import Account from "./pages/Account.tsx";
 import Home from "./pages/Home.tsx";
 import AdminHome from "./pages/AdminHome.tsx";
 import Contact from "./pages/Contact.tsx";
-
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import EventList from "./pages/EventList.tsx";
 import MapView from "./pages/MapView.tsx";
@@ -38,40 +36,7 @@ import AddEvent from "./components/events/AddEvent.tsx";
 import EditEvent from "./components/events/EditEvent.tsx";
 import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import type { Event, ContactType } from "./utils/types.ts";
-import type { View } from "./utils/views.ts";
-
-/** Page titles for each view. */
-const VIEW_TITLES: Partial<Record<View, string>> = {
-  calendar:         "Calendar | BSL Calendar",
-  list:             "Events | BSL Calendar",
-  map:              "Map | BSL Calendar",
-  home:             "Home | BSL Calendar",
-  contact:          "Contact | BSL Calendar",
-  privacy:          "Privacy Policy | BSL Calendar",
-  login:            "Login | BSL Calendar",
-  account:          "Account | BSL Calendar",
-  "admin-queue":    "Event Queue | BSL Calendar",
-  "admin-messages": "Messages | BSL Calendar",
-  "admin-home":     "Edit Home | BSL Calendar",
-};
-
-/** Every navigable view gets its own shareable URL path. */
-const PAGE_PATHS: Partial<Record<View, string>> = {
-  calendar:          "/",
-  list:              "/list",
-  login:             "/login",
-  home:              "/home",
-  map:               "/map",
-  contact:           "/contact",
-  privacy:           "/privacy",
-  "admin-queue":     "/admin-queue",
-  "admin-messages":  "/admin-messages",
-  "admin-home":      "/admin-home",
-  account:           "/account",
-};
-const PATH_TO_VIEW = Object.fromEntries(
-  Object.entries(PAGE_PATHS).map(([v, p]) => [p, v as View])
-);
+import { type View, VIEW_PATHS, PATH_TO_VIEW, VIEW_TITLES } from "./utils/views.ts";
 
 /** Fetch a single approved event by ID. Returns the event or null. */
 async function fetchEventById(id: string): Promise<Event | null> {
@@ -96,7 +61,7 @@ function App() {
 
   // ── Auth ────────────────────────────────────────────────────────────────
   const {
-    isLoggedIn, adminName, userEmail,
+    isLoggedIn, isAdmin, isAuthLoading, userId, adminName, userEmail,
     pendingCount, setPendingCount,
     messagesCount, setMessagesCount,
     fetchPendingCount, handleLogout,
@@ -207,19 +172,24 @@ function App() {
 
   // ── Auth guard ─────────────────────────────────────────────────────────
   useEffect(() => {
-    const adminViews = ["admin-queue", "admin-messages", "admin-home", "account"] as const;
-    if ((adminViews as readonly string[]).includes(view) && !isLoggedIn) {
-      window.history.replaceState({}, "", PAGE_PATHS.login);
+    // Views that require being logged in at all
+    const authRequiredViews = ["admin-queue", "admin-messages", "admin-home", "account", "add-event", "edit-event", "delete-event"] as const;
+    if ((authRequiredViews as readonly string[]).includes(view) && !isLoggedIn) {
+      window.history.replaceState({}, "", VIEW_PATHS.login);
       setView("login");
       return;
     }
-    if (view === "edit-event" && !isLoggedIn) {
-      window.history.replaceState({}, "", "/");
-      setView("calendar");
-      return;
+    // Admin-only views: redirect logged-in non-admins (skip while auth is still loading)
+    if (!isAuthLoading) {
+      const strictAdminViews = ["admin-queue", "admin-messages", "admin-home"] as const;
+      if ((strictAdminViews as readonly string[]).includes(view) && isLoggedIn && !isAdmin) {
+        window.history.replaceState({}, "", "/");
+        setView("calendar");
+        return;
+      }
     }
-    if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
-  }, [view, isLoggedIn, fetchPendingCount]);
+    if (view === "admin-queue" && isLoggedIn && isAdmin) fetchPendingCount();
+  }, [view, isLoggedIn, isAdmin, isAuthLoading, fetchPendingCount]);
 
   useEffect(() => {
     if (view !== "contact") setContactPrefill(null);
@@ -237,7 +207,7 @@ function App() {
     if (v !== "list") setListSearchOpen(false);
     if (v !== "event") setViewingEvent(null);
 
-    const targetPath = PAGE_PATHS[v] ?? "/";
+    const targetPath = VIEW_PATHS[v] ?? "/";
     if (window.location.pathname !== targetPath) window.history.pushState({}, "", targetPath);
 
     scrollToTopInstant();
@@ -271,7 +241,7 @@ function App() {
     setDeletingEvent(null);
     setViewingEvent(null);
     const returnView = postDeleteReturn === "event" ? postEventReturn : postDeleteReturn;
-    const returnPath = PAGE_PATHS[returnView] ?? "/";
+    const returnPath = VIEW_PATHS[returnView] ?? "/";
     if (window.location.pathname !== returnPath) window.history.pushState({}, "", returnPath);
     setView(returnView);
   };
@@ -314,6 +284,7 @@ function App() {
       <Navbar
         currentView={view}
         isLoggedIn={isLoggedIn}
+        isAdmin={isAdmin}
         pendingCount={pendingCount}
         messagesCount={messagesCount}
         adminName={adminName}
@@ -338,6 +309,7 @@ function App() {
             onAddEvent={handleAddEventFromCalendar}
             onViewEvent={handleViewEvent}
             onNavigate={handleNavigate}
+            isLoggedIn={isLoggedIn}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
             onScrollToTodayReady={handleScrollToTodayReady}
@@ -358,18 +330,31 @@ function App() {
           <EventPage
             event={viewingEvent}
             isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+            userId={userId}
             onBack={() => handleNavigate(postEventReturn)}
             onEdit={ev => handleEditEvent(ev, "event")}
-            onDelete={isLoggedIn ? ev => handleDeleteEvent(ev, "event") : undefined}
-            onDuplicate={handleDuplicateEvent}
+            onDelete={(isLoggedIn && (isAdmin || viewingEvent.submitted_by === userId)) ? ev => handleDeleteEvent(ev, "event") : undefined}
+            onDuplicate={isAdmin ? handleDuplicateEvent : undefined}
             onReport={handleReportEvent}
           />
         )}
-        {view === "login"      && <Login onLogin={handleLogin} />}
-        {view === "add-event"  && <AddEvent prefillDate={addEventDate} prefillEvent={duplicatingEvent ?? undefined} isAdmin={isLoggedIn} onBrowse={() => handleNavigate("calendar")} />}
+        {view === "login"  && <Login onLogin={handleLogin} />}
+        {view === "signup" && <Login onLogin={handleLogin} initialScreen="signup" />}
+        {view === "add-event" && isLoggedIn && (
+          <AddEvent
+            prefillDate={addEventDate}
+            prefillEvent={duplicatingEvent ?? undefined}
+            isAdmin={isAdmin}
+            userId={userId}
+            onBrowse={() => handleNavigate("calendar")}
+          />
+        )}
         {view === "delete-event" && isLoggedIn && deletingEvent && (
           <DeleteEventConfirm
             event={deletingEvent}
+            isAdmin={isAdmin}
+            userId={userId}
             onDeleted={handleDeleted}
             onCancel={handleDeleteCancel}
           />
@@ -377,28 +362,30 @@ function App() {
         {view === "edit-event" && isLoggedIn && editingEvent && (
           <EditEvent
             event={editingEvent}
+            isAdmin={isAdmin}
+            userId={userId}
             onSaved={handleEditSaved}
             onCancel={handleEditCancel}
             defaultRecurringScope={postEditReturn === "admin-queue" ? "all-future" : undefined}
           />
         )}
-        {view === "admin-queue" && isLoggedIn && (
+        {view === "admin-queue" && isLoggedIn && isAdmin && (
           <AdminQueue
             onPendingCountChange={setPendingCount}
             onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
           />
         )}
-        {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}
+        {view === "admin-messages" && isLoggedIn && isAdmin && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}
         {view === "contact" && <Contact prefill={contactPrefill} />}
 
         {view === "home" && (
           <Home
             isLoggedIn={isLoggedIn}
-            onEdit={() => handleNavigate("admin-home")}
+            onEdit={isAdmin ? () => handleNavigate("admin-home") : undefined}
             onNavigate={handleNavigate}
           />
         )}
-        {view === "admin-home" && isLoggedIn && (
+        {view === "admin-home" && isLoggedIn && isAdmin && (
           <AdminHome
             onSaved={() => handleNavigate("home")}
             onCancel={() => handleNavigate("home")}
@@ -408,7 +395,9 @@ function App() {
           <Account
             email={userEmail}
             displayName={adminName}
+            isAdmin={isAdmin}
             onLogout={handleAppLogout}
+            onNavigate={handleNavigate}
           />
         )}
         {view === "privacy" && <PrivacyPolicy />}

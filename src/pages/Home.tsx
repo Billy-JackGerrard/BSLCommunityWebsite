@@ -17,7 +17,7 @@ type AboutContent = {
 
 type Props = {
   isLoggedIn: boolean;
-  onEdit: () => void;
+  onEdit?: () => void;
   onNavigate: (view: View) => void;
 };
 
@@ -266,7 +266,7 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
           <div className="home-hero-mesh" />
         </div>
 
-        {isLoggedIn && (
+        {isLoggedIn && onEdit && (
           <button className="home-edit-btn" onClick={onEdit}>Edit</button>
         )}
 

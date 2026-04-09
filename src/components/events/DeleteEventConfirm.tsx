@@ -6,11 +6,13 @@ import "./EditEvent.css";
 
 type Props = {
   event: Event;
+  isAdmin?: boolean;
+  userId?: string | null;
   onDeleted: () => void;
   onCancel: () => void;
 };
 
-export default function DeleteEventConfirm({ event, onDeleted, onCancel }: Props) {
+export default function DeleteEventConfirm({ event, isAdmin: _isAdmin, userId: _userId, onDeleted, onCancel }: Props) {
   const isRecurring = !!event.recurrence?.id;
   const [step, setStep] = useState<"scope" | "confirm" | "deleting">(
     isRecurring ? "scope" : "confirm"

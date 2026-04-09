@@ -42,6 +42,7 @@ type Props = {
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
   onViewEvent: (event: Event) => void;
   onNavigate: (view: "list" | "map") => void;
+  isLoggedIn?: boolean;
   searchOpen: boolean;
   onToggleSearch: () => void;
   onScrollToTodayReady: (fn: () => void) => void;
@@ -177,7 +178,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOpen, onToggleSearch, onScrollToTodayReady }: Props) {
+export default function Calendar({ onAddEvent, onViewEvent, onNavigate, isLoggedIn, searchOpen, onToggleSearch, onScrollToTodayReady }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -514,13 +515,15 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
                 {selected.day} {MONTHS[selected.month]} {selected.year}
               </div>
               <div className="calendar-panel-header-actions">
-                <button
-                  className="calendar-panel-add-btn"
-                  onClick={() => onAddEvent(selected)}
-                  title="Add event on this day"
-                >
-                  + Add Event
-                </button>
+                {isLoggedIn && (
+                  <button
+                    className="calendar-panel-add-btn"
+                    onClick={() => onAddEvent(selected)}
+                    title="Add event on this day"
+                  >
+                    + Add Event
+                  </button>
+                )}
                 <button className="calendar-panel-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
               </div>
             </div>

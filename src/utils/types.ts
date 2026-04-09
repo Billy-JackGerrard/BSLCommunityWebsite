@@ -31,6 +31,7 @@ export type Event = {
   starts_at: string;
   finishes_at?: string;
   created_at: string;
+  submitted_by?: string;
   contact_name?: string;
   contact_email?: string;
   url?: string;
@@ -50,6 +51,12 @@ export type Event = {
 export type AdminEvent = Event & {
   approved: boolean;
   admin_id?: string;
+};
+
+export type UserProfile = {
+  user_id: string;
+  is_admin: boolean;
+  display_name?: string | null;
 };
 
 

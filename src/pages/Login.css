@@ -78,6 +78,67 @@
     color: var(--color-accent);
 }
 
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.login-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.login-oauth-btn:hover:not(:disabled) {
+  background: var(--color-surface-hover, rgba(0,0,0,0.04));
+  border-color: var(--color-accent);
+}
+
+.login-oauth-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.login-oauth-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.login-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.login-toggle-row .login-back-btn {
+  flex: 1;
+}
+
 @media (max-width: 400px) {
   .login-page {
     padding: 1rem;

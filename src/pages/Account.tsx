@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import type { View } from "../utils/views";
 import "./Account.css";
 
 type Props = {
   email: string | null;
   displayName: string | null;
+  isAdmin?: boolean;
   onLogout: () => void;
+  onNavigate?: (view: View) => void;
 };
 
-export default function Account({ email, displayName, onLogout }: Props) {
+export default function Account({ email, displayName, isAdmin, onLogout, onNavigate }: Props) {
   // ── Display name ──────────────────────────────────────────────────────────
   const [name, setName] = useState(displayName ?? "");
   const [nameSaving, setNameSaving] = useState(false);
@@ -28,12 +31,28 @@ export default function Account({ email, displayName, onLogout }: Props) {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
 
+  // ── User metadata (fetched once on mount) ────────────────────────────────
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isOAuthUser, setIsOAuthUser] = useState(false);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      setCurrentUserId(user.id);
+      if (user.app_metadata?.provider && user.app_metadata.provider !== "email") {
+        setIsOAuthUser(true);
+      }
+    });
+  }, []);
+
   const handleSaveName = async () => {
     if (!name.trim()) { setNameError("Name cannot be empty."); return; }
     setNameSaving(true);
     setNameError(null);
     setNameSuccess(false);
     const { error } = await supabase.auth.updateUser({ data: { display_name: name.trim() } });
+    if (!error && currentUserId) {
+      await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", currentUserId);
+    }
     setNameSaving(false);
     if (error) { setNameError(error.message); return; }
     setNameSuccess(true);
@@ -103,82 +122,122 @@ export default function Account({ email, displayName, onLogout }: Props) {
         <div className="account-divider" />
 
         {/* ── Email ── */}
-        <section className="account-section">
-          <h2 className="account-section-heading">Email Address</h2>
-          {emailError && <div className="form-error" role="alert">{emailError}</div>}
-          {emailSuccess && (
-            <div className="account-success">
-              Confirmation sent — check your inbox to verify the new address.
+        {isOAuthUser ? (
+          <section className="account-section">
+            <h2 className="account-section-heading">Email Address</h2>
+            <p className="account-oauth-note">
+              Your email is managed by Google and can't be changed here.
+            </p>
+            <p className="account-oauth-value">{email}</p>
+          </section>
+        ) : (
+          <section className="account-section">
+            <h2 className="account-section-heading">Email Address</h2>
+            {emailError && <div className="form-error" role="alert">{emailError}</div>}
+            {emailSuccess && (
+              <div className="account-success">
+                Confirmation sent — check your inbox to verify the new address.
+              </div>
+            )}
+            <div className="form-field">
+              <label htmlFor="account-email" className="form-label">Email</label>
+              <input
+                id="account-email"
+                className="form-input"
+                type="email"
+                value={newEmail}
+                onChange={e => { setNewEmail(e.target.value); setEmailSuccess(false); setEmailError(null); }}
+                onKeyDown={e => e.key === "Enter" && handleSaveEmail()}
+              />
             </div>
-          )}
-          <div className="form-field">
-            <label htmlFor="account-email" className="form-label">Email</label>
-            <input
-              id="account-email"
-              className="form-input"
-              type="email"
-              value={newEmail}
-              onChange={e => { setNewEmail(e.target.value); setEmailSuccess(false); setEmailError(null); }}
-              onKeyDown={e => e.key === "Enter" && handleSaveEmail()}
-            />
-          </div>
-          <button
-            className="btn-primary account-save-btn"
-            onClick={handleSaveEmail}
-            disabled={emailSaving}
-          >
-            {emailSaving ? (
-              <span className="btn-loading">
-                <span className="btn-spinner" aria-hidden="true" />
-                Saving…
-              </span>
-            ) : "Update Email"}
-          </button>
-        </section>
+            <button
+              className="btn-primary account-save-btn"
+              onClick={handleSaveEmail}
+              disabled={emailSaving}
+            >
+              {emailSaving ? (
+                <span className="btn-loading">
+                  <span className="btn-spinner" aria-hidden="true" />
+                  Saving…
+                </span>
+              ) : "Update Email"}
+            </button>
+          </section>
+        )}
 
         <div className="account-divider" />
 
         {/* ── Password ── */}
-        <section className="account-section">
-          <h2 className="account-section-heading">Change Password</h2>
-          {passwordError && <div className="form-error" role="alert">{passwordError}</div>}
-          {passwordSuccess && <div className="account-success">Password updated successfully.</div>}
-          <div className="form-field">
-            <label htmlFor="account-new-password" className="form-label">New Password</label>
-            <input
-              id="account-new-password"
-              className="form-input"
-              type="password"
-              placeholder="At least 8 characters"
-              value={newPassword}
-              onChange={e => { setNewPassword(e.target.value); setPasswordSuccess(false); setPasswordError(null); }}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="account-confirm-password" className="form-label">Confirm Password</label>
-            <input
-              id="account-confirm-password"
-              className="form-input"
-              type="password"
-              placeholder="Repeat your new password"
-              value={confirmPassword}
-              onChange={e => { setConfirmPassword(e.target.value); setPasswordSuccess(false); setPasswordError(null); }}
-              onKeyDown={e => e.key === "Enter" && handleSavePassword()}
-            />
-          </div>
-          <button
-            className="btn-primary account-save-btn"
-            onClick={handleSavePassword}
-            disabled={passwordSaving}
-          >
-            {passwordSaving ? (
-              <span className="btn-loading">
-                <span className="btn-spinner" aria-hidden="true" />
-                Saving…
-              </span>
-            ) : "Update Password"}
-          </button>
-        </section>
+        {isOAuthUser ? (
+          <section className="account-section">
+            <h2 className="account-section-heading">Password</h2>
+            <p className="account-oauth-note">
+              You signed in with Google — password management isn't available for this account.
+            </p>
+          </section>
+        ) : (
+          <section className="account-section">
+            <h2 className="account-section-heading">Change Password</h2>
+            {passwordError && <div className="form-error" role="alert">{passwordError}</div>}
+            {passwordSuccess && <div className="account-success">Password updated successfully.</div>}
+            <div className="form-field">
+              <label htmlFor="account-new-password" className="form-label">New Password</label>
+              <input
+                id="account-new-password"
+                className="form-input"
+                type="password"
+                placeholder="At least 8 characters"
+                value={newPassword}
+                onChange={e => { setNewPassword(e.target.value); setPasswordSuccess(false); setPasswordError(null); }}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="account-confirm-password" className="form-label">Confirm Password</label>
+              <input
+                id="account-confirm-password"
+                className="form-input"
+                type="password"
+                placeholder="Repeat your new password"
+                value={confirmPassword}
+                onChange={e => { setConfirmPassword(e.target.value); setPasswordSuccess(false); setPasswordError(null); }}
+                onKeyDown={e => e.key === "Enter" && handleSavePassword()}
+              />
+            </div>
+            <button
+              className="btn-primary account-save-btn"
+              onClick={handleSavePassword}
+              disabled={passwordSaving}
+            >
+              {passwordSaving ? (
+                <span className="btn-loading">
+                  <span className="btn-spinner" aria-hidden="true" />
+                  Saving…
+                </span>
+              ) : "Update Password"}
+            </button>
+          </section>
+        )}
+
+        {/* ── Admin section ── */}
+        {isAdmin && (
+          <>
+            <div className="account-divider" />
+            <section className="account-section">
+              <h2 className="account-section-heading">Admin</h2>
+              <div className="account-admin-links">
+                <button className="account-admin-link" onClick={() => onNavigate?.("admin-queue")}>
+                  Pending Events
+                </button>
+                <button className="account-admin-link" onClick={() => onNavigate?.("admin-messages")}>
+                  Messages
+                </button>
+                <button className="account-admin-link" onClick={() => onNavigate?.("admin-home")}>
+                  Edit Home Page
+                </button>
+              </div>
+            </section>
+          </>
+        )}
 
         <div className="account-divider" />
 
