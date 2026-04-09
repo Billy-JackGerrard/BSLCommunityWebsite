@@ -23,11 +23,24 @@ type Props = {
   showAddToCalendar?: boolean;
 };
 
-function ShareButton({ eventId }: { eventId: number }) {
+function ShareButton({ eventId, title }: { eventId: number; title: string }) {
   const { copied, copy } = useCopyToClipboard();
   const shareUrl = `${window.location.origin}/event/${eventId}`;
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text: "Check out this BSL event!", url: shareUrl });
+      } catch {
+        // User cancelled or share failed — do nothing
+      }
+    } else {
+      copy(shareUrl);
+    }
+  };
+
   return (
-    <motion.button className="event-detail-share-btn" onClick={() => copy(shareUrl)} whileTap={scaleSpring.tap}>
+    <motion.button className="event-detail-share-btn" onClick={handleShare} whileTap={scaleSpring.tap}>
       {copied ? "Copied ✓" : "Share event"}
     </motion.button>
   );
@@ -285,7 +298,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
       )}
 
       <div className="event-detail-cal-row">
-        <ShareButton eventId={event.id} />
+        <ShareButton eventId={event.id} title={event.title} />
       </div>
 
       {showAddToCalendar && (
