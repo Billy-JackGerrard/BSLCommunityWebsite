@@ -376,7 +376,7 @@ function App() {
           />
         )}
         {view === "admin-messages" && isLoggedIn && isAdmin && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}
-        {view === "contact" && <Contact prefill={contactPrefill} />}
+        {view === "contact" && <Contact prefill={contactPrefill} isLoggedIn={isLoggedIn} userEmail={userEmail} />}
 
         {view === "home" && (
           <Home

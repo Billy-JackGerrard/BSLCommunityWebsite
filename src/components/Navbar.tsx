@@ -132,7 +132,7 @@ export default function Navbar({
             </button>
           )}
 
-          {!isLoggedIn && (
+          {!isAdmin && (
             <button
               className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
               onClick={() => navigate("contact")}

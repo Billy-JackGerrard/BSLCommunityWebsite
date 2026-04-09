@@ -7,7 +7,7 @@ import { isValidEmail } from "../utils/validation";
 import { scaleSpring } from "../utils/motion";
 import "./Contact.css";
 
-export default function Contact({ prefill }: { prefill?: { type: ContactType; message: string } | null }) {
+export default function Contact({ prefill, isLoggedIn, userEmail }: { prefill?: { type: ContactType; message: string } | null; isLoggedIn?: boolean; userEmail?: string | null }) {
   const [type, setType] = useState<ContactType>(() => prefill?.type ?? "general");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function Contact({ prefill }: { prefill?: { type: ContactType; me
       setError("Please enter a message before sending.");
       return;
     }
-    if (email.trim() && !isValidEmail(email.trim())) {
+    if (!isLoggedIn && email.trim() && !isValidEmail(email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -30,9 +30,11 @@ export default function Contact({ prefill }: { prefill?: { type: ContactType; me
     setError(null);
     setLoading(true);
 
+    const resolvedEmail = isLoggedIn ? (userEmail ?? null) : (email.trim() || null);
+
     const { error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type, name: name.trim() || null, email: email.trim() || null, title: title.trim() || null, message: message.trim() });
+      .insert({ type, name: name.trim() || null, email: resolvedEmail, title: title.trim() || null, message: message.trim() });
 
     setLoading(false);
 
@@ -130,20 +132,22 @@ export default function Contact({ prefill }: { prefill?: { type: ContactType; me
           />
         </div>
 
-        {/* Email */}
-        <div className="form-field">
-          <label htmlFor="contact-email" className="form-label">
-            Your Email <span className="contact-optional">(optional)</span>
-          </label>
-          <input
-            id="contact-email"
-            className="form-input"
-            type="email"
-            placeholder="e.g. jane@example.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-        </div>
+        {/* Email — hidden for logged-in users (their account email is used) */}
+        {!isLoggedIn && (
+          <div className="form-field">
+            <label htmlFor="contact-email" className="form-label">
+              Your Email <span className="contact-optional">(optional)</span>
+            </label>
+            <input
+              id="contact-email"
+              className="form-input"
+              type="email"
+              placeholder="e.g. jane@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+          </div>
+        )}
 
         {/* Title */}
         <div className="form-field">
