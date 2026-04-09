@@ -152,6 +152,28 @@
     max-height: calc(100vh - var(--navbar-h));
     overflow-y: auto;
     overflow-x: hidden;
+    transition: width 0.25s ease;
+  }
+
+  .event-list-sidebar--event {
+    width: 340px;
+    overflow-y: hidden;
+  }
+
+  .event-list-sidebar-event-detail {
+    overflow-y: auto;
+    max-height: calc(100vh - var(--navbar-h));
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .event-list-sidebar-event-detail::-webkit-scrollbar { width: 4px; }
+  .event-list-sidebar-event-detail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+  .event-list-sidebar-event-detail .event-detail-card {
+    width: 100% !important;
+    position: static !important;
+    border-radius: var(--radius-xl);
   }
 
   .mobile-filter-bar {

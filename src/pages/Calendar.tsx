@@ -12,6 +12,7 @@ import FilterPanel from "../components/FilterPanel";
 import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
+import EventDetailCard from "../components/events/EventDetails";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -238,6 +239,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
   const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const todayMonthRef = useRef<HTMLDivElement | null>(null);
 
+  const [panelEvent, setPanelEvent] = useState<Event | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef    = useRef<HTMLDivElement>(null);
@@ -297,7 +299,16 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
     };
   }, []);
 
+  // Clear panel event when the selected day changes
+  useEffect(() => {
+    setPanelEvent(null);
+  }, [selected]);
+
   const handleViewEvent = useCallback((ev: Event) => {
+    if (window.innerWidth > 700) {
+      setPanelEvent(ev);
+      return;
+    }
     const d = new Date(ev.starts_at);
     persistedTargetMonthKey = `${d.getFullYear()}-${d.getMonth()}`;
     persistedScrollTop = null;
@@ -444,7 +455,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
       )}
 
       {/* ── Right: event panel ── */}
-      <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""}`}>
+      <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""} ${panelEvent ? "calendar-panel--event" : ""}`}>
 
         {/* Desktop view switcher — above filters in right panel */}
         <ViewSwitcher
@@ -455,25 +466,27 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
           onSearch={handleSearchToggle}
         />
 
-        {/* Desktop filter toggle — top of panel column */}
-        <div className={`calendar-panel-filters${filtersCollapsed ? " calendar-panel-filters--collapsed" : ""}`}>
-          <button className="calendar-panel-filter-toggle" onClick={() => setFiltersCollapsed(c => !c)} aria-expanded={!filtersCollapsed}>
-            <span className="calendar-panel-filter-toggle-label">Filters</span>
-            <span className="calendar-panel-filter-toggle-arrow">{filtersCollapsed ? "▶" : "▼"}</span>
-          </button>
-          {!filtersCollapsed && (
-            <FilterPanel
-              selectedCategories={selectedCategories}
-              onToggleCategory={toggleCategory}
-              onClearCategories={clearCategories}
-              dateFilter={dateFilter}
-              onSetDateFilter={setDateFilter}
-              distanceFilter={distanceFilter}
-              onSetDistanceFilter={setDistanceFilter}
-              onClearDistanceFilter={clearDistanceFilter}
-            />
-          )}
-        </div>
+        {/* Desktop filter toggle — hidden when event detail is showing */}
+        {!panelEvent && (
+          <div className={`calendar-panel-filters${filtersCollapsed ? " calendar-panel-filters--collapsed" : ""}`}>
+            <button className="calendar-panel-filter-toggle" onClick={() => setFiltersCollapsed(c => !c)} aria-expanded={!filtersCollapsed}>
+              <span className="calendar-panel-filter-toggle-label">Filters</span>
+              <span className="calendar-panel-filter-toggle-arrow">{filtersCollapsed ? "▶" : "▼"}</span>
+            </button>
+            {!filtersCollapsed && (
+              <FilterPanel
+                selectedCategories={selectedCategories}
+                onToggleCategory={toggleCategory}
+                onClearCategories={clearCategories}
+                dateFilter={dateFilter}
+                onSetDateFilter={setDateFilter}
+                distanceFilter={distanceFilter}
+                onSetDistanceFilter={setDistanceFilter}
+                onClearDistanceFilter={clearDistanceFilter}
+              />
+            )}
+          </div>
+        )}
 
         {!selected ? (
           <div className="calendar-panel-empty">
@@ -484,6 +497,15 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
             <p>Select a day to see events</p>
+          </div>
+        ) : panelEvent ? (
+          <div className="calendar-panel-event-detail">
+            <EventDetailCard
+              event={panelEvent}
+              isLoggedIn={false}
+              onClose={() => setPanelEvent(null)}
+              onEdit={() => {}}
+            />
           </div>
         ) : (
           <>

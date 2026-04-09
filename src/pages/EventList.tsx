@@ -13,6 +13,7 @@ import FilterPanel from "../components/FilterPanel";
 import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
+import EventDetailCard from "../components/events/EventDetails";
 import { fadeSlideUp, staggerContainer, scaleSpring } from "../utils/motion";
 import "./EventList.css";
 
@@ -84,6 +85,7 @@ function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: 
 export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggleSearch }: Props) {
   useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
+  const [panelEvent, setPanelEvent] = useState<Event | null>(null);
   const [showPast, setShowPast] = useState(false);
   const { events, loading, error } = useUpcomingEvents(showPast);
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories, distanceFilter, setDistanceFilter, clearDistanceFilter } = useFilters();
@@ -104,6 +106,14 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
   }, [searchOpen]);
 
   const onToggleSearchFn = onToggleSearch ?? (() => {});
+
+  const handleViewEvent = useCallback((ev: Event) => {
+    if (window.innerWidth >= 860) {
+      setPanelEvent(ev);
+    } else {
+      onViewEvent(ev);
+    }
+  }, [onViewEvent]);
 
   // Close search on outside click
   const closeSearch = useCallback(() => {
@@ -202,7 +212,7 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
             ) : (
               <>
                 {groups.map(group => (
-                  <MonthSection key={group.label} group={group} onViewEvent={onViewEvent} />
+                  <MonthSection key={group.label} group={group} onViewEvent={handleViewEvent} />
                 ))}
                 {excludedByDistanceCount > 0 && (
                   <p className="filter-panel-distance-notice">
@@ -215,24 +225,37 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
         </div>
 
         {/* Sidebar — RIGHT on desktop, hidden on mobile */}
-        <aside className="event-list-sidebar">
-          <ViewSwitcher
-            className="event-list-sidebar-switcher"
-            activeView="list"
-            onNavigate={v => onNavigate?.(v)}
-            onToday={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            onSearch={onToggleSearch ?? (() => {})}
-          />
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-            distanceFilter={distanceFilter}
-            onSetDistanceFilter={setDistanceFilter}
-            onClearDistanceFilter={clearDistanceFilter}
-          />
+        <aside className={`event-list-sidebar${panelEvent ? " event-list-sidebar--event" : ""}`}>
+          {panelEvent ? (
+            <div className="event-list-sidebar-event-detail">
+              <EventDetailCard
+                event={panelEvent}
+                isLoggedIn={false}
+                onClose={() => setPanelEvent(null)}
+                onEdit={() => {}}
+              />
+            </div>
+          ) : (
+            <>
+              <ViewSwitcher
+                className="event-list-sidebar-switcher"
+                activeView="list"
+                onNavigate={v => onNavigate?.(v)}
+                onToday={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                onSearch={onToggleSearch ?? (() => {})}
+              />
+              <FilterPanel
+                selectedCategories={selectedCategories}
+                onToggleCategory={toggleCategory}
+                onClearCategories={clearCategories}
+                dateFilter={dateFilter}
+                onSetDateFilter={setDateFilter}
+                distanceFilter={distanceFilter}
+                onSetDistanceFilter={setDistanceFilter}
+                onClearDistanceFilter={clearDistanceFilter}
+              />
+            </>
+          )}
         </aside>
 
       </div>

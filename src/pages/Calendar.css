@@ -756,6 +756,31 @@
     }
 }
 
+/* ── Panel: event detail mode ── */
+.calendar-panel--event {
+    width: clamp(320px, 35%, 420px);
+}
+
+.calendar-panel-event-detail {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+.calendar-panel-event-detail::-webkit-scrollbar { width: 4px; }
+.calendar-panel-event-detail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+.calendar-panel-event-detail .event-detail-card {
+    width: 100% !important;
+    position: static !important;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    box-shadow: none;
+}
+
 /* ── Inline event expansion ── */
 .calendar-panel-event-wrap {
     border-radius: 8px;
