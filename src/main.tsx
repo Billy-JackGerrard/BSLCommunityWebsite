@@ -395,7 +395,7 @@ function App() {
           <Home
             isLoggedIn={isLoggedIn}
             onEdit={() => handleNavigate("admin-home")}
-            onNavigate={() => handleNavigate("calendar")}
+            onNavigate={handleNavigate}
           />
         )}
         {view === "admin-home" && isLoggedIn && (

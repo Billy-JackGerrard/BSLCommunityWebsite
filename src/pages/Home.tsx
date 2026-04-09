@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { supabase } from "../supabaseClient";
 import type { Section } from "../utils/types";
+import type { View } from "../utils/views";
 import { useInView } from "../hooks/useInView";
 import "./Home.css";
 
@@ -17,7 +18,7 @@ type AboutContent = {
 type Props = {
   isLoggedIn: boolean;
   onEdit: () => void;
-  onNavigate: (view: "calendar") => void;
+  onNavigate: (view: View) => void;
 };
 
 function renderParagraph(text: string) {
@@ -127,7 +128,7 @@ function StatsBar() {
   const stats = [
     { number: 100, label: "Events Hosted" },
     { number: 500, label: "Community Members" },
-    { number: 20, label: "Venues across Edinburgh" },
+    { number: 20, label: "Venues across Scotland" },
   ];
 
   return (
@@ -157,9 +158,9 @@ function BottomCTA({ onNavigate }: { onNavigate: () => void }) {
       </div>
       <div className="home-bottom-cta-mesh" />
       <div ref={ref as React.Ref<HTMLDivElement>} className={`home-bottom-cta-inner scroll-reveal${isInView ? " in-view" : ""}`}>
-        <span className="home-bottom-cta-badge">Join the community</span>
-        <h2 className="home-bottom-cta-title">Ready to explore?</h2>
-        <p className="home-bottom-cta-text">Discover BSL events happening in Edinburgh and become part of something special.</p>
+        <span className="home-bottom-cta-badge">Come join us</span>
+        <h2 className="home-bottom-cta-title">Ready to get started?</h2>
+        <p className="home-bottom-cta-text">Find BSL events happening near you and connect with a community that gets it.</p>
         <div className="home-cta-group">
           <button className="home-cta-btn home-cta-btn--light" onClick={onNavigate}>
             <span>Browse Events</span>
@@ -170,6 +171,22 @@ function BottomCTA({ onNavigate }: { onNavigate: () => void }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/* ── Footer ── */
+function HomeFooter({ onNavigate }: { onNavigate: (view: View) => void }) {
+  return (
+    <footer className="home-footer">
+      <div className="home-footer-inner">
+        <p className="home-footer-copy">BSL Calendar</p>
+        <nav className="home-footer-links" aria-label="Footer links">
+          <button className="home-footer-link" onClick={() => onNavigate("contact")}>Contact us</button>
+          <span className="home-footer-sep" aria-hidden="true" />
+          <button className="home-footer-link" onClick={() => onNavigate("privacy")}>Privacy policy</button>
+        </nav>
+      </div>
+    </footer>
   );
 }
 
@@ -262,7 +279,7 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
         >
           <span className="home-hero-badge">
             <span className="home-hero-badge-dot" />
-            Edinburgh BSL Community
+            BSL Calendar
           </span>
           <h1 className="home-headline">
             <span className="home-headline-shimmer">
@@ -302,8 +319,8 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
       {homeContent?.sections && homeContent.sections.length > 0 && (
         <div className="home-sections">
           <div className="home-sections-header scroll-reveal">
-            <span className="home-sections-label">What We Offer</span>
-            <h2 className="home-sections-title">Everything you need</h2>
+            <span className="home-sections-label">What's on offer</span>
+            <h2 className="home-sections-title">Everything in one place</h2>
           </div>
           <div className="home-sections-container">
             {homeContent.sections.map((section, i) => (
@@ -329,6 +346,9 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
 
       {/* ── Bottom CTA ───────────────────────────────────── */}
       <BottomCTA onNavigate={() => onNavigate("calendar")} />
+
+      {/* ── Footer ───────────────────────────────────────── */}
+      <HomeFooter onNavigate={onNavigate} />
     </div>
   );
 }
