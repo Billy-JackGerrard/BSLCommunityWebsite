@@ -152,6 +152,33 @@
   background: var(--color-bg-card-gradient);
   border-right: 1px solid var(--color-border-subtle);
   padding: 0.75rem;
+  transition: width 0.25s ease;
+}
+
+.map-sidebar--event {
+  width: 320px;
+  overflow-y: hidden;
+  padding: 0;
+}
+
+.map-sidebar-event-detail {
+  overflow-y: auto;
+  height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.map-sidebar-event-detail::-webkit-scrollbar { width: 4px; }
+.map-sidebar-event-detail::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+.map-sidebar-event-detail .event-detail-card {
+  width: 100% !important;
+  position: static !important;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  box-shadow: none;
 }
 
 /* Wrapper for map + overlays */

@@ -108,7 +108,7 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
   const onToggleSearchFn = onToggleSearch ?? (() => {});
 
   const handleViewEvent = useCallback((ev: Event) => {
-    if (window.innerWidth >= 860) {
+    if (window.innerWidth >= 860 && window.innerHeight > 500) {
       setPanelEvent(ev);
     } else {
       onViewEvent(ev);

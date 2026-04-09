@@ -10,6 +10,7 @@ import FilterPanel from "../components/FilterPanel";
 import MobileFilterBar from "../components/MobileFilterBar";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
+import EventDetailCard from "../components/events/EventDetails";
 import { MONTHS, SHORT_MONTHS, SHORT_DAYS, formatWeekLabel, formatDayLabel, getWeekStart, getWeekEnd, formatDate, formatTime } from "../utils/dates";
 import { passesGranularityFilter, passesDistanceFilter, matchesSearch } from "../utils/eventFilters";
 import type { Event, Category } from "../utils/types";
@@ -112,14 +113,26 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 200);
 
+  const [panelEvent, setPanelEvent] = useState<Event | null>(null);
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.LayerGroup>(L.layerGroup());
   const circleLayerRef = useRef<L.LayerGroup>(L.layerGroup());
   const prevCenterRef = useRef<{ lat: number; lng: number } | null>(null);
-  // Store callback ref so popup click handlers always access the latest onViewEvent
+  // Store callback ref so popup click handlers always access the latest handlers
   const onViewEventRef = useRef(onViewEvent);
   onViewEventRef.current = onViewEvent;
+  // Ref for panel setter — used inside Leaflet popup handlers
+  const handleMarkerEventRef = useRef<(ev: Event) => void>(() => {});
+  handleMarkerEventRef.current = (ev: Event) => {
+    if (window.innerWidth >= 701 && window.innerHeight > 500) {
+      setPanelEvent(ev);
+      mapRef.current?.closePopup();
+    } else {
+      onViewEventRef.current(ev);
+    }
+  };
 
   // Fetch events for the current view month(s).
   // For week-boundary weeks (e.g. 28 Mar - 3 Apr), fetches both months and merges.
@@ -305,7 +318,7 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
           if (!btn) return;
           const idx = Number(btn.dataset.eventIndex);
           const event = eventsAtLocation[idx];
-          if (event) onViewEventRef.current(event);
+          if (event) handleMarkerEventRef.current(event);
         });
       });
 
@@ -564,20 +577,31 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
       )}
 
       <div className="map-body">
-        <aside className="map-sidebar">
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-            distanceFilter={distanceFilter}
-            onSetDistanceFilter={setDistanceFilter}
-            onClearDistanceFilter={clearDistanceFilter}
-            mode="map"
-            granularity={granularity}
-            onSetGranularity={handleGranularityChange}
-          />
+        <aside className={`map-sidebar${panelEvent ? " map-sidebar--event" : ""}`}>
+          {panelEvent ? (
+            <div className="map-sidebar-event-detail">
+              <EventDetailCard
+                event={panelEvent}
+                isLoggedIn={false}
+                onClose={() => setPanelEvent(null)}
+                onEdit={() => {}}
+              />
+            </div>
+          ) : (
+            <FilterPanel
+              selectedCategories={selectedCategories}
+              onToggleCategory={toggleCategory}
+              onClearCategories={clearCategories}
+              dateFilter={dateFilter}
+              onSetDateFilter={setDateFilter}
+              distanceFilter={distanceFilter}
+              onSetDistanceFilter={setDistanceFilter}
+              onClearDistanceFilter={clearDistanceFilter}
+              mode="map"
+              granularity={granularity}
+              onSetGranularity={handleGranularityChange}
+            />
+          )}
         </aside>
 
         <div className="map-area">
