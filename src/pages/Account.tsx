@@ -225,9 +225,6 @@ export default function Account({ email, displayName, isAdmin, onLogout, onNavig
             <section className="account-section">
               <h2 className="account-section-heading">Admin</h2>
               <div className="account-admin-links">
-                <button className="account-admin-link" onClick={() => onNavigate?.("admin-queue")}>
-                  Pending Events
-                </button>
                 <button className="account-admin-link" onClick={() => onNavigate?.("admin-messages")}>
                   Messages
                 </button>

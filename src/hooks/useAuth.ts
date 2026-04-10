@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../supabaseClient";
-import { deduplicateByRecurrence } from "../utils/recurrence";
 
 /**
  * Manages authentication state, user identity, role, and badge counts.
@@ -12,7 +11,6 @@ export function useAuth() {
   const [userId, setUserId] = useState<string | null>(null);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [pendingCount, setPendingCount] = useState(0);
   const [messagesCount, setMessagesCount] = useState(0);
 
   const fetchMessagesCount = useCallback(async () => {
@@ -20,16 +18,6 @@ export function useAuth() {
       .from("contact_messages")
       .select("id", { count: "exact", head: true });
     if (!error) setMessagesCount(count ?? 0);
-  }, []);
-
-  const fetchPendingCount = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("events")
-      .select("id, recurrence")
-      .eq("approved", false);
-
-    if (error || !data) { setPendingCount(0); return; }
-    setPendingCount(deduplicateByRecurrence(data).length);
   }, []);
 
   useEffect(() => {
@@ -40,7 +28,6 @@ export function useAuth() {
         setUserId(null);
         setUserEmail(null);
         setAdminName(null);
-        setPendingCount(0);
         setMessagesCount(0);
         setIsAuthLoading(false);
         return;
@@ -67,10 +54,8 @@ export function useAuth() {
       }
 
       if (adminFlag) {
-        fetchPendingCount().catch(console.error);
         fetchMessagesCount().catch(console.error);
       } else {
-        setPendingCount(0);
         setMessagesCount(0);
       }
 
@@ -86,7 +71,7 @@ export function useAuth() {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchPendingCount, fetchMessagesCount]);
+  }, [fetchMessagesCount]);
 
   const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();
@@ -100,11 +85,8 @@ export function useAuth() {
     userId,
     adminName,
     userEmail,
-    pendingCount,
-    setPendingCount,
     messagesCount,
     setMessagesCount,
-    fetchPendingCount,
     handleLogout,
   };
 }

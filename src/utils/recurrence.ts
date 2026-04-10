@@ -233,7 +233,7 @@ export function expandRecurrences(
  * the same recurring series, keeping only the first occurrence of each series.
  * Non-recurring events are always kept.
  *
- * Used by both AdminQueue and main.tsx to get an accurate pending count.
+ * Used to deduplicate recurring series in event lists.
  */
 export function deduplicateByRecurrence<T extends { id: string | number; recurrence?: RecurrenceRule | null }>(
   events: T[]

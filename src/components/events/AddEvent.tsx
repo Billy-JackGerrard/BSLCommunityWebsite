@@ -12,12 +12,11 @@ import "./AddEvent.css";
 type Props = {
   prefillDate?: string; // "YYYY-MM-DD" — pre-populates the start date when adding from calendar
   prefillEvent?: Event;  // pre-populates all fields when duplicating an event
-  isAdmin?: boolean;
   userId?: string | null;
   onBrowse?: () => void;
 };
 
-export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, userId, onBrowse }: Props) {
+export default function AddEvent({ prefillDate, prefillEvent, userId, onBrowse }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +29,13 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, u
   const handleSubmit = async (rows: EventFormRow[]) => {
     setLoading(true);
     setError(null);
+
+    const endTime = rows[0].finishes_at ?? rows[0].starts_at;
+    if (new Date(endTime) < new Date()) {
+      setError("This event has already finished — please update the date and time.");
+      setLoading(false);
+      return;
+    }
 
     if (!turnstileToken) {
       setError("Please complete the captcha check.");
@@ -70,18 +76,10 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, u
       return;
     }
 
-    // Fetch session only to get the user ID for admin_id
-    const { data: { session } } = await supabase.auth.getSession();
-
-    // All occurrences are inserted upfront. For non-admins they are all
-    // unapproved — the queue deduplicates by recurrence_id so only the first
-    // shows up for review, and approval sets the whole series to approved in
-    // one query.
     const rowsWithMeta = rows.map(row => ({
       ...row,
-      approved: isAdmin,
-      admin_id: isAdmin ? (session?.user?.id ?? null) : null,
-      submitted_by: userId ?? session?.user?.id ?? null,
+      approved: true,
+      submitted_by: userId ?? null,
     }));
 
     const { error: insertError } = await supabase.from("events").insert(rowsWithMeta);
@@ -116,18 +114,12 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, u
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
             >✓</motion.div>
             <h2 className="addevent-title">
-              {isRecurring ? "Recurring Event Submitted!" : "Event Added!"}
+              {isRecurring ? "Recurring Event Added!" : "Event Added!"}
             </h2>
             <p className="addevent-success-msg">
-              {isAdmin ? (
-                isRecurring
-                  ? `${submittedCount} occurrences have been published directly to the calendar.`
-                  : "Your event has been published directly to the calendar."
-              ) : (
-                isRecurring
-                  ? `Thank you! Your recurring event has been submitted for review. Once approved, all ${submittedCount} dates will appear on the calendar.`
-                  : "Thank you! Your event has been submitted and is awaiting approval from an admin."
-              )}
+              {isRecurring
+                ? `${submittedCount} occurrences have been published to the calendar.`
+                : "Your event has been published to the calendar."}
             </p>
             <div className="addevent-success-actions">
               <motion.button className="btn-primary" onClick={resetForm} whileTap={scaleSpring.tap}>
@@ -149,12 +141,6 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false, u
     <div className="addevent-page">
       <div className="page-card addevent-card">
         <h2 className="addevent-title">Add an Event</h2>
-
-        {!isAdmin && (
-          <p className="addevent-subtitle">
-            Events are reviewed by an admin before appearing on the calendar.
-          </p>
-        )}
 
         <EventForm
           key={formKey}

@@ -82,6 +82,8 @@ function LinkButtons({ url }: { url: string }) {
 }
 
 export default function EventDetailCard({ event, isLoggedIn, isAdmin, userId, onClose, onEdit, onDelete, onDuplicate, onReport, actions, showAddToCalendar = true }: Props) {
+  const isEventFinished = new Date(event.finishes_at ?? event.starts_at) < new Date();
+
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
@@ -130,7 +132,7 @@ export default function EventDetailCard({ event, isLoggedIn, isAdmin, userId, on
               ⧉ Duplicate
             </motion.button>
           )}
-          {isLoggedIn && (isAdmin || event.submitted_by === userId) && (
+          {isLoggedIn && (isAdmin || (event.submitted_by === userId && !isEventFinished)) && (
             <div className="event-detail-admin-actions">
               <motion.button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event" whileTap={scaleSpring.tap}>
                 ✎ Edit

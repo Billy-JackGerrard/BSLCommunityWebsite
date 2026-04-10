@@ -3,7 +3,7 @@ export type View =
   | "home" | "calendar" | "list" | "map" | "event"
   | "login" | "signup" | "account"
   | "add-event" | "edit-event" | "delete-event"
-  | "admin-queue" | "admin-messages" | "admin-home"
+  | "admin-messages" | "admin-home"
   | "contact" | "privacy";
 
 /** URL path for each navigable view. Views without an entry have no direct URL. */
@@ -17,7 +17,6 @@ export const VIEW_PATHS: Partial<Record<View, string>> = {
   account:           "/account",
   contact:           "/contact",
   privacy:           "/privacy",
-  "admin-queue":     "/admin-queue",
   "admin-messages":  "/admin-messages",
   "admin-home":      "/admin-home",
 };
@@ -38,7 +37,6 @@ export const VIEW_TITLES: Partial<Record<View, string>> = {
   login:             "Sign In | BSL Calendar",
   signup:            "Create Account | BSL Calendar",
   account:           "Account | BSL Calendar",
-  "admin-queue":     "Event Queue | BSL Calendar",
   "admin-messages":  "Messages | BSL Calendar",
   "admin-home":      "Edit Home | BSL Calendar",
 };

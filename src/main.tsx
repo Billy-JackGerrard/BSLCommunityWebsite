@@ -20,7 +20,6 @@ import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
 import Calendar from "./pages/Calendar.tsx";
 import Login from "./pages/Login.tsx";
-import AdminQueue from "./pages/AdminQueue.tsx";
 import AdminMessages from "./pages/AdminMessages.tsx";
 import Account from "./pages/Account.tsx";
 import Home from "./pages/Home.tsx";
@@ -38,13 +37,12 @@ import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import type { Event, ContactType } from "./utils/types.ts";
 import { type View, VIEW_PATHS, PATH_TO_VIEW, VIEW_TITLES } from "./utils/views.ts";
 
-/** Fetch a single approved event by ID. Returns the event or null. */
+/** Fetch a single event by ID. Returns the event or null. */
 async function fetchEventById(id: string): Promise<Event | null> {
   const { data, error } = await supabase
     .from("events")
     .select("*")
     .eq("id", id)
-    .eq("approved", true)
     .single();
 
   if (error) {
@@ -62,9 +60,8 @@ function App() {
   // ── Auth ────────────────────────────────────────────────────────────────
   const {
     isLoggedIn, isAdmin, isAuthLoading, userId, adminName, userEmail,
-    pendingCount, setPendingCount,
     messagesCount, setMessagesCount,
-    fetchPendingCount, handleLogout,
+    handleLogout,
   } = useAuth();
 
   // ── View / navigation ──────────────────────────────────────────────────
@@ -173,7 +170,7 @@ function App() {
   // ── Auth guard ─────────────────────────────────────────────────────────
   useEffect(() => {
     // Views that require being logged in at all
-    const authRequiredViews = ["admin-queue", "admin-messages", "admin-home", "account", "add-event", "edit-event", "delete-event"] as const;
+    const authRequiredViews = ["admin-messages", "admin-home", "account", "add-event", "edit-event", "delete-event"] as const;
     if ((authRequiredViews as readonly string[]).includes(view) && !isLoggedIn) {
       window.history.replaceState({}, "", VIEW_PATHS.login);
       setView("login");
@@ -181,15 +178,14 @@ function App() {
     }
     // Admin-only views: redirect logged-in non-admins (skip while auth is still loading)
     if (!isAuthLoading) {
-      const strictAdminViews = ["admin-queue", "admin-messages", "admin-home"] as const;
+      const strictAdminViews = ["admin-messages", "admin-home"] as const;
       if ((strictAdminViews as readonly string[]).includes(view) && isLoggedIn && !isAdmin) {
         window.history.replaceState({}, "", "/");
         setView("calendar");
         return;
       }
     }
-    if (view === "admin-queue" && isLoggedIn && isAdmin) fetchPendingCount();
-  }, [view, isLoggedIn, isAdmin, isAuthLoading, fetchPendingCount]);
+  }, [view, isLoggedIn, isAdmin, isAuthLoading]);
 
   useEffect(() => {
     if (view !== "contact") setContactPrefill(null);
@@ -285,7 +281,6 @@ function App() {
         currentView={view}
         isLoggedIn={isLoggedIn}
         isAdmin={isAdmin}
-        pendingCount={pendingCount}
         messagesCount={messagesCount}
         adminName={adminName}
         onNavigate={handleNavigate}
@@ -345,7 +340,6 @@ function App() {
           <AddEvent
             prefillDate={addEventDate}
             prefillEvent={duplicatingEvent ?? undefined}
-            isAdmin={isAdmin}
             userId={userId}
             onBrowse={() => handleNavigate("calendar")}
           />
@@ -362,17 +356,9 @@ function App() {
         {view === "edit-event" && isLoggedIn && editingEvent && (
           <EditEvent
             event={editingEvent}
-            isAdmin={isAdmin}
             userId={userId}
             onSaved={handleEditSaved}
             onCancel={handleEditCancel}
-            defaultRecurringScope={postEditReturn === "admin-queue" ? "all-future" : undefined}
-          />
-        )}
-        {view === "admin-queue" && isLoggedIn && isAdmin && (
-          <AdminQueue
-            onPendingCountChange={setPendingCount}
-            onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
           />
         )}
         {view === "admin-messages" && isLoggedIn && isAdmin && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}

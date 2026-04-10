@@ -13,7 +13,6 @@ type Props = {
   currentView: View;
   isLoggedIn: boolean;
   isAdmin?: boolean;
-  pendingCount: number;
   messagesCount: number;
   adminName?: string | null;
   onNavigate: (view: View) => void;
@@ -27,7 +26,6 @@ export default function Navbar({
   currentView,
   isLoggedIn,
   isAdmin,
-  pendingCount,
   messagesCount,
   adminName,
   onNavigate,
@@ -152,18 +150,6 @@ export default function Navbar({
               Messages
               {messagesCount > 0 && (
                 <span className="navbar-pending-badge">{messagesCount}</span>
-              )}
-            </button>
-          )}
-
-          {isLoggedIn && isAdmin && (
-            <button
-              className={`navbar-link navbar-link--queue ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
-              onClick={() => navigate("admin-queue")}
-            >
-              Pending Events
-              {pendingCount > 0 && (
-                <span className="navbar-pending-badge">{pendingCount}</span>
               )}
             </button>
           )}

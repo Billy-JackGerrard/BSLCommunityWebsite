@@ -15,7 +15,7 @@ export function formatAddress(addr: EventAddress): string {
   return [street, addr.suburb, addr.city, addr.postcode].filter(Boolean).join(", ");
 }
 
-/** Core event shape — returned by all approved-event queries. */
+/** Core event shape returned by event queries. */
 export type Event = {
   id: number;
   title: string;
@@ -42,15 +42,6 @@ export type Event = {
   /** Unified recurrence field. Present and non-null when this event is part
    *  of a recurring series; the `id` field within links all occurrences. */
   recurrence?: RecurrenceRule;
-};
-
-/**
- * Extended shape used in admin contexts (AdminQueue, EditEvent) where
- * `approved` and `admin_id` are present and meaningful.
- */
-export type AdminEvent = Event & {
-  approved: boolean;
-  admin_id?: string;
 };
 
 export type UserProfile = {

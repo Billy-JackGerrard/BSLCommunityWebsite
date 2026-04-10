@@ -25,8 +25,7 @@ export default function PrivacyPolicy() {
             <li>
               <strong>Event submissions</strong> — when someone submits an event, we store the
               event details provided: title, description, location, dates, contact name, and
-              contact email. This information is reviewed by an admin and, if approved, displayed
-              publicly on the calendar.
+              contact email. This information is displayed publicly on the calendar.
             </li>
             <li>
               <strong>Contact messages</strong> — when you use the contact form, we store your
@@ -55,8 +54,7 @@ export default function PrivacyPolicy() {
         <section className="privacy-section">
           <h3 className="section-label">How long we keep it</h3>
           <ul className="privacy-list">
-            <li>Approved event listings are kept until they are deleted by an admin or the event organiser requests removal.</li>
-            <li>Rejected or unapproved submissions are deleted periodically.</li>
+            <li>Event listings are kept until they are deleted by an admin or the event organiser requests removal.</li>
             <li>Contact messages are kept for a reasonable period to allow follow-up, then deleted.</li>
           </ul>
         </section>
@@ -64,8 +62,8 @@ export default function PrivacyPolicy() {
         <section className="privacy-section">
           <h3 className="section-label">Who can see it</h3>
           <ul className="privacy-list">
-            <li>Approved event details (including organiser contact info) are visible to all visitors.</li>
-            <li>Unapproved submissions and contact messages are only accessible to site admins.</li>
+            <li>Event details (including organiser contact info) are visible to all visitors.</li>
+            <li>Contact messages are only accessible to site admins.</li>
             <li>We do not sell, share, or transfer your data to third parties.</li>
           </ul>
           <p className="privacy-body">

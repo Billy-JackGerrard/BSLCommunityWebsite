@@ -1,6 +1,6 @@
-# BSL Community Website
+# BSL Calendar
 
-A community hub for British Sign Language (BSL) events in Edinburgh (and in the future possibly Scotland/UK). The site aggregates socials, classes, and community events into one place so people don't miss what's happening.
+A calendar and hub for British Sign Language (BSL) events in Edinburgh (and in the future possibly Scotland/UK). The site aggregates socials, performances, and community events into one place so people don't miss what's happening.
 
 ## What it does
 
